@@ -80,18 +80,22 @@ namespace Business.Handlers.Authorizations.Commands
                 _userRepository.Add(user);
                 await _userRepository.SaveChangesAsync();
 
-                //await _mediator.Send(new CreateCustomerCommand
-                //{
-                //    DashboardKey = SecurityKeyHelper.GetRandomHexNumber(64).ToLower(),
-                //    UserId = user.UserId,
-                //    CustomerScaleId = request.CustomerScaleId
 
-                //});
+
+
+
 
                 var claims = _userRepository.GetClaims(user.UserId);
 
-                var accessToken = _tokenHelper.CreateToken<DArchToken>(user);
-                accessToken.Claims = claims.Select(x => x.Name).ToList();
+                var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
+                {
+                    UserId = user.UserId,
+                    OperationClaims = claims.Select(x => x.Name).ToArray()
+                });
+
+
+
+
 
                 _cacheManager.Add($"{CacheKeys.UserIdForClaim}={user.UserId}", claims.Select(x => x.Name));
 

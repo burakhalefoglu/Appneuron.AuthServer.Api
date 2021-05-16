@@ -1,10 +1,17 @@
-﻿using Core.Entities.Concrete;
+﻿using Core.Entities.ClaimModels;
+using Core.Entities.Concrete;
 
 namespace Core.Utilities.Security.Jwt
 {
     public interface ITokenHelper
     {
-        TAccessToken CreateToken<TAccessToken>(User user)
+        TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel user)
           where TAccessToken : IAccessToken, new();
+
+        TAccessToken CreateClientToken<TAccessToken>(ClientClaimModel clientClaimModel)
+               where TAccessToken : IAccessToken, new();
+
+        TAccessToken CreateAdminToken<TAccessToken>(UserClaimModel user)
+         where TAccessToken : IAccessToken, new();
     }
 }

@@ -11,6 +11,7 @@ using MediatR;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Core.Entities.ClaimModels;
 
 namespace Business.Handlers.Authorizations.Queries
 {
@@ -47,7 +48,12 @@ namespace Business.Handlers.Authorizations.Queries
 
                 var claims = _userRepository.GetClaims(user.UserId);
 
-                var accessToken = _tokenHelper.CreateToken<DArchToken>(user);
+                var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
+                {
+                    UserId = user.UserId,
+                    OperationClaims = claims.Select(x => x.Name).ToArray()
+                });
+
                 accessToken.Claims = claims.Select(x => x.Name).ToList();
 
                 _cacheManager.Add($"{CacheKeys.UserIdForClaim}={user.UserId}", claims.Select(x => x.Name));

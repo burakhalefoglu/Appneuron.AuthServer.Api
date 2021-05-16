@@ -30,7 +30,7 @@ namespace Business.Helpers
             {
                 FullName = "System Admin",
                 Password = "(ex9XivwA0sDtc%XX%Mnidj8)JFhLf8cAnaJ&ySqec@^hutPtc9qPA-46qZOZy&l",
-                Email = "admin@adminmail.com",
+                Email = "admin@appneuron.com",
             });
             await mediator.Send(new CreateUserClaimsInternalCommand
             {

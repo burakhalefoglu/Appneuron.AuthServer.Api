@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Core.Entities.ClaimModels;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -31,5 +32,17 @@ namespace Core.Extensions
         {
             roles.ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
         }
+
+        public static void AddCustomerId(this ICollection<Claim> claims, string customerId)
+        {
+            claims.Add(new Claim(JwtCustomClaimNames.CustomerId, customerId));
+        }
+
+        public static void AddProjectId(this ICollection<Claim> claims, string projectId)
+        {
+            claims.Add(new Claim(JwtCustomClaimNames.ProjectId, projectId));
+        }
+
+
     }
 }
