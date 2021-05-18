@@ -21,8 +21,6 @@ namespace Business.Handlers.Users.Commands
         public string MobilePhones { get; set; }
         public bool Status { get; set; }
         public DateTime RecordDate { get; set; }
-        public string Address { get; set; }
-        public string Notes { get; set; }
         public DateTime UpdateContactDate { get; set; }
         public string Password { get; set; }
 
@@ -50,7 +48,6 @@ namespace Business.Handlers.Users.Commands
                     Email = request.Email,
                     Name = request.Name,
                     Status = true,
-                    Notes = request.Notes,
                     MobilePhones = request.MobilePhones,
                 };
 

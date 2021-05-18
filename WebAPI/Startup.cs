@@ -75,7 +75,7 @@ namespace WebAPI
                                                     ValidateAudience = true,
                                                     ValidateLifetime = true,
                                                     ValidIssuer = tokenOptions.Issuer,
-                                                    ValidAudience = tokenOptions.Audience,
+                                                    ValidAudiences = tokenOptions.Audience,
                                                     ValidateIssuerSigningKey = true,
                                                     IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
                                                     ClockSkew = TimeSpan.Zero
@@ -122,9 +122,14 @@ namespace WebAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.ConfigureCustomExceptionMiddleware();
 
-            app.UseDbOperationClaimCreator();
+            //güvenlik için gerekli...
+            app.UseHsts();
+            //güvenlik için gerekli...
+            app.UseSecurityHeaders();
+
+
+            app.ConfigureCustomExceptionMiddleware();
 
             app.UseSwagger();
 
@@ -160,6 +165,7 @@ namespace WebAPI
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

@@ -10,10 +10,10 @@ namespace Core.Entities.Concrete
 
         public string Name { get; set; }
         public string Email { get; set; }
-        public string MobilePhones { get; set; }
+        public string DashboardKey { get; set; }
         public bool Status { get; set; }
+        public string MobilePhones { get; set; }
         public DateTime RecordDate { get; set; }
-        public string Notes { get; set; }
         public DateTime UpdateContactDate { get; set; }
 
         public byte[] PasswordSalt { get; set; }
@@ -23,7 +23,7 @@ namespace Core.Entities.Concrete
 
         public virtual ICollection<UserGroup> UserGroups { get; set; }
         public virtual ICollection<UserClaim> UserClaims { get; set; }
-
+        public virtual ICollection<Client> Client { get; set; }
 
 
 

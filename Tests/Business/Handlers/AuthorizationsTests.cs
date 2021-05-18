@@ -73,11 +73,10 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_Register()
         {
-            var registerUser = new User { Email = "test@test.com", Name = "test test" };
+            var registerUser = new User { Email = "test@test.com", Name = "test test", DashboardKey = "csfgsrfgjsk" };
             _command = new RegisterUserCommand
             {
                 Email = registerUser.Email,
-                Name = registerUser.Name,
                 Password = "123456"
             };
             var result = await _registerUserCommandHandler.Handle(_command, new System.Threading.CancellationToken());

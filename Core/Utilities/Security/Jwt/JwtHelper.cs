@@ -2,6 +2,7 @@
 using Core.Entities.Concrete;
 using Core.Extensions;
 using Core.Utilities.Security.Encyption;
+using Core.Utilities.Security.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -14,9 +15,11 @@ namespace Core.Utilities.Security.Jwt
     public class JwtHelper : ITokenHelper
     {
         public IConfiguration Configuration { get; }
+        private readonly OperationClaimCrypto _operationClaimCrypto;
         private readonly TokenOptions _tokenOptions;
         private readonly CustomerOptions _customerOptions;
         private readonly UnityClientOptions _unityClientOptions;
+
         private DateTime _accessTokenExpiration;
 
         public JwtHelper(IConfiguration configuration)
@@ -25,6 +28,8 @@ namespace Core.Utilities.Security.Jwt
             _tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
             _customerOptions = Configuration.GetSection("CustomerOptions").Get<CustomerOptions>();
             _unityClientOptions = Configuration.GetSection("UnityClientOptions").Get<UnityClientOptions>();
+            _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
+
         }
 
         public string DecodeToken(string input)
@@ -96,7 +101,7 @@ namespace Core.Utilities.Security.Jwt
             var jwt = new JwtSecurityToken(
 
                     issuer: tokenOptions.Issuer,
-                    audience: tokenOptions.Audience,
+                    audience: tokenOptions.Audience[0],
                     expires: _accessTokenExpiration,
                     notBefore: DateTime.Now,
                     claims: SetUserClaims(userClaimModel),
@@ -124,10 +129,18 @@ namespace Core.Utilities.Security.Jwt
 
         private IEnumerable<Claim> SetUserClaims(UserClaimModel userClaimModel)
         {
+            for (int i = 0; i < userClaimModel.OperationClaims.Length; i++)
+            {
+                userClaimModel.OperationClaims[i] =
+                    SecurityKeyHelper.EncryptString(_operationClaimCrypto.Key,
+                    userClaimModel.OperationClaims[i]);
+            }
+
+
             var claims = new List<Claim>();
             claims.AddNameIdentifier(userClaimModel.UserId.ToString());
             claims.AddRoles(userClaimModel.OperationClaims);
-
+            claims.AddUniqueKey(userClaimModel.UniqueKey);
             return claims;
         }
 
@@ -150,6 +163,14 @@ namespace Core.Utilities.Security.Jwt
 
         private IEnumerable<Claim> SetClaimsforClient(ClientClaimModel clientClaimModel)
         {
+
+            for (int i = 0; i < clientClaimModel.OperationClaims.Length; i++)
+            {
+                clientClaimModel.OperationClaims[i] =
+                    SecurityKeyHelper.EncryptString(_operationClaimCrypto.Key,
+                    clientClaimModel.OperationClaims[i]);
+            }
+
             var claims = new List<Claim>();
             claims.AddNameIdentifier(clientClaimModel.ClientId);
             claims.AddRoles(clientClaimModel.OperationClaims);

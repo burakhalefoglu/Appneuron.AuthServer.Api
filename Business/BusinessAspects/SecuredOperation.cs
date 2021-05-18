@@ -3,11 +3,15 @@ using Castle.DynamicProxy;
 using Core.CrossCuttingConcerns.Caching;
 using Core.Utilities.Interceptors;
 using Core.Utilities.IoC;
+using Core.Utilities.Security.Encyption;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security;
+using Core.Utilities.Security.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Business.BusinessAspects
 {
@@ -21,11 +25,17 @@ namespace Business.BusinessAspects
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ICacheManager _cacheManager;
+        private readonly OperationClaimCrypto _operationClaimCrypto;
+        public IConfiguration Configuration { get; }
+
 
         public SecuredOperation()
         {
+            Configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
             _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
             _cacheManager = ServiceTool.ServiceProvider.GetService<ICacheManager>();
+            _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
+
         }
 
         protected override void OnBefore(IInvocation invocation)
@@ -34,10 +44,20 @@ namespace Business.BusinessAspects
 
             if (userId == null) throw new SecurityException(Messages.AuthorizationsDenied);
 
-            var oprClaims = _cacheManager.Get($"{CacheKeys.UserIdForClaim}={userId}") as IEnumerable<string>;
+
+            var oprClaims = _httpContextAccessor.HttpContext?.User.Claims.Where(x => x.Type.EndsWith("role")).ToList();
+            List<string> ocNameList = new List<string>();
+
+
+            foreach (var item in oprClaims)
+            {
+                var itemDecryptValue = SecurityKeyHelper.DecryptString(_operationClaimCrypto.Key, item.Value);
+                ocNameList.Add(itemDecryptValue);
+            }
+
 
             var operationName = invocation.TargetType.ReflectedType.Name;
-            if (oprClaims.Contains(operationName))
+            if (ocNameList.Contains(operationName))
                 return;
 
             throw new SecurityException(Messages.AuthorizationsDenied);

@@ -1,5 +1,6 @@
 ﻿using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
+using Business.Handlers.Clients.Commands;
 using Business.Handlers.Users.Commands;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
@@ -73,6 +74,30 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
+
+
+        /// <summary>
+        ///  Make it User Register operations
+        /// </summary>
+        /// <param name="createClientToken"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [Consumes("application/json")]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
+        [HttpPost("clienttoken")]
+        public async Task<IActionResult> ClientToken([FromBody] CreateTokenClientCommand createClientToken)
+        {
+            var result = await Mediator.Send(createClientToken);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
 
         ///<summary>
         ///Make it Forgot Password operations

@@ -8,5 +8,7 @@ namespace Core.Entities.ClaimModels
     {
         public const string CustomerId = "CustomerID";
         public const string ProjectId = "ProjectId";
+        public const string UniqueKey = "UniqueKey";
+
     }
 }

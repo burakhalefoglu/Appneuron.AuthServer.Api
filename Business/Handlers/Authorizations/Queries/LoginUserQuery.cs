@@ -51,10 +51,11 @@ namespace Business.Handlers.Authorizations.Queries
                 var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
                 {
                     UserId = user.UserId,
-                    OperationClaims = claims.Select(x => x.Name).ToArray()
+                    OperationClaims = claims.Select(x => x.Name).ToArray(),
+                    UniqueKey = user.DashboardKey
                 });
 
-                accessToken.Claims = claims.Select(x => x.Name).ToList();
+                //accessToken.Claims = claims.Select(x => x.Name).ToList();
 
                 _cacheManager.Add($"{CacheKeys.UserIdForClaim}={user.UserId}", claims.Select(x => x.Name));
 

@@ -8,7 +8,7 @@ namespace DataAccess.Concrete.Configurations
     {
         public void Configure(EntityTypeBuilder<UserClaim> builder)
         {
-            builder.HasKey(e => new { e.Id });
+            builder.HasKey(e => new { e.ClaimId, e.UsersId });
 
             builder.HasIndex(e => new { e.UsersId, e.ClaimId }, "Uk_Uniqe")
                               .IsUnique();

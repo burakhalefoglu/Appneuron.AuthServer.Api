@@ -1,5 +1,8 @@
 ﻿using Business.Constants;
+using Business.Fakes.Handlers.GroupClaims;
+using Business.Fakes.Handlers.UserClaims;
 using Business.Handlers.Authorizations.ValidationRules;
+using Business.Helpers;
 using Business.Services.Authentication;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -8,13 +11,16 @@ using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
+using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using MediatR;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,10 +31,6 @@ namespace Business.Handlers.Authorizations.Commands
     {
         public string Email { get; set; }
         public string Password { get; set; }
-        public string ConfirmPassword { get; set; }
-        public string Name { get; set; }
-        public string Notes { get; set; }
-        public short CustomerScaleId { get; set; }
 
         public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, IResult>
         {
@@ -58,8 +60,6 @@ namespace Business.Handlers.Authorizations.Commands
             [TransactionScopeAspectAsync]
             public async Task<IResult> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
             {
-                if (request.Password != request.ConfirmPassword)
-                    return new ErrorResult(Messages.PassworddidntMatch);
 
                 var userExits = await _userRepository.GetAsync(u => u.Email == request.Email);
 
@@ -70,34 +70,51 @@ namespace Business.Handlers.Authorizations.Commands
                 var user = new User
                 {
                     Email = request.Email,
-                    Name = request.Name,
+                    Name = UserNameCreationHelper.EmailToUsername(request.Email),
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                     Status = true,
-                    Notes = request.Notes
+                    DashboardKey = SecurityKeyHelper.GetRandomHexNumber(32),
                 };
 
                 _userRepository.Add(user);
                 await _userRepository.SaveChangesAsync();
 
+                var newUser = _userRepository.Get(x => x.Email == user.Email);
+
+                var result = (await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery()
+                {
+                    GroupId = 1
+                }));
+
+                List<SelectionItem> selectionItems = result.Data.ToList();
+                List<OperationClaim> operationClaims = new List<OperationClaim>();
+
+                foreach (var item in selectionItems)
+                {
+                    operationClaims.Add(new OperationClaim
+                    {
+                        Id = item.Id,
+                        Name = item.Label
+                    });
+                }
 
 
-
-
-
-                var claims = _userRepository.GetClaims(user.UserId);
+                await _mediator.Send(new CreateUserClaimsInternalCommand
+                {
+                    UserId = newUser.UserId,
+                    OperationClaims = operationClaims,
+                    Users = newUser
+                });
 
                 var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
                 {
                     UserId = user.UserId,
-                    OperationClaims = claims.Select(x => x.Name).ToArray()
+                    UniqueKey = user.DashboardKey,
+                    OperationClaims = operationClaims.Select(x => x.Name).ToArray()
                 });
 
-
-
-
-
-                _cacheManager.Add($"{CacheKeys.UserIdForClaim}={user.UserId}", claims.Select(x => x.Name));
+                _cacheManager.Add($"{CacheKeys.UserIdForClaim}={user.UserId}", operationClaims.Select(x => x.Name));
 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }

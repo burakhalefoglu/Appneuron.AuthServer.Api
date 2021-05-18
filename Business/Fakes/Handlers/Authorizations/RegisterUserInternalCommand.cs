@@ -4,6 +4,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
+using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using MediatR;
@@ -43,6 +44,7 @@ namespace Business.Fakes.Handlers.Authorizations
                     Name = request.FullName,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
+                    DashboardKey = SecurityKeyHelper.GetRandomHexNumber(32),
                     Status = true
                 };
 

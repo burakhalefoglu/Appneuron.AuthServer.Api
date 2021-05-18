@@ -17,69 +17,8 @@ namespace WebAPI.Controllers
     [ApiController]
     public class GroupClaimsController : BaseApiController
     {
-        ///<summary>
-        ///GroupClaims list
-        ///</summary>
-        ///<remarks>GroupClaims</remarks>
-        ///<return>GroupClaims List</return>
-        ///<response code="200"></response>
-        //[AllowAnonymous]
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GroupClaim>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        [HttpGet("getall")]
-        public async Task<IActionResult> GetList()
-        {
-            var result = await Mediator.Send(new GetGroupClaimsQuery());
-            if (result.Success)
-            {
-                return Ok(result.Data);
-            }
 
-            return BadRequest(result.Message);
-        }
 
-        ///<summary>
-        ///It brings the details according to its id.
-        ///</summary>
-        ///<remarks>bla bla bla </remarks>
-        ///<return>GroupClaims List</return>
-        ///<response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GroupClaim))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        [HttpGet("getbyid")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var result = await Mediator.Send(new GetGroupClaimQuery { Id = id });
-            if (result.Success)
-            {
-                return Ok(result.Data);
-            }
-
-            return BadRequest(result.Message);
-        }
-
-        ///<summary>
-        ///Brings up Claims by Group Id.
-        ///</summary>
-        ///<remarks>bla bla bla </remarks>
-        ///<return>GroupClaims List</return>
-        ///<response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<SelectionItem>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        [HttpGet("getgroupclaimsbygroupid")]
-        public async Task<IActionResult> GetGroupClaimsByGroupId(int id)
-        {
-            var result = await Mediator.Send(new GetGroupClaimsLookupByGroupIdQuery { GroupId = id });
-            if (result.Success)
-            {
-                return Ok(result.Data);
-            }
-
-            return BadRequest(result.Message);
-        }
 
         /// <summary>
         /// Addded GroupClaim .
