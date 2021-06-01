@@ -66,7 +66,7 @@ namespace WebAPI.Controllers
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        [HttpGet("getbyid")]
+        [HttpGet]
         public async Task<IActionResult> GetById()
         {
             var result = await Mediator.Send(new GetUserQuery { });
@@ -77,6 +77,8 @@ namespace WebAPI.Controllers
 
             return BadRequest(result.Message);
         }
+
+
 
 
 

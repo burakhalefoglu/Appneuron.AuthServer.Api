@@ -18,7 +18,6 @@ namespace Business.Fakes.Handlers.UserClaims
     {
         public int UserId { get; set; }
         public List<OperationClaim> OperationClaims { get; set; }
-        public User Users { get; set; }
 
         public class CreateUserClaimsInternalCommandHandler : IRequestHandler<CreateUserClaimsInternalCommand, IResult>
         {
@@ -43,10 +42,8 @@ namespace Business.Fakes.Handlers.UserClaims
                         {
                             ClaimId = claim.Id,
                             UsersId = request.UserId,
-                            Claim = claim,
-                            Users = request.Users
 
-                        }); ;
+                        });
 
                     }
 

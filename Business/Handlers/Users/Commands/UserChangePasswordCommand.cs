@@ -19,6 +19,7 @@ namespace Business.Handlers.Users.Commands
     public class UserChangePasswordCommand : IRequest<IResult>
     {
         public string Password { get; set; }
+        public string validPassword { get; set; }
 
         public class UserChangePasswordCommandHandler : IRequestHandler<UserChangePasswordCommand, IResult>
         {
@@ -40,16 +41,21 @@ namespace Business.Handlers.Users.Commands
             {
                 var UserId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
-                var userExits = await _userRepository.GetAsync(u => u.UserId == UserId);
-                if (userExits == null)
+                var user = await _userRepository.GetAsync(u => u.UserId == UserId);
+                if (user == null)
                     return new ErrorResult(Messages.UserNotFound);
+
+
+                if (!HashingHelper.VerifyPasswordHash(request.validPassword, user.PasswordSalt, user.PasswordHash))
+                    return new ErrorResult(Messages.PasswordError);
+
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
 
-                userExits.PasswordHash = passwordHash;
-                userExits.PasswordSalt = passwordSalt;
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
 
-                _userRepository.Update(userExits);
+                _userRepository.Update(user);
                 await _userRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.Updated);
             }

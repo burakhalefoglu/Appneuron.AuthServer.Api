@@ -1,6 +1,5 @@
 ﻿using Business.Constants;
 using Castle.DynamicProxy;
-using Core.CrossCuttingConcerns.Caching;
 using Core.Utilities.Interceptors;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Encyption;
@@ -21,19 +20,17 @@ namespace Business.BusinessAspects
     ///If a valid authorization cannot be found in aspect, it throws an exception.
     /// </summary>
 
-    public class SecuredOperation : MethodInterceptionAttribute
+    public class SecuredOperationAttribute : MethodInterceptionAttribute
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ICacheManager _cacheManager;
         private readonly OperationClaimCrypto _operationClaimCrypto;
         public IConfiguration Configuration { get; }
 
 
-        public SecuredOperation()
+        public SecuredOperationAttribute()
         {
             Configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
             _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
-            _cacheManager = ServiceTool.ServiceProvider.GetService<ICacheManager>();
             _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
 
         }

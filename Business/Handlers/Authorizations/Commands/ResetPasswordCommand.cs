@@ -19,7 +19,6 @@ namespace Business.Handlers.Authorizations.Commands
     public class ResetPasswordCommand : IRequest<IResult>
     {
         public string Password { get; set; }
-        public string PasswordAgain { get; set; }
 
         public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, IResult>
         {
@@ -39,10 +38,6 @@ namespace Business.Handlers.Authorizations.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
             {
-                if (request.Password != request.PasswordAgain)
-                {
-                    return new ErrorDataResult<User>(Messages.PasswordError);
-                }
 
                 var queryString = _httpContextAccessor.HttpContext.Request.Query;
                 var token = queryString["token"];

@@ -37,7 +37,6 @@ namespace Business.Handlers.Authorizations.Commands
             private readonly IUserRepository _userRepository;
             private readonly IMediator _mediator;
             private readonly ITokenHelper _tokenHelper;
-            private readonly ICacheManager _cacheManager;
 
 
             public RegisterUserCommandHandler(IUserRepository userRepository,
@@ -48,7 +47,6 @@ namespace Business.Handlers.Authorizations.Commands
                 _userRepository = userRepository;
                 _mediator = mediator;
                 _tokenHelper = tokenHelper;
-                _cacheManager = cacheManager;
 
 
             }
@@ -94,7 +92,7 @@ namespace Business.Handlers.Authorizations.Commands
                 {
                     operationClaims.Add(new OperationClaim
                     {
-                        Id = item.Id,
+                        Id = int.Parse(item.Id),
                         Name = item.Label
                     });
                 }
@@ -104,7 +102,6 @@ namespace Business.Handlers.Authorizations.Commands
                 {
                     UserId = newUser.UserId,
                     OperationClaims = operationClaims,
-                    Users = newUser
                 });
 
                 var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
@@ -113,8 +110,6 @@ namespace Business.Handlers.Authorizations.Commands
                     UniqueKey = user.DashboardKey,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()
                 });
-
-                _cacheManager.Add($"{CacheKeys.UserIdForClaim}={user.UserId}", operationClaims.Select(x => x.Name));
 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }

@@ -10,11 +10,11 @@ namespace Core.Aspects.Autofac.Transaction
     /// <summary>
     /// TransactionScopeAspect
     /// </summary>
-    public class TransactionScopeAspectAsync : MethodInterceptionAttribute
+    public class TransactionScopeAspectAsyncAttribute : MethodInterceptionAttribute
     {
         private readonly Type _dbContextType;
 
-        public TransactionScopeAspectAsync()
+        public TransactionScopeAspectAsyncAttribute()
         {
         }
 
