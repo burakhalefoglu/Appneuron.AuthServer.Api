@@ -18,7 +18,7 @@ namespace Core.Utilities.Security.Jwt
         private readonly OperationClaimCrypto _operationClaimCrypto;
         private readonly TokenOptions _tokenOptions;
         private readonly CustomerOptions _customerOptions;
-        private readonly UnityClientOptions _unityClientOptions;
+        private readonly ClientOptions _clientOptions;
 
         private DateTime _accessTokenExpiration;
 
@@ -27,7 +27,7 @@ namespace Core.Utilities.Security.Jwt
             Configuration = configuration;
             _tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
             _customerOptions = Configuration.GetSection("CustomerOptions").Get<CustomerOptions>();
-            _unityClientOptions = Configuration.GetSection("UnityClientOptions").Get<UnityClientOptions>();
+            _clientOptions = Configuration.GetSection("ClientOptions").Get<ClientOptions>();
             _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
 
         }
@@ -43,7 +43,7 @@ namespace Core.Utilities.Security.Jwt
         public TAccessToken CreateClientToken<TAccessToken>(ClientClaimModel clientClaimModel)
           where TAccessToken : IAccessToken, new()
         {
-            _accessTokenExpiration = DateTime.Now.AddMinutes(_tokenOptions.AccessTokenExpiration);
+            _accessTokenExpiration = DateTime.Now.AddMinutes(_clientOptions.AccessTokenExpiration);
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
             var jwt = CreateClientJwtSecurityToken(_tokenOptions, clientClaimModel, signingCredentials);
@@ -151,7 +151,7 @@ namespace Core.Utilities.Security.Jwt
             var jwt = new JwtSecurityToken(
 
                     issuer: tokenOptions.Issuer,
-                    audience: _unityClientOptions.Audience,
+                    audience: _clientOptions.Audience,
                     expires: _accessTokenExpiration,
                     notBefore: DateTime.Now,
                     claims: SetClaimsforClient(clientClaimModel),
