@@ -74,6 +74,7 @@ namespace Business
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddMediatR(typeof(BusinessStartup).GetTypeInfo().Assembly);
 
+
             ValidatorOptions.Global.DisplayNameResolver = (type, memberInfo, expression) =>
             {
                 return memberInfo.GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>()?.GetName();
@@ -87,6 +88,7 @@ namespace Business
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
             services.AddTransient<IClientGroupRepository, ClientGroupRepository>();
             services.AddTransient<IClientClaimRepository, ClientClaimRepository>();
             services.AddTransient<IClientRepository, ClientRepository>();
@@ -113,6 +115,7 @@ namespace Business
         public void ConfigureStagingServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
             services.AddTransient<IClientGroupRepository, ClientGroupRepository>();
             services.AddTransient<IClientClaimRepository, ClientClaimRepository>();
             services.AddTransient<IClientRepository, ClientRepository>();
@@ -139,6 +142,7 @@ namespace Business
         public void ConfigureProductionServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
             services.AddTransient<IClientGroupRepository, ClientGroupRepository>();
             services.AddTransient<IClientClaimRepository, ClientClaimRepository>();
             services.AddTransient<IClientRepository, ClientRepository>();

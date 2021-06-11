@@ -27,7 +27,7 @@ namespace Core.Utilities.MessageBrokers.RabbitMq
             {
                 channel.QueueDeclare(
                         queue: "DArchQueue",
-                        durable: false,
+                        durable: true,
                         exclusive: false,
                         autoDelete: false,
                         arguments: null);

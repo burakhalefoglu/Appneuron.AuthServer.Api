@@ -1,4 +1,5 @@
 using Core.Entities.Concrete;
+using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
@@ -62,6 +63,7 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<Client> Clients { get; set; }
         public DbSet<ClientClaim> ClientClaims { get; set; }
         public DbSet<ClientGroup> ClientGroups { get; set; }
+        public DbSet<UserProject> UserProjects { get; set; }
 
     }
 }

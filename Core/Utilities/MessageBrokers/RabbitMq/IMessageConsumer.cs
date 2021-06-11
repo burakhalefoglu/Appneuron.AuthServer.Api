@@ -1,7 +1,9 @@
-﻿namespace Core.Utilities.MessageBrokers.RabbitMq
+﻿using System.Threading.Tasks;
+
+namespace Core.Utilities.MessageBrokers.RabbitMq
 {
     public interface IMessageConsumer
     {
-        void GetQueue();
+        Task GetQueue();
     }
 }

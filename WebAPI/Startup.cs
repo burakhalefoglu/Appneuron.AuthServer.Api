@@ -1,4 +1,5 @@
 ﻿using Business;
+using Business.CustomBackgroundService;
 using Business.Helpers;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
@@ -13,8 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 using System;
 using System.Globalization;
 using System.IO;
@@ -89,6 +88,7 @@ namespace WebAPI
             services.AddTransient<FileLogger>();
             services.AddTransient<PostgreSqlLogger>();
             services.AddTransient<MsSqlLogger>();
+            services.AddHostedService<RabbitMqBackgroundService>();
 
             base.ConfigureServices(services);
         }
@@ -137,7 +137,7 @@ namespace WebAPI
             {
                 c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture");
             });
-            app.UseCors(builder => builder.WithOrigins("http://localhost:4200").AllowAnyHeader());
+            app.UseCors(builder => builder.WithOrigins("https://localhost:4200").AllowAnyHeader());
 
             app.UseHttpsRedirection();
 
@@ -160,7 +160,6 @@ namespace WebAPI
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
             app.UseStaticFiles();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

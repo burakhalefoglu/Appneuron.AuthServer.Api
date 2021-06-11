@@ -2,6 +2,8 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using Core.Extensions;
 
 namespace WebAPI
 {
@@ -14,9 +16,11 @@ namespace WebAPI
         ///
         /// </summary>
         /// <param name="args"></param>
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+
+            await CreateHostBuilder(args).Build().RunAsync();
+
         }
 
         /// <summary>
