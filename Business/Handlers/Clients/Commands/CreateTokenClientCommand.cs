@@ -107,7 +107,7 @@ namespace Business.Handlers.Clients.Commands
                 {
                     operationClaims.Add(new OperationClaim
                     {
-                        Id = item.Id,
+                        Id = int.Parse(item.Id),
                         Name = item.Label
                     });
                 }
