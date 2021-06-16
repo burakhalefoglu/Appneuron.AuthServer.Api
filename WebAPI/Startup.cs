@@ -1,11 +1,13 @@
 ﻿using Business;
-using Business.CustomBackgroundService;
 using Business.Helpers;
+using Business.MessageBrokers.RabbitMq.Consumers;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
 using Core.Utilities.IoC;
+using Core.Utilities.MessageBrokers.RabbitMq;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Jwt;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,7 +17,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.Json.Serialization;
@@ -64,6 +65,32 @@ namespace WebAPI
                 builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
+            var rabbitmqOptions = Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
+
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<CreateProjectMessageCommandConsumer>();
+
+                // Default Port : 5672
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(rabbitmqOptions.HostName, "/", host =>
+                    {
+                        host.Username(rabbitmqOptions.UserName);
+                        host.Password(rabbitmqOptions.Password);
+                    });
+
+                    cfg.ReceiveEndpoint("CreateCustomerProjectQueue", e =>
+                    {
+                        e.ConfigureConsumer<CreateProjectMessageCommandConsumer>(context);
+                    });
+                });
+
+            });
+
+            services.AddMassTransitHostedService();
+
+
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -89,7 +116,6 @@ namespace WebAPI
             services.AddTransient<FileLogger>();
             services.AddTransient<PostgreSqlLogger>();
             services.AddTransient<MsSqlLogger>();
-            services.AddHostedService<RabbitMqBackgroundService>();
 
             base.ConfigureServices(services);
         }

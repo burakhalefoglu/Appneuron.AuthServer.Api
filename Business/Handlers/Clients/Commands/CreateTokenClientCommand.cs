@@ -2,7 +2,9 @@
 using Business.Fakes.Handlers.Clients.Commands;
 using Business.Fakes.Handlers.Clients.Queries;
 using Business.Fakes.Handlers.GroupClaims;
+using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.Authorizations.ValidationRules;
+using Business.MessageBrokers.RabbitMq.Models;
 using Business.Services.Authentication;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -16,7 +18,9 @@ using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
+using MassTransit;
 using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -38,9 +42,11 @@ namespace Business.Handlers.Clients.Commands
             private readonly IMediator _mediator;
             private readonly ITokenHelper _tokenHelper;
             private readonly ICacheManager _cacheManager;
+            private readonly ISendEndpointProvider _sendEndpointProvider;
 
 
-            public CreateTokenClientCommandHandler(IUserRepository userRepository,
+            public CreateTokenClientCommandHandler(ISendEndpointProvider sendEndpointProvider,
+                IUserRepository userRepository,
                 IMediator mediator,
                  ITokenHelper tokenHelper,
                   ICacheManager cacheManager)
@@ -49,6 +55,7 @@ namespace Business.Handlers.Clients.Commands
                 _mediator = mediator;
                 _tokenHelper = tokenHelper;
                 _cacheManager = cacheManager;
+                _sendEndpointProvider = sendEndpointProvider;
 
 
             }
@@ -64,6 +71,18 @@ namespace Business.Handlers.Clients.Commands
 
                 if (user == null)
                     return new ErrorResult(Messages.UserNotFound);
+
+                var projectInfo = (await _mediator.Send(new GetUserProjectInternalQuery()
+                {
+                    UserId = user.UserId,
+                    ProjectKey = request.ProjectId
+                }));
+
+                if (projectInfo.Data == null)
+                {
+                    return new ErrorResult(Messages.ProjectNotFound);
+                }
+
 
                 var result = (await _mediator.Send(new GetClientInternalQuery()
                 {
@@ -89,6 +108,16 @@ namespace Business.Handlers.Clients.Commands
                     }));
                     client = clientResult.Data;
 
+                    var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:CreateClientQueue"));
+
+                    await sendEndpoint.Send(new CreateClientMessageComamnd
+                    {
+
+                        ClientId = client.ClientId,
+                        ProjectKey = client.ProjectId,
+                        CreatedAt = DateTime.Now,
+                        IsPaidClient = false
+                    });
                 }
 
                 var resultGroupClaim = (await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery()
@@ -97,8 +126,6 @@ namespace Business.Handlers.Clients.Commands
                 }));
 
                 List<SelectionItem> selectionItems = resultGroupClaim.Data.ToList();
-
-
 
 
                 List<OperationClaim> operationClaims = new List<OperationClaim>();
