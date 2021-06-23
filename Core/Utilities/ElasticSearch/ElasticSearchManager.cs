@@ -46,7 +46,6 @@ namespace Core.Utilities.ElasticSearch
 
         public async Task<List<ElasticSearchGetModel<T>>> GetAllSearch<T>(SearchParameters parameters) where T : class
         {
-
             var elasticClient = GetElasticClient(parameters.IndexName);
             var searchResponse = await elasticClient.SearchAsync<T>(s => s
                             .Index(Indices.Index(parameters.IndexName))

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Business.Helpers
@@ -10,8 +9,6 @@ namespace Business.Helpers
         {
             StringBuilder bld = new StringBuilder();
 
-
-
             foreach (var item in email)
             {
                 if (item.ToString() == "@")
@@ -19,12 +16,10 @@ namespace Business.Helpers
                     break;
                 }
                 bld.Append(item);
-
             }
             string username = bld.ToString();
 
             return AppendRandomNumber(username);
-
         }
 
         private static string AppendRandomNumber(string username)

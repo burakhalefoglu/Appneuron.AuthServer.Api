@@ -2,10 +2,7 @@
 using Business.MessageBrokers.RabbitMq.Models;
 using MassTransit;
 using MediatR;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Business.MessageBrokers.RabbitMq.Consumers
@@ -27,7 +24,6 @@ namespace Business.MessageBrokers.RabbitMq.Consumers
             {
                 UserId = context.Message.UserId,
                 ProjectKey = context.Message.ProjectKey
-
             });
 
             Debug.WriteLine($"Message: {result.Message} , Success: {result.Success}");

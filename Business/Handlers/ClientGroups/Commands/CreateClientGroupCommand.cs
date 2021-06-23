@@ -1,34 +1,32 @@
-﻿
-using Business.BusinessAspects;
+﻿using Business.BusinessAspects;
 using Business.Constants;
+using Business.Handlers.ClientGroups.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Core.Entities.Concrete;
 using MediatR;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Business.Handlers.ClientGroups.ValidationRules;
 
 namespace Business.Handlers.ClientGroups.Commands
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class CreateClientGroupCommand : IRequest<IResult>
     {
-
         public long ClientId { get; set; }
-
 
         public class CreateClientGroupCommandHandler : IRequestHandler<CreateClientGroupCommand, IResult>
         {
             private readonly IClientGroupRepository _clientGroupRepository;
             private readonly IMediator _mediator;
+
             public CreateClientGroupCommandHandler(IClientGroupRepository clientGroupRepository, IMediator mediator)
             {
                 _clientGroupRepository = clientGroupRepository;
@@ -49,7 +47,6 @@ namespace Business.Handlers.ClientGroups.Commands
                 var addedClientGroup = new ClientGroup
                 {
                     ClientId = request.ClientId,
-
                 };
 
                 _clientGroupRepository.Add(addedClientGroup);

@@ -25,7 +25,6 @@ namespace Core.Utilities.Security.Encyption
             return result + random.Next(16).ToString("X");
         }
 
-
         public static string EncryptString(string key, string plainText)
         {
             byte[] iv = new byte[16];
@@ -74,15 +73,9 @@ namespace Core.Utilities.Security.Encyption
                         {
                             return streamReader.ReadToEnd();
                         }
-
                     }
                 }
-
-
             }
-
         }
-
     }
-
 }

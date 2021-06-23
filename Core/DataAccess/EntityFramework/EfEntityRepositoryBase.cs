@@ -145,7 +145,5 @@ namespace Core.DataAccess.EntityFramework
             else
                 return Context.Set<TEntity>().Count(expression);
         }
-
-
     }
 }

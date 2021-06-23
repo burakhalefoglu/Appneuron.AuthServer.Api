@@ -9,10 +9,10 @@ using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Business.Handlers.Users.Commands
 {
@@ -26,7 +26,6 @@ namespace Business.Handlers.Users.Commands
             private readonly IUserRepository _userRepository;
             private readonly IMapper _mapper;
             private readonly IHttpContextAccessor _httpContextAccessor;
-
 
             public UserChangePasswordCommandHandler(IUserRepository userRepository, IMediator mediator, IMapper mapper)
             {
@@ -45,10 +44,8 @@ namespace Business.Handlers.Users.Commands
                 if (user == null)
                     return new ErrorResult(Messages.UserNotFound);
 
-
                 if (!HashingHelper.VerifyPasswordHash(request.validPassword, user.PasswordSalt, user.PasswordHash))
                     return new ErrorResult(Messages.PasswordError);
-
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
 

@@ -1,32 +1,31 @@
-﻿
+﻿using Business.Constants;
+using Business.Handlers.UserProjects.Commands;
 using Business.Handlers.UserProjects.Queries;
 using DataAccess.Abstract;
+using Entities.Concrete;
+using FluentAssertions;
+using MediatR;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using static Business.Handlers.UserProjects.Queries.GetUserProjectQuery;
-using Entities.Concrete;
-using static Business.Handlers.UserProjects.Queries.GetUserProjectsQuery;
 using static Business.Handlers.UserProjects.Commands.CreateUserProjectCommand;
-using Business.Handlers.UserProjects.Commands;
-using Business.Constants;
-using static Business.Handlers.UserProjects.Commands.UpdateUserProjectCommand;
 using static Business.Handlers.UserProjects.Commands.DeleteUserProjectCommand;
-using MediatR;
-using System.Linq;
-using FluentAssertions;
-
+using static Business.Handlers.UserProjects.Commands.UpdateUserProjectCommand;
+using static Business.Handlers.UserProjects.Queries.GetUserProjectQuery;
+using static Business.Handlers.UserProjects.Queries.GetUserProjectsQuery;
 
 namespace Tests.Business.HandlersTest
 {
     [TestFixture]
     public class UserProjectHandlerTests
     {
-        Mock<IUserProjectRepository> _userProjectRepository;
-        Mock<IMediator> _mediator;
+        private Mock<IUserProjectRepository> _userProjectRepository;
+        private Mock<IMediator> _mediator;
+
         [SetUp]
         public void Setup()
         {
@@ -42,7 +41,7 @@ namespace Tests.Business.HandlersTest
 
             _userProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>())).ReturnsAsync(new UserProject()
 //propertyler buraya yazılacak
-//{																		
+//{
 //UserProjectId = 1,
 //UserProjectName = "Test"
 //}
@@ -56,7 +55,6 @@ namespace Tests.Business.HandlersTest
             //Asset
             x.Success.Should().BeTrue();
             //x.Data.UserProjectId.Should().Be(1);
-
         }
 
         [Test]
@@ -76,7 +74,6 @@ namespace Tests.Business.HandlersTest
             //Asset
             x.Success.Should().BeTrue();
             ((List<UserProject>)x.Data).Count.Should().BeGreaterThan(1);
-
         }
 
         [Test]
@@ -106,7 +103,7 @@ namespace Tests.Business.HandlersTest
         {
             //Arrange
             var command = new CreateUserProjectCommand();
-            //propertyler buraya yazılacak 
+            //propertyler buraya yazılacak
             //command.UserProjectName = "test";
 
             _userProjectRepository.Setup(x => x.Query())
@@ -161,4 +158,3 @@ namespace Tests.Business.HandlersTest
         }
     }
 }
-

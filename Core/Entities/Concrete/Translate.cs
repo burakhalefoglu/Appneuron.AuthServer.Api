@@ -8,6 +8,5 @@
         public string Value { get; set; }
 
         public virtual Language Languages { get; set; }
-
     }
 }

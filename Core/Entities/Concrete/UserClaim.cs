@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Core.Entities.Concrete
+﻿namespace Core.Entities.Concrete
 {
     public class UserClaim : IEntity
     {
@@ -9,6 +7,5 @@ namespace Core.Entities.Concrete
 
         public virtual OperationClaim Claim { get; set; }
         public virtual User Users { get; set; }
-
     }
 }

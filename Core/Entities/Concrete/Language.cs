@@ -9,6 +9,5 @@ namespace Core.Entities.Concrete
         public string Code { get; set; }
 
         public virtual ICollection<Translate> Translates { get; set; }
-
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.Entities.Concrete
 {
@@ -24,8 +23,6 @@ namespace Core.Entities.Concrete
         public virtual ICollection<UserGroup> UserGroups { get; set; }
         public virtual ICollection<UserClaim> UserClaims { get; set; }
         public virtual ICollection<Client> Client { get; set; }
-
-
 
         public User()
         {

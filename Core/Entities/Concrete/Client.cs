@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Core.Entities.Concrete
 {
@@ -13,8 +11,5 @@ namespace Core.Entities.Concrete
         public virtual User user { get; set; }
         public virtual ICollection<ClientGroup> ClientGroups { get; set; }
         public virtual ICollection<ClientClaim> ClientClaims { get; set; }
-
-
-
     }
 }

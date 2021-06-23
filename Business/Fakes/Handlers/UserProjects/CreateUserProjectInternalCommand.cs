@@ -1,6 +1,5 @@
-﻿
-using Business.BusinessAspects;
-using Business.Constants;
+﻿using Business.Constants;
+using Business.Handlers.UserProjects.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
@@ -9,25 +8,22 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Business.Handlers.UserProjects.ValidationRules;
 
 namespace Business.Fakes.Handlers.UserProjects
 {
-
     public class CreateUserProjectInternalCommand : IRequest<IResult>
     {
-
         public int UserId { get; set; }
         public string ProjectKey { get; set; }
-
 
         public class CreateUserProjectInternalCommandHandler : IRequestHandler<CreateUserProjectInternalCommand, IResult>
         {
             private readonly IUserProjectRepository _userProjectRepository;
             private readonly IMediator _mediator;
+
             public CreateUserProjectInternalCommandHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
             {
                 _userProjectRepository = userProjectRepository;
@@ -48,7 +44,6 @@ namespace Business.Fakes.Handlers.UserProjects
                 {
                     UserId = request.UserId,
                     ProjectKey = request.ProjectKey,
-
                 };
 
                 _userProjectRepository.Add(addedUserProject);

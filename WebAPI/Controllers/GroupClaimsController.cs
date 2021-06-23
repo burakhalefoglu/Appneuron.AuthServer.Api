@@ -1,10 +1,6 @@
 ﻿using Business.Handlers.GroupClaims.Commands;
-using Business.Handlers.GroupClaims.Queries;
-using Core.Entities.Concrete;
-using Core.Entities.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -17,9 +13,6 @@ namespace WebAPI.Controllers
     [ApiController]
     public class GroupClaimsController : BaseApiController
     {
-
-
-
         /// <summary>
         /// Addded GroupClaim .
         /// </summary>

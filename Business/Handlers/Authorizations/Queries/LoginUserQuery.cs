@@ -3,6 +3,7 @@ using Business.Services.Authentication;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.Entities.ClaimModels;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
@@ -11,7 +12,6 @@ using MediatR;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Entities.ClaimModels;
 
 namespace Business.Handlers.Authorizations.Queries
 {

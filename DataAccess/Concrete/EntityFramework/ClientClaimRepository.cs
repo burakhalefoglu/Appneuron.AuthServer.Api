@@ -1,10 +1,8 @@
-﻿
-using System;
-using System.Linq;
-using Core.DataAccess.EntityFramework;
+﻿using Core.DataAccess.EntityFramework;
 using Core.Entities.Concrete;
-using DataAccess.Concrete.EntityFramework.Contexts;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework.Contexts;
+
 namespace DataAccess.Concrete.EntityFramework
 {
     public class ClientClaimRepository : EfEntityRepositoryBase<ClientClaim, ProjectDbContext>, IClientClaimRepository

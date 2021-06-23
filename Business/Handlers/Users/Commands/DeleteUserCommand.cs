@@ -3,20 +3,17 @@ using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
+using Core.Aspects.Autofac.Transaction;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
-using Core.Aspects.Autofac.Transaction;
-using System.Collections.Generic;
-using Core.Entities.Concrete;
-using Business.Fakes.Handlers.UserClaims;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Business.Handlers.Users.Commands
 {

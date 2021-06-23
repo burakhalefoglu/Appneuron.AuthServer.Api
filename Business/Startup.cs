@@ -2,14 +2,12 @@ using Autofac;
 using Business.Constants;
 using Business.DependencyResolvers;
 using Business.Fakes.DArch;
-using Business.MessageBrokers.RabbitMq;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.DependencyResolvers;
 using Core.Extensions;
 using Core.Utilities.ElasticSearch;
 using Core.Utilities.IoC;
-using Core.Utilities.MessageBrokers.RabbitMq;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
@@ -72,7 +70,6 @@ namespace Business
             services.AddAutoMapper(typeof(ConfigurationManager));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddMediatR(typeof(BusinessStartup).GetTypeInfo().Assembly);
-
 
             ValidatorOptions.Global.DisplayNameResolver = (type, memberInfo, expression) =>
             {

@@ -1,5 +1,4 @@
-﻿using Core.Entities.Concrete;
-using Core.Utilities.Results;
+﻿using Core.Utilities.Results;
 using MediatR;
 
 namespace Business.Services.Authentication.Model
@@ -9,7 +8,6 @@ namespace Business.Services.Authentication.Model
     /// </summary>
     public class VerifyOtpCommand : IRequest<IDataResult<DArchToken>>
     {
-
         /// <summary>
         /// Specifies the subtype so that the same provider user can enter from different systems.
         /// </summary>

@@ -75,7 +75,6 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-
         /// <summary>
         ///  Make it User Register operations
         /// </summary>
@@ -97,7 +96,6 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
-
 
         ///<summary>
         ///Make it Forgot Password operations
@@ -168,7 +166,6 @@ namespace WebAPI.Controllers
 
             return BadRequest(result.Message);
         }
-
 
         /// <summary>
         /// Token decode test

@@ -1,5 +1,4 @@
 ﻿using Business.Services.Authentication.Model;
-using Core.Entities.Concrete;
 using FluentValidation;
 
 namespace Business.Handlers.Authorizations.ValidationRules

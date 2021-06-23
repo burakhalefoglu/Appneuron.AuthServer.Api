@@ -1,24 +1,18 @@
-﻿
+﻿using Business.BusinessAspects;
 using Business.Constants;
-using Business.BusinessAspects;
+using Business.Handlers.ClientGroups.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
+using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Core.Entities.Concrete;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Core.Aspects.Autofac.Validation;
-using Business.Handlers.ClientGroups.ValidationRules;
-
 
 namespace Business.Handlers.ClientGroups.Commands
 {
-
-
     public class UpdateClientGroupCommand : IRequest<IResult>
     {
         public int GroupId { get; set; }
@@ -43,9 +37,7 @@ namespace Business.Handlers.ClientGroups.Commands
             {
                 var isThereClientGroupRecord = await _clientGroupRepository.GetAsync(u => u.GroupId == request.GroupId);
 
-
                 isThereClientGroupRecord.ClientId = request.ClientId;
-
 
                 _clientGroupRepository.Update(isThereClientGroupRecord);
                 await _clientGroupRepository.SaveChangesAsync();
@@ -54,4 +46,3 @@ namespace Business.Handlers.ClientGroups.Commands
         }
     }
 }
-

@@ -1,14 +1,12 @@
-﻿
-using Business.BusinessAspects;
+﻿using Business.BusinessAspects;
+using Core.Aspects.Autofac.Logging;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Core.Entities.Concrete;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-
 
 namespace Business.Handlers.ClientClaims.Queries
 {
@@ -26,6 +24,7 @@ namespace Business.Handlers.ClientClaims.Queries
                 _clientClaimRepository = clientClaimRepository;
                 _mediator = mediator;
             }
+
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<ClientClaim>> Handle(GetClientClaimQuery request, CancellationToken cancellationToken)

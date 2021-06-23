@@ -38,7 +38,6 @@ namespace Business.Handlers.Authorizations.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
             {
-
                 var queryString = _httpContextAccessor.HttpContext.Request.Query;
                 var token = queryString["token"];
                 var resultUser = await _userRepository.GetAsync(p => p.ResetPasswordToken == token.ToString());

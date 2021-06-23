@@ -1,13 +1,9 @@
-﻿
-using Business.BusinessAspects;
+﻿using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.Entities.Concrete;
 
 namespace Business.Fakes.Handlers.Clients.Queries
 {
@@ -15,7 +11,6 @@ namespace Business.Fakes.Handlers.Clients.Queries
     {
         public string ClientId { get; set; }
         public string ProjectId { get; set; }
-
 
         public class GetClientQueryHandler : IRequestHandler<GetClientInternalQuery, IDataResult<Client>>
         {

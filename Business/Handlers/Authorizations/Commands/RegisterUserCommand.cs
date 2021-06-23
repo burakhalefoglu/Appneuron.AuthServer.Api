@@ -38,7 +38,6 @@ namespace Business.Handlers.Authorizations.Commands
             private readonly IMediator _mediator;
             private readonly ITokenHelper _tokenHelper;
 
-
             public RegisterUserCommandHandler(IUserRepository userRepository,
                 IMediator mediator,
                  ITokenHelper tokenHelper,
@@ -47,8 +46,6 @@ namespace Business.Handlers.Authorizations.Commands
                 _userRepository = userRepository;
                 _mediator = mediator;
                 _tokenHelper = tokenHelper;
-
-
             }
 
             [PerformanceAspect(5)]
@@ -58,7 +55,6 @@ namespace Business.Handlers.Authorizations.Commands
             [TransactionScopeAspectAsync]
             public async Task<IResult> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
             {
-
                 var userExits = await _userRepository.GetAsync(u => u.Email == request.Email);
 
                 if (userExits != null)
@@ -96,7 +92,6 @@ namespace Business.Handlers.Authorizations.Commands
                         Name = item.Label
                     });
                 }
-
 
                 await _mediator.Send(new CreateUserClaimsInternalCommand
                 {

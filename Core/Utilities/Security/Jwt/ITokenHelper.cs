@@ -1,5 +1,4 @@
 ﻿using Core.Entities.ClaimModels;
-using Core.Entities.Concrete;
 
 namespace Core.Utilities.Security.Jwt
 {

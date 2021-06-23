@@ -1,12 +1,10 @@
-﻿
-using Business.Handlers.ClientGroups.Commands;
+﻿using Business.Handlers.ClientGroups.Commands;
 using Business.Handlers.ClientGroups.Queries;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Core.Entities.Concrete;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -42,7 +40,7 @@ namespace WebAPI.Controllers
         ///</summary>
         ///<remarks>ClientGroups</remarks>
         ///<return>ClientGroups List</return>
-        ///<response code="200"></response>  
+        ///<response code="200"></response>
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClientGroup))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

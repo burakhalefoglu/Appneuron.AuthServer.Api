@@ -8,10 +8,10 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Business.Handlers.Users.Queries
 {
@@ -28,7 +28,6 @@ namespace Business.Handlers.Users.Queries
                 _userRepository = userRepository;
                 _mapper = mapper;
                 _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
-
             }
 
             [SecuredOperation(Priority = 1)]

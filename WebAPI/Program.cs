@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using Core.Extensions;
 
 namespace WebAPI
 {
@@ -18,9 +17,7 @@ namespace WebAPI
         /// <param name="args"></param>
         public static async Task Main(string[] args)
         {
-
             await CreateHostBuilder(args).Build().RunAsync();
-
         }
 
         /// <summary>

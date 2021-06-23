@@ -1,24 +1,18 @@
-﻿
+﻿using Business.BusinessAspects;
 using Business.Constants;
-using Business.BusinessAspects;
+using Business.Handlers.ClientClaims.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
+using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Core.Entities.Concrete;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Core.Aspects.Autofac.Validation;
-using Business.Handlers.ClientClaims.ValidationRules;
-
 
 namespace Business.Handlers.ClientClaims.Commands
 {
-
-
     public class UpdateClientClaimCommand : IRequest<IResult>
     {
         public long ClientId { get; set; }
@@ -43,9 +37,7 @@ namespace Business.Handlers.ClientClaims.Commands
             {
                 var isThereClientClaimRecord = await _clientClaimRepository.GetAsync(u => u.ClientId == request.ClientId);
 
-
                 isThereClientClaimRecord.ClaimId = request.ClaimId;
-
 
                 _clientClaimRepository.Update(isThereClientClaimRecord);
                 await _clientClaimRepository.SaveChangesAsync();
@@ -54,4 +46,3 @@ namespace Business.Handlers.ClientClaims.Commands
         }
     }
 }
-

@@ -1,34 +1,32 @@
-﻿
-using Business.BusinessAspects;
+﻿using Business.BusinessAspects;
 using Business.Constants;
+using Business.Handlers.ClientClaims.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Core.Entities.Concrete;
 using MediatR;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Business.Handlers.ClientClaims.ValidationRules;
 
 namespace Business.Handlers.ClientClaims.Commands
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class CreateClientClaimCommand : IRequest<IResult>
     {
-
         public int ClaimId { get; set; }
-
 
         public class CreateClientClaimCommandHandler : IRequestHandler<CreateClientClaimCommand, IResult>
         {
             private readonly IClientClaimRepository _clientClaimRepository;
             private readonly IMediator _mediator;
+
             public CreateClientClaimCommandHandler(IClientClaimRepository clientClaimRepository, IMediator mediator)
             {
                 _clientClaimRepository = clientClaimRepository;
@@ -49,7 +47,6 @@ namespace Business.Handlers.ClientClaims.Commands
                 var addedClientClaim = new ClientClaim
                 {
                     ClaimId = request.ClaimId,
-
                 };
 
                 _clientClaimRepository.Add(addedClientClaim);

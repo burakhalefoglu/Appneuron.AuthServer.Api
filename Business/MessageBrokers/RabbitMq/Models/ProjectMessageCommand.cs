@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Business.MessageBrokers.RabbitMq.Models
+﻿namespace Business.MessageBrokers.RabbitMq.Models
 {
     public class ProjectMessageCommand
     {

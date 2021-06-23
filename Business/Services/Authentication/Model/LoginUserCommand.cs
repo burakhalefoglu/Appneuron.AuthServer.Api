@@ -1,5 +1,4 @@
-﻿using Core.Entities.Concrete;
-using Core.Utilities.Results;
+﻿using Core.Utilities.Results;
 using MediatR;
 using System.Text.RegularExpressions;
 
@@ -28,7 +27,6 @@ namespace Business.Services.Authentication.Model
         /// It is used for personnel and external personal logins.
         /// </summary>
         public string Password { get; set; }
-
 
         public bool IsPhoneValid
         {

@@ -37,24 +37,17 @@ namespace Business.Fakes.Handlers.UserClaims
 
                     if (result == 0)
                     {
-
                         _userClaimsRepository.Add(new UserClaim
                         {
                             ClaimId = claim.Id,
                             UsersId = request.UserId,
-
                         });
-
                     }
-
                 }
-
 
                 await _userClaimsRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.Added);
             }
-
-
         }
     }
 }

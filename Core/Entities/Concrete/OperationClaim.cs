@@ -12,6 +12,5 @@ namespace Core.Entities.Concrete
         public virtual ICollection<GroupClaim> GroupClaims { get; set; }
         public virtual ICollection<UserClaim> UserClaims { get; set; }
         public virtual ICollection<ClientClaim> ClientClaims { get; set; }
-
     }
 }

@@ -58,7 +58,6 @@ namespace WebAPI
                                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
                             });
 
-
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin",
@@ -85,11 +84,9 @@ namespace WebAPI
                         e.ConfigureConsumer<CreateProjectMessageCommandConsumer>(context);
                     });
                 });
-
             });
 
             services.AddMassTransitHostedService();
-
 
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
@@ -149,12 +146,10 @@ namespace WebAPI
                 app.UseDeveloperExceptionPage();
             }
 
-
             //güvenlik için gerekli...
             app.UseHsts();
             //güvenlik için gerekli...
             app.UseSecurityHeaders();
-
 
             app.ConfigureCustomExceptionMiddleware();
 
@@ -191,7 +186,6 @@ namespace WebAPI
             {
                 endpoints.MapControllers();
             });
-
         }
     }
 }

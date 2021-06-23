@@ -1,5 +1,4 @@
 ﻿using Core.Utilities.IoC;
-using Core.Utilities.MessageBrokers.RabbitMq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,9 +13,5 @@ namespace Core.Extensions
                 module.Load(services, configuration);
             }
         }
-
     }
-
-
-
 }

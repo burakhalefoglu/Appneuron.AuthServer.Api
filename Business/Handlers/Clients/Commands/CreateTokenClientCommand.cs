@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static Business.Fakes.Handlers.Clients.Queries.GetClientInternalQuery;
 
 namespace Business.Handlers.Clients.Commands
 {
@@ -35,7 +34,6 @@ namespace Business.Handlers.Clients.Commands
         public string DashboardKey { get; set; }
         public string ProjectId { get; set; }
 
-
         public class CreateTokenClientCommandHandler : IRequestHandler<CreateTokenClientCommand, IResult>
         {
             private readonly IUserRepository _userRepository;
@@ -43,7 +41,6 @@ namespace Business.Handlers.Clients.Commands
             private readonly ITokenHelper _tokenHelper;
             private readonly ICacheManager _cacheManager;
             private readonly ISendEndpointProvider _sendEndpointProvider;
-
 
             public CreateTokenClientCommandHandler(ISendEndpointProvider sendEndpointProvider,
                 IUserRepository userRepository,
@@ -56,8 +53,6 @@ namespace Business.Handlers.Clients.Commands
                 _tokenHelper = tokenHelper;
                 _cacheManager = cacheManager;
                 _sendEndpointProvider = sendEndpointProvider;
-
-
             }
 
             [PerformanceAspect(5)]
@@ -66,7 +61,6 @@ namespace Business.Handlers.Clients.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(CreateTokenClientCommand request, CancellationToken cancellationToken)
             {
-
                 var user = await _userRepository.GetAsync(u => u.DashboardKey == request.DashboardKey);
 
                 if (user == null)
@@ -82,7 +76,6 @@ namespace Business.Handlers.Clients.Commands
                 {
                     return new ErrorResult(Messages.ProjectNotFound);
                 }
-
 
                 var result = (await _mediator.Send(new GetClientInternalQuery()
                 {
@@ -112,7 +105,6 @@ namespace Business.Handlers.Clients.Commands
 
                     await sendEndpoint.Send(new CreateClientMessageComamnd
                     {
-
                         ClientId = client.ClientId,
                         ProjectKey = client.ProjectId,
                         CreatedAt = DateTime.Now,
@@ -127,7 +119,6 @@ namespace Business.Handlers.Clients.Commands
 
                 List<SelectionItem> selectionItems = resultGroupClaim.Data.ToList();
 
-
                 List<OperationClaim> operationClaims = new List<OperationClaim>();
 
                 foreach (var item in selectionItems)
@@ -138,7 +129,6 @@ namespace Business.Handlers.Clients.Commands
                         Name = item.Label
                     });
                 }
-
 
                 var accessToken = _tokenHelper.CreateClientToken<DArchToken>(new ClientClaimModel
                 {

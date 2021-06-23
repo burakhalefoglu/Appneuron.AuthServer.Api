@@ -64,6 +64,5 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<ClientClaim> ClientClaims { get; set; }
         public DbSet<ClientGroup> ClientGroups { get; set; }
         public DbSet<UserProject> UserProjects { get; set; }
-
     }
 }

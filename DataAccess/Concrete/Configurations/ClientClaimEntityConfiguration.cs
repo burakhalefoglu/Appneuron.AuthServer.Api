@@ -1,9 +1,6 @@
 ﻿using Core.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DataAccess.Concrete.Configurations
 {
@@ -11,7 +8,6 @@ namespace DataAccess.Concrete.Configurations
     {
         public void Configure(EntityTypeBuilder<ClientClaim> builder)
         {
-
             builder.HasKey(e => new { e.ClaimId, e.ClientId });
 
             builder.HasOne(d => d.Claim)

@@ -33,11 +33,11 @@ namespace Core.Extensions
             roles.ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
         }
 
-
         public static void AddUniqueKey(this ICollection<Claim> claims, string uniqueKey)
         {
             claims.Add(new Claim(JwtCustomClaimNames.UniqueKey, uniqueKey));
         }
+
         public static void AddCustomerId(this ICollection<Claim> claims, int customerId)
         {
             claims.Add(new Claim(JwtCustomClaimNames.CustomerId, customerId.ToString()));
@@ -47,7 +47,5 @@ namespace Core.Extensions
         {
             claims.Add(new Claim(JwtCustomClaimNames.ProjectId, projectId));
         }
-
-
     }
 }

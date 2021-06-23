@@ -1,36 +1,28 @@
-﻿
-using Business.BusinessAspects;
-using Business.Constants;
-using Core.Aspects.Autofac.Caching;
-using Core.Aspects.Autofac.Logging;
-using Core.Aspects.Autofac.Validation;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+﻿using Business.Constants;
+using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Core.Entities.Concrete;
 using MediatR;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Business.Handlers.Clients.ValidationRules;
 
 namespace Business.Fakes.Handlers.Clients.Commands
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class CreateClientInternalCommand : IRequest<IResult>
     {
-
         public string ClientId { get; set; }
         public string ProjectId { get; set; }
         public int CustomerId { get; set; }
-
 
         public class CreateClientCommandHandler : IRequestHandler<CreateClientInternalCommand, IResult>
         {
             private readonly IClientRepository _clientRepository;
             private readonly IMediator _mediator;
+
             public CreateClientCommandHandler(IClientRepository clientRepository, IMediator mediator)
             {
                 _clientRepository = clientRepository;
@@ -49,7 +41,6 @@ namespace Business.Fakes.Handlers.Clients.Commands
                     ClientId = request.ClientId,
                     ProjectId = request.ProjectId,
                     CustomerId = request.CustomerId,
-
                 };
 
                 _clientRepository.Add(addedClient);

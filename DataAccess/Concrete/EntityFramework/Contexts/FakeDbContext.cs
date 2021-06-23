@@ -1,7 +1,5 @@
-﻿using System;
+﻿using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Entities.Concrete;
 
 #nullable disable
 

@@ -1,5 +1,4 @@
 ﻿using Core.Entities.ClaimModels;
-using Core.Entities.Concrete;
 using Core.Extensions;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Models;
@@ -29,7 +28,6 @@ namespace Core.Utilities.Security.Jwt
             _customerOptions = Configuration.GetSection("CustomerOptions").Get<CustomerOptions>();
             _clientOptions = Configuration.GetSection("ClientOptions").Get<ClientOptions>();
             _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
-
         }
 
         public string DecodeToken(string input)
@@ -57,7 +55,6 @@ namespace Core.Utilities.Security.Jwt
             };
         }
 
-
         public TAccessToken CreateAdminToken<TAccessToken>(UserClaimModel userClaimModel)
             where TAccessToken : IAccessToken, new()
         {
@@ -74,9 +71,6 @@ namespace Core.Utilities.Security.Jwt
                 Expiration = _accessTokenExpiration
             };
         }
-
-
-
 
         public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel)
             where TAccessToken : IAccessToken, new()
@@ -110,8 +104,6 @@ namespace Core.Utilities.Security.Jwt
             return jwt;
         }
 
-
-
         public JwtSecurityToken CreateCustomerJwtSecurityToken(TokenOptions tokenOptions, UserClaimModel userClaimModel,
                 SigningCredentials signingCredentials)
         {
@@ -136,14 +128,12 @@ namespace Core.Utilities.Security.Jwt
                     userClaimModel.OperationClaims[i]);
             }
 
-
             var claims = new List<Claim>();
             claims.AddNameIdentifier(userClaimModel.UserId.ToString());
             claims.AddRoles(userClaimModel.OperationClaims);
             claims.AddUniqueKey(userClaimModel.UniqueKey);
             return claims;
         }
-
 
         private JwtSecurityToken CreateClientJwtSecurityToken(TokenOptions tokenOptions, ClientClaimModel clientClaimModel,
                SigningCredentials signingCredentials)
@@ -160,10 +150,8 @@ namespace Core.Utilities.Security.Jwt
             return jwt;
         }
 
-
         private IEnumerable<Claim> SetClaimsforClient(ClientClaimModel clientClaimModel)
         {
-
             for (int i = 0; i < clientClaimModel.OperationClaims.Length; i++)
             {
                 clientClaimModel.OperationClaims[i] =
@@ -179,7 +167,5 @@ namespace Core.Utilities.Security.Jwt
 
             return claims;
         }
-
-
     }
 }
