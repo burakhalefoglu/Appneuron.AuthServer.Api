@@ -7,8 +7,8 @@
       "sslPort": 0
     },
     "iisExpress": {
-      "applicationUrl": "http://localhost:52039/WebAPI",
-      "sslPort": 44375
+      "applicationUrl": "http://localhost:52039",
+      "sslPort": 0
     }
   },
   "IIS Express": {

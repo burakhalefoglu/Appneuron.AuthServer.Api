@@ -1,8 +1,10 @@
 ﻿using Business.Handlers.UserProjects.Commands;
 using Business.Handlers.UserProjects.Queries;
+using Business.MessageBrokers.SignalR;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,6 +17,8 @@ namespace WebAPI.Controllers
     [ApiController]
     public class UserProjectsController : BaseApiController
     {
+       
+
         ///<summary>
         ///List UserProjects
         ///</summary>
@@ -108,6 +112,27 @@ namespace WebAPI.Controllers
             if (result.Success)
             {
                 return Ok(result.Message);
+            }
+            return BadRequest(result.Message);
+        }
+
+        ///<summary>
+        ///It brings the details according to its id.
+        ///</summary>
+        ///<remarks>UserProjects</remarks>
+        ///<return>UserProjects List</return>
+        ///<response code="200"></response>
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserProject))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpGet("getByUserId")]
+        public async Task<IActionResult> GetById(int UserId)
+        {
+          
+            var result = await Mediator.Send(new GetUserProjectsByUserIdQuery { UserId = UserId });
+            if (result.Success)
+            {
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }

@@ -2,6 +2,7 @@
 using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserClaims;
 using Business.Handlers.Authorizations.ValidationRules;
+using Business.Handlers.UserProjects.Queries;
 using Business.Helpers;
 using Business.Services.Authentication;
 using Core.Aspects.Autofac.Caching;
@@ -99,12 +100,22 @@ namespace Business.Handlers.Authorizations.Commands
                     OperationClaims = operationClaims,
                 });
 
+                var ProjectIdResult = await _mediator.Send(new GetUserProjectsInternalQuery
+                {
+                    UserId = user.UserId,
+                });
+                List<string> ProjectIdList = new List<string>();
+                ProjectIdResult.Data.ToList().ForEach(x =>
+                {
+                    ProjectIdList.Add(x.ProjectKey);
+                });
+
                 var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
                 {
                     UserId = user.UserId,
                     UniqueKey = user.DashboardKey,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()
-                });
+                },ProjectIdList);
 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }

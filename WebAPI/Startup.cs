@@ -1,6 +1,7 @@
 ﻿using Business;
 using Business.Helpers;
 using Business.MessageBrokers.RabbitMq.Consumers;
+using Business.MessageBrokers.SignalR;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
 using Core.Utilities.IoC;
@@ -57,12 +58,17 @@ namespace WebAPI
                                 services.AddControllers().AddNewtonsoftJson(options =>
                                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
                             });
-
+            services.AddSignalR();
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowOrigin",
-                builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                options.AddPolicy("CorsPolicy",
+           builder => builder.WithOrigins("http://localhost:4200", "https://localhost:4200")
+           .AllowAnyMethod()
+           .AllowAnyHeader()
+           .AllowCredentials());
             });
+            services.AddControllers();
+
 
             var rabbitmqOptions = Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
 
@@ -159,9 +165,9 @@ namespace WebAPI
             {
                 c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture");
             });
-            app.UseCors(builder => builder.WithOrigins("https://localhost:4200").AllowAnyHeader());
-
             app.UseHttpsRedirection();
+
+            app.UseCors("CorsPolicy");
 
             app.UseRouting();
 
@@ -182,9 +188,12 @@ namespace WebAPI
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
             app.UseStaticFiles();
+
             app.UseEndpoints(endpoints =>
-            {
+            {                
                 endpoints.MapControllers();
+                endpoints.MapHub<TestHub>("/test");
+
             });
         }
     }
