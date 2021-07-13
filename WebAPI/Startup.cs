@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.Json.Serialization;
@@ -59,10 +60,11 @@ namespace WebAPI
                                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
                             });
             services.AddSignalR();
+            var corsPolicies = Configuration.GetSection("CorsPolicies").Get<String[]>();
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-           builder => builder.WithOrigins("http://localhost:4200", "https://localhost:4200")
+           builder => builder.WithOrigins(corsPolicies)
            .AllowAnyMethod()
            .AllowAnyHeader()
            .AllowCredentials());
