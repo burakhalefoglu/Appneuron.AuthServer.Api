@@ -83,30 +83,23 @@ namespace Business.Handlers.Clients.Commands
                     ProjectId = request.ProjectId
                 }));
 
-                Client client = result.Data;
 
-                if (client == null)
+                if (result.Data == null)
                 {
-                    await _mediator.Send(new CreateClientInternalCommand()
+                    var Createresult = await _mediator.Send(new CreateClientInternalCommand()
                     {
                         ClientId = request.ClientId,
                         ProjectId = request.ProjectId,
                         CustomerId = user.UserId
                     });
-
-                    var clientResult = (await _mediator.Send(new GetClientInternalQuery()
-                    {
-                        ClientId = request.ClientId,
-                        ProjectId = request.ProjectId
-                    }));
-                    client = clientResult.Data;
+                  
 
                     var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:CreateClientQueue"));
 
                     await sendEndpoint.Send(new CreateClientMessageComamnd
                     {
-                        ClientId = client.ClientId,
-                        ProjectKey = client.ProjectId,
+                        ClientId = request.ClientId,
+                        ProjectKey = request.ProjectId,
                         CreatedAt = DateTime.Now,
                         IsPaidClient = false
                     });
@@ -132,9 +125,9 @@ namespace Business.Handlers.Clients.Commands
 
                 var accessToken = _tokenHelper.CreateClientToken<DArchToken>(new ClientClaimModel
                 {
-                    ClientId = client.ClientId,
+                    ClientId = request.ClientId,
                     CustomerId = user.UserId,
-                    ProjectId = client.ProjectId,
+                    ProjectId = request.ProjectId,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()
                 });
 

@@ -10,7 +10,7 @@ namespace Business.Fakes.Handlers.Clients.Queries
     public class GetClientInternalQuery : IRequest<IDataResult<Client>>
     {
         public string ClientId { get; set; }
-        public string ProjectId { get; set; }
+        public string ProjectId { get; set; } 
 
         public class GetClientQueryHandler : IRequestHandler<GetClientInternalQuery, IDataResult<Client>>
         {
