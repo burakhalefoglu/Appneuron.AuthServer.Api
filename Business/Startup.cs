@@ -2,6 +2,7 @@ using Autofac;
 using Business.Constants;
 using Business.DependencyResolvers;
 using Business.Fakes.DArch;
+using Business.MessageBrokers.Kafka;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.DependencyResolvers;
@@ -61,7 +62,7 @@ namespace Business
             });
 
             services.AddSingleton<ConfigurationManager>();
-
+            services.AddSingleton<IKafkaMessageBroker, KafkaMessageBroker>();
             services.AddTransient<ITokenHelper, JwtHelper>();
             services.AddTransient<IElasticSearch, ElasticSearchManager>();
 

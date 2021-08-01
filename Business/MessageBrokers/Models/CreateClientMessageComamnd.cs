@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Business.MessageBrokers.RabbitMq.Models
+namespace Business.MessageBrokers.Models
 {
     public class CreateClientMessageComamnd
     {

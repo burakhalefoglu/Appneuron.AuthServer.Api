@@ -1,10 +1,8 @@
 ﻿using Business.Handlers.UserProjects.Commands;
 using Business.Handlers.UserProjects.Queries;
-using Business.MessageBrokers.SignalR;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

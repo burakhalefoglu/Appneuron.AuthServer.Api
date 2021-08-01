@@ -4,7 +4,8 @@ using Business.Fakes.Handlers.Clients.Queries;
 using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.Authorizations.ValidationRules;
-using Business.MessageBrokers.RabbitMq.Models;
+using Business.MessageBrokers.Kafka;
+using Business.MessageBrokers.Models;
 using Business.Services.Authentication;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -40,19 +41,20 @@ namespace Business.Handlers.Clients.Commands
             private readonly IMediator _mediator;
             private readonly ITokenHelper _tokenHelper;
             private readonly ICacheManager _cacheManager;
-            private readonly ISendEndpointProvider _sendEndpointProvider;
-
-            public CreateTokenClientCommandHandler(ISendEndpointProvider sendEndpointProvider,
+            private readonly IKafkaMessageBroker _kafkaMessageBroker;
+            
+            public CreateTokenClientCommandHandler(
                 IUserRepository userRepository,
                 IMediator mediator,
                  ITokenHelper tokenHelper,
-                  ICacheManager cacheManager)
+                  ICacheManager cacheManager,
+                  IKafkaMessageBroker kafkaMessageBroker)
             {
                 _userRepository = userRepository;
                 _mediator = mediator;
                 _tokenHelper = tokenHelper;
                 _cacheManager = cacheManager;
-                _sendEndpointProvider = sendEndpointProvider;
+                _kafkaMessageBroker = kafkaMessageBroker;
             }
 
             [PerformanceAspect(5)]
@@ -92,11 +94,9 @@ namespace Business.Handlers.Clients.Commands
                         ProjectId = request.ProjectId,
                         CustomerId = user.UserId
                     });
-                  
 
-                    var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:CreateClientQueue"));
 
-                    await sendEndpoint.Send(new CreateClientMessageComamnd
+                    await _kafkaMessageBroker.SendMessageAsync(new CreateClientMessageComamnd
                     {
                         ClientId = request.ClientId,
                         ProjectKey = request.ProjectId,

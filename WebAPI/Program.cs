@@ -1,7 +1,10 @@
 using Autofac.Extensions.DependencyInjection;
+using Business.MessageBrokers.Kafka;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace WebAPI
@@ -18,6 +21,17 @@ namespace WebAPI
         public static async Task Main(string[] args)
         {
             await CreateHostBuilder(args).Build().RunAsync();
+
+            await ConsumerAdapter();
+        }
+
+        private static async Task ConsumerAdapter()
+        {
+            IServiceCollection services = new ServiceCollection();
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            var kafka = serviceProvider.GetService<IKafkaMessageBroker>();
+            await kafka.GetProjectCreationMessage();
         }
 
         /// <summary>

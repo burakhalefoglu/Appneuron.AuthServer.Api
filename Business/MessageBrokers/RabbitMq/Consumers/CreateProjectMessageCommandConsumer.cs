@@ -2,8 +2,7 @@
 using Business.Fakes.Handlers.UserClaims;
 using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.UserProjects.Queries;
-using Business.MessageBrokers.RabbitMq.Models;
-using Business.MessageBrokers.SignalR;
+using Business.MessageBrokers.Models;
 using Business.Services.Authentication;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
@@ -27,19 +26,16 @@ namespace Business.MessageBrokers.RabbitMq.Consumers
     {
         private readonly IMediator _mediator;
         private readonly ISendEndpointProvider _sendEndpointProvider;
-        private IHubContext<TestHub> _hubContext;
         private readonly ITokenHelper _tokenHelper;
         private readonly IUserRepository _userRepository;
 
         public CreateProjectMessageCommandConsumer(IMediator mediator,
             ISendEndpointProvider sendEndpointProvider,
-            IHubContext<TestHub> hubContext,
             ITokenHelper tokenHelper,
             IUserRepository userRepository)
         {
             _mediator = mediator;
             _sendEndpointProvider = sendEndpointProvider;
-            _hubContext = hubContext;
             _tokenHelper = tokenHelper;
             _userRepository = userRepository;
 
@@ -54,9 +50,6 @@ namespace Business.MessageBrokers.RabbitMq.Consumers
                 UserId = context.Message.UserId,
                 ProjectKey = context.Message.ProjectKey
             });
-            var userHasProject = TestHub.userList.Find(user => user.UserId == context.Message.UserId);
-            if (userHasProject == null)
-                return;
 
             var user = await _userRepository.GetAsync(u => u.UserId == context.Message.UserId);
 
@@ -104,8 +97,7 @@ namespace Business.MessageBrokers.RabbitMq.Consumers
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
             }, ProjectIdList);
 
-            _hubContext.Clients.Client(userHasProject.ConnectionId)
-                .SendAsync("getProjectCreatedEvent", accessToken.Token).Wait();
+         //TODO: will send token with socket :)
         }
     }
 }

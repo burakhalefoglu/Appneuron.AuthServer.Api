@@ -1,14 +1,11 @@
 ﻿using Business;
 using Business.Helpers;
-using Business.MessageBrokers.RabbitMq.Consumers;
-using Business.MessageBrokers.SignalR;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
 using Core.Utilities.IoC;
 using Core.Utilities.MessageBrokers.RabbitMq;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Jwt;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.Json.Serialization;
@@ -59,7 +55,7 @@ namespace WebAPI
                                 services.AddControllers().AddNewtonsoftJson(options =>
                                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
                             });
-            services.AddSignalR();
+
             var corsPolicies = Configuration.GetSection("CorsPolicies").Get<String[]>();
             services.AddCors(options =>
             {
@@ -73,28 +69,6 @@ namespace WebAPI
 
 
             var rabbitmqOptions = Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
-
-            services.AddMassTransit(x =>
-            {
-                x.AddConsumer<CreateProjectMessageCommandConsumer>();
-
-                // Default Port : 5672
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    cfg.Host(rabbitmqOptions.HostName, "/", host =>
-                    {
-                        host.Username(rabbitmqOptions.UserName);
-                        host.Password(rabbitmqOptions.Password);
-                    });
-
-                    cfg.ReceiveEndpoint("CreateCustomerProjectQueue", e =>
-                    {
-                        e.ConfigureConsumer<CreateProjectMessageCommandConsumer>(context);
-                    });
-                });
-            });
-
-            services.AddMassTransitHostedService();
 
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
@@ -194,8 +168,6 @@ namespace WebAPI
             app.UseEndpoints(endpoints =>
             {                
                 endpoints.MapControllers();
-                endpoints.MapHub<TestHub>("/test");
-
             });
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace Business.MessageBrokers.RabbitMq.Models
+﻿namespace Business.MessageBrokers.Models
 {
     public class ProjectMessageCommand
     {
