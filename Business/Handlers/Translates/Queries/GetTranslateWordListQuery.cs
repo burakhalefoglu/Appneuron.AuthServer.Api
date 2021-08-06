@@ -2,7 +2,7 @@
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
@@ -30,7 +30,7 @@ namespace Business.Handlers.Translates.Queries
             [SecuredOperation(Priority = 1)]
             [PerformanceAspect(5)]
             [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             public async Task<IDataResult<Dictionary<string, string>>> Handle(GetTranslateWordListQuery request, CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<Dictionary<string, string>>(await _translateRepository.GetTranslateWordList(request.Lang));

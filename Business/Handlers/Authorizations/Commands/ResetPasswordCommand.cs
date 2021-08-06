@@ -1,7 +1,7 @@
 ﻿using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Entities.Concrete;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
@@ -35,7 +35,7 @@ namespace Business.Handlers.Authorizations.Commands
             }
 
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaForgotResetLogger))]
             public async Task<IResult> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
             {
                 var queryString = _httpContextAccessor.HttpContext.Request.Query;

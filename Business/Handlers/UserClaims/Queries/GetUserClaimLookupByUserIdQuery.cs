@@ -1,6 +1,6 @@
 ﻿using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -27,7 +27,7 @@ namespace Business.Handlers.UserClaims.Queries
             }
 
             [SecuredOperation(Priority = 1)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetUserClaimLookupByUserIdQuery request, CancellationToken cancellationToken)
             {
                 var data = await _userClaimRepository.GetUserClaimSelectedList(request.Id);

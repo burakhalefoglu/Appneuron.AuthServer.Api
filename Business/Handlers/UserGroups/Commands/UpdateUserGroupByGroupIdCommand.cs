@@ -2,7 +2,7 @@
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -30,7 +30,7 @@ namespace Business.Handlers.UserGroups.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             public async Task<IResult> Handle(UpdateUserGroupByGroupIdCommand request, CancellationToken cancellationToken)
             {
                 var list = request.UserIds.Select(x => new UserGroup() { GroupId = request.GroupId, UserId = x });

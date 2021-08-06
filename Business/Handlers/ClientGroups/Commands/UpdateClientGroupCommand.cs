@@ -4,7 +4,7 @@ using Business.Handlers.ClientGroups.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
@@ -31,7 +31,7 @@ namespace Business.Handlers.ClientGroups.Commands
 
             [ValidationAspect(typeof(UpdateClientGroupValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateClientGroupCommand request, CancellationToken cancellationToken)
             {

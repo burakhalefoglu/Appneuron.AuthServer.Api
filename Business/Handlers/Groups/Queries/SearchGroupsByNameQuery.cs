@@ -1,7 +1,7 @@
 ﻿using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Entities.Concrete;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -27,7 +27,7 @@ namespace Business.Handlers.Groups.Queries
             }
 
             [SecuredOperation(Priority = 1)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             public async Task<IDataResult<IEnumerable<Group>>> Handle(SearchGroupsByNameQuery request, CancellationToken cancellationToken)
             {
                 var result = BusinessRules.Run(StringLengthMustBeGreaterThanThree(request.GroupName));

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
-using System.IO;
+using System.IO; 
 
 namespace Core.CrossCuttingConcerns.Logging.Serilog.Loggers
 {

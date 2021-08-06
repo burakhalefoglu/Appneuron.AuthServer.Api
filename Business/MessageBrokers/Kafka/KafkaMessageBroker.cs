@@ -16,13 +16,11 @@ using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
 using MassTransit;
-using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Linq;
 using MediatR;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
-using System.Threading;
 using Business.MessageBrokers.Models;
 
 namespace Business.MessageBrokers.Kafka
@@ -90,13 +88,13 @@ namespace Business.MessageBrokers.Kafka
 
                             Console.WriteLine($"Received message at {consumeResult.TopicPartitionOffset}: {consumeResult.Message.Value}");
 
-                            
 
-                              var projectMessageCommand = JsonConvert.DeserializeObject<ProjectMessageCommand>(consumeResult.Message.Value,
-                              new JsonSerializerSettings
-                              {
-                                  PreserveReferencesHandling = PreserveReferencesHandling.Objects
-                              });
+
+                            var projectMessageCommand = JsonConvert.DeserializeObject<ProjectMessageCommand>(consumeResult.Message.Value,
+                            new JsonSerializerSettings
+                            {
+                                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                            });
 
                             var result = await _mediator.Send(new CreateUserProjectInternalCommand
                             {
@@ -150,15 +148,23 @@ namespace Business.MessageBrokers.Kafka
                                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
                             }, ProjectIdList);
 
-                            //TODO: burada token client ' a socket ile gönderilecek.
-                            // Eğer başarılı ise commit edilecek.
-                            try
+                            var kafkaResult = await SendMessageAsync(new ProjectCreationResult
                             {
-                                consumer.Commit(consumeResult);
-                            }
-                            catch (KafkaException e)
+
+                                Accesstoken = accessToken.Token,
+                                UserId = user.UserId
+                            });
+
+                            if (kafkaResult.Success)
                             {
-                                Console.WriteLine($"Commit error: {e.Error.Reason}");
+                                try
+                                {
+                                    consumer.Commit(consumeResult);
+                                }
+                                catch (KafkaException e)
+                                {
+                                    Console.WriteLine($"Commit error: {e.Error.Reason}");
+                                }
                             }
 
                         }

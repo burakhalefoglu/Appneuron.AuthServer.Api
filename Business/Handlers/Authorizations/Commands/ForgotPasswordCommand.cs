@@ -3,7 +3,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Transaction;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.Mail;
 using Core.Utilities.Mail.Helpers;
 using Core.Utilities.Results;
@@ -40,7 +40,7 @@ namespace Business.Handlers.Authorizations.Commands
             ///
             [PerformanceAspect(5)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaForgotResetLogger))]
             [TransactionScopeAspectAsync]
             public async Task<IResult> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
             {

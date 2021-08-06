@@ -4,7 +4,7 @@ using Business.Handlers.Languages.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
@@ -33,7 +33,7 @@ namespace Business.Handlers.Languages.Commands
             [SecuredOperation(Priority = 1)]
             [ValidationAspect(typeof(CreateLanguageValidator), Priority = 2)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             public async Task<IResult> Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)
             {
                 var isThereLanguageRecord = await _languageRepository.GetAsync(u => u.Id == request.Id);

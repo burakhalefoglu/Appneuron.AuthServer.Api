@@ -1,6 +1,6 @@
 ﻿using Castle.DynamicProxy;
 using Core.Aspects.Autofac.Exception;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +14,7 @@ namespace Core.Utilities.Interceptors
             var classAttributes = type.GetCustomAttributes<MethodInterceptionBaseAttribute>(true).ToList();
             var methodAttributes = type.GetMethod(method.Name).GetCustomAttributes<MethodInterceptionBaseAttribute>(true);
             classAttributes.AddRange(methodAttributes);
-            classAttributes.Add(new ExceptionLogAspect(typeof(PostgreSqlLogger)));
+            classAttributes.Add(new ExceptionLogAspect(typeof(ApacheKafkaExceptionLogger)));
             return classAttributes.OrderBy(x => x.Priority).ToArray();
         }
     }

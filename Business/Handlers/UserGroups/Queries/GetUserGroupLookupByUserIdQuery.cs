@@ -1,7 +1,7 @@
 ﻿using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -29,7 +29,7 @@ namespace Business.Handlers.UserGroups.Queries
 
             [SecuredOperation(Priority = 1)]
             [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetUserGroupLookupByUserIdQuery request, CancellationToken cancellationToken)
             {
                 var data = await _groupClaimRepository.GetUserGroupSelectedList(request.UserId);

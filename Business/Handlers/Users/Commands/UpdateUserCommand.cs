@@ -3,7 +3,7 @@ using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -37,7 +37,7 @@ namespace Business.Handlers.Users.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             public async Task<IResult> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
             {
                 var UserId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);

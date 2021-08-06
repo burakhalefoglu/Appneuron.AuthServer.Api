@@ -4,7 +4,7 @@ using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -38,7 +38,7 @@ namespace Business.Handlers.Users.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             [TransactionScopeAspectAsync]
             public async Task<IResult> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
             {

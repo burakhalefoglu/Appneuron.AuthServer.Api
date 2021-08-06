@@ -2,7 +2,7 @@
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
@@ -26,7 +26,7 @@ namespace Business.Handlers.UserGroups.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             public async Task<IResult> Handle(DeleteUserGroupCommand request, CancellationToken cancellationToken)
             {
                 var entityToDelete = await _userGroupRepository.GetAsync(x => x.UserId == request.Id);

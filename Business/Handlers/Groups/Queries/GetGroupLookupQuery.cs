@@ -1,4 +1,6 @@
 ﻿using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Logging;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -22,6 +24,7 @@ namespace Business.Handlers.Groups.Queries
             }
 
             [CacheAspect(10)]
+            [LogAspect(typeof(FileLogger))]
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetGroupLookupQuery request, CancellationToken cancellationToken)
             {
                 var list = await _groupRepository.GetListAsync();

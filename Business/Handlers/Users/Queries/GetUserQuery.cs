@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Entities.Dtos;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
@@ -31,7 +31,7 @@ namespace Business.Handlers.Users.Queries
             }
 
             [SecuredOperation(Priority = 1)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
             public async Task<IDataResult<UserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
             {
                 var userId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
