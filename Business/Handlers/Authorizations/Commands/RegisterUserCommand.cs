@@ -11,7 +11,7 @@ using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Caching;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
@@ -52,7 +52,7 @@ namespace Business.Handlers.Authorizations.Commands
             [PerformanceAspect(5)]
             [ValidationAspect(typeof(RegisterUserValidator), Priority = 2)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
+            [LogAspect(typeof(FileLogger))]
             [TransactionScopeAspectAsync]
             public async Task<IResult> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
             {

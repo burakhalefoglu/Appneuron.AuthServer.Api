@@ -2,7 +2,7 @@
 
 namespace Core.CrossCuttingConcerns.Logging.Serilog
 {
-    public abstract class LoggerServiceBase
+    public abstract class LoggerServiceBase 
     {
         public ILogger Logger;
 

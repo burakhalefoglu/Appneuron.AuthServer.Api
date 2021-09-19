@@ -18,7 +18,7 @@ namespace Core.Aspects.Autofac.Logging
     public class LogAspect : MethodInterceptionAttribute
     {
         private readonly LoggerServiceBase _loggerServiceBase;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor; 
 
         public LogAspect(Type loggerService)
         {

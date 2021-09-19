@@ -5,7 +5,7 @@ using Business.Handlers.UserProjects.Queries;
 using Business.Services.Authentication;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Caching;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
@@ -44,7 +44,7 @@ namespace Business.Handlers.Authorizations.Queries
                 _cacheManager = cacheManager;
             }
 
-            [LogAspect(typeof(ApacheKafkaLoginLogger))]
+            [LogAspect(typeof(FileLogger))]
             public async Task<IDataResult<AccessToken>> Handle(LoginUserQuery request, CancellationToken cancellationToken)
             {
                 var user = await _userRepository.GetAsync(u => u.Email == request.Email);
