@@ -9,7 +9,6 @@ namespace Business.Fakes.Handlers.UserProjects
 {
     public class GetUserProjectInternalQuery : IRequest<IDataResult<UserProject>>
     {
-        public long UserId { get; set; }
         public string ProjectKey { get; set; }
 
         public class GetUserProjectQueryHandler : IRequestHandler<GetUserProjectInternalQuery, IDataResult<UserProject>>
@@ -25,7 +24,7 @@ namespace Business.Fakes.Handlers.UserProjects
 
             public async Task<IDataResult<UserProject>> Handle(GetUserProjectInternalQuery request, CancellationToken cancellationToken)
             {
-                var userProject = await _userProjectRepository.GetAsync(p => p.UserId == request.UserId && p.ProjectKey == request.ProjectKey);
+                var userProject = await _userProjectRepository.GetAsync(p => p.ProjectKey == request.ProjectKey);
                 return new SuccessDataResult<UserProject>(userProject);
             }
         }

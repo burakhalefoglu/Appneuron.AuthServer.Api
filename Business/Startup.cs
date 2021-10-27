@@ -24,6 +24,7 @@ using System;
 using System.Reflection;
 using System.Security.Claims;
 using System.Security.Principal;
+using Business.Handlers.Clients.Commands;
 
 namespace Business
 {
@@ -62,11 +63,12 @@ namespace Business
             });
 
             services.AddSingleton<ConfigurationManager>();
-            services.AddSingleton<IKafkaMessageBroker, KafkaMessageBroker>();
             services.AddTransient<ITokenHelper, JwtHelper>();
-            services.AddTransient<IElasticSearch, ElasticSearchManager>();
 
+            services.AddTransient<IElasticSearch, ElasticSearchManager>();
             services.AddSingleton<ICacheManager, MemoryCacheManager>();
+            services.AddSingleton<IKafkaMessageBroker, KafkaMessageBroker>();
+
 
             services.AddAutoMapper(typeof(ConfigurationManager));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
@@ -85,10 +87,8 @@ namespace Business
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             ConfigureServices(services);
-            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
-            services.AddTransient<IClientGroupRepository, ClientGroupRepository>();
-            services.AddTransient<IClientClaimRepository, ClientClaimRepository>();
             services.AddTransient<IClientRepository, ClientRepository>();
+            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
 
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();
@@ -112,10 +112,8 @@ namespace Business
         public void ConfigureStagingServices(IServiceCollection services)
         {
             ConfigureServices(services);
-            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
-            services.AddTransient<IClientGroupRepository, ClientGroupRepository>();
-            services.AddTransient<IClientClaimRepository, ClientClaimRepository>();
             services.AddTransient<IClientRepository, ClientRepository>();
+            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
 
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();
@@ -139,10 +137,8 @@ namespace Business
         public void ConfigureProductionServices(IServiceCollection services)
         {
             ConfigureServices(services);
-            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
-            services.AddTransient<IClientGroupRepository, ClientGroupRepository>();
-            services.AddTransient<IClientClaimRepository, ClientClaimRepository>();
             services.AddTransient<IClientRepository, ClientRepository>();
+            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
 
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();

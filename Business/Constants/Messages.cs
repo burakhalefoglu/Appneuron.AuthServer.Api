@@ -21,6 +21,7 @@
         public static string SuccessfulLogin => "SuccessfulLogin";
         public static string SendMobileCode => "SendMobileCode";
         public static string NameAlreadyExist => "NameAlreadyExist";
+        public static string EmailAlreadyExist => "EmailAlreadyExist";
         public static string WrongEmail => "WrongEmail";
         public static string CitizenNumber => "CID";
         public static string PasswordEmpty => "PasswordEmpty";

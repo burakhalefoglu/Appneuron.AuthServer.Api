@@ -1,8 +1,11 @@
-﻿using Core.DataAccess.EntityFramework;
+﻿
+using System;
+using System.Linq;
+using Core.DataAccess.EntityFramework;
 using Core.Entities.Concrete;
-using DataAccess.Abstract;
+using Entities.Concrete;
 using DataAccess.Concrete.EntityFramework.Contexts;
-
+using DataAccess.Abstract;
 namespace DataAccess.Concrete.EntityFramework
 {
     public class ClientRepository : EfEntityRepositoryBase<Client, ProjectDbContext>, IClientRepository
@@ -12,3 +15,4 @@ namespace DataAccess.Concrete.EntityFramework
         }
     }
 }
+

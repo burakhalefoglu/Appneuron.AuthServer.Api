@@ -1,4 +1,5 @@
-﻿using Business.Handlers.Authorizations.Commands;
+﻿using System.Diagnostics;
+using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
 using Business.Handlers.Clients.Commands;
 using Business.Handlers.Users.Commands;
@@ -39,7 +40,7 @@ namespace WebAPI.Controllers
         [Consumes("application/json")]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(IResult))]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserQuery loginModel)
         {
@@ -50,7 +51,7 @@ namespace WebAPI.Controllers
                 return Ok(result);
             }
 
-            return Unauthorized(result.Message);
+            return Unauthorized(result);
         }
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace WebAPI.Controllers
         [Consumes("application/json")]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserCommand createUser)
         {
@@ -72,35 +73,13 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return Unauthorized(result);
         }
 
-        /// <summary>
-        ///  Make it User Register operations
-        /// </summary>
-        /// <param name="createClientToken"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [Consumes("application/json")]
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpPost("clienttoken")]
-        public async Task<IActionResult> ClientToken([FromBody] CreateTokenClientCommand createClientToken)
-        {
-            var result = await Mediator.Send(createClientToken);
-
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
 
         ///<summary>
         ///Make it Forgot Password operations
         ///</summary>
-        ///<remarks>tckimlikno</remarks>
         ///<return></return>
         ///<response code="200"></response>
         [AllowAnonymous]
@@ -124,7 +103,6 @@ namespace WebAPI.Controllers
         ///<summary>
         ///Make it Reset Password operations
         ///</summary>
-        ///<remarks>tckimlikno</remarks>
         ///<return></return>
         ///<response code="200"></response>
         [AllowAnonymous]
@@ -152,8 +130,8 @@ namespace WebAPI.Controllers
         /// <returns></returns>
         [Consumes("application/json")]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpPut("changeuserpassword")]
         public async Task<IActionResult> ChangeUserPassword([FromBody] UserChangePasswordCommand command)
         {
@@ -161,26 +139,10 @@ namespace WebAPI.Controllers
 
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result);
             }
 
-            return BadRequest(result.Message);
-        }
-
-        /// <summary>
-        /// Token decode test
-        /// </summary>
-        /// <returns></returns>
-        [Consumes("application/json")]
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-        [HttpPost("test")]
-        public IActionResult LoginTest()
-        {
-            var auth = Request.Headers["Authorization"];
-            var token = new JwtHelper(_configuration).DecodeToken(auth);
-
-            return Ok(token);
+            return BadRequest(result);
         }
     }
 }

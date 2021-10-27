@@ -59,7 +59,7 @@ namespace Business.Handlers.Authorizations.Commands
                 var userExits = await _userRepository.GetAsync(u => u.Email == request.Email);
 
                 if (userExits != null)
-                    return new ErrorResult(Messages.NameAlreadyExist);
+                    return new ErrorResult(Messages.EmailAlreadyExist);
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
                 var user = new User

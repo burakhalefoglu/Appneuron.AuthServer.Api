@@ -9,6 +9,5 @@ namespace Core.Entities.Concrete
 
         public virtual ICollection<GroupClaim> GroupClaims { get; set; }
         public virtual ICollection<UserGroup> UserGroups { get; set; }
-        public virtual ICollection<ClientGroup> ClientGroups { get; set; }
     }
 }

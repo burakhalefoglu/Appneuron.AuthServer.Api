@@ -1,4 +1,7 @@
-﻿using Core.Entities.Concrete;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Core.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,16 +11,9 @@ namespace DataAccess.Concrete.Configurations
     {
         public void Configure(EntityTypeBuilder<Client> builder)
         {
-            builder.HasKey(x => x.Id);
-            builder.Property(x => x.CustomerId).IsRequired();
-            builder.Property(x => x.ProjectId).HasMaxLength(500).IsRequired();
-            builder.Property(x => x.ClientId).HasMaxLength(500).IsRequired();
-
-            builder.HasOne(d => d.user)
-            .WithMany(p => p.Client)
-            .HasForeignKey(d => d.CustomerId)
-            .OnDelete(DeleteBehavior.Cascade)
-            .HasConstraintName("fk_Clients_Users");
+            builder.HasKey(e => new { e.Id });
+            builder.Property(x => x.ClientId).IsRequired();
+            builder.Property(x => x.ProjectId).IsRequired();
         }
     }
 }

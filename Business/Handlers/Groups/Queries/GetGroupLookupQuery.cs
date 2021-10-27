@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Business.BusinessAspects;
 
 namespace Business.Handlers.Groups.Queries
 {
@@ -25,6 +26,7 @@ namespace Business.Handlers.Groups.Queries
 
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
+            [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetGroupLookupQuery request, CancellationToken cancellationToken)
             {
                 var list = await _groupRepository.GetListAsync();

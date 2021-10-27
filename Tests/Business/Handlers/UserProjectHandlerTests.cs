@@ -39,7 +39,8 @@ namespace Tests.Business.HandlersTest
             //Arrange
             var query = new GetUserProjectQuery();
 
-            _userProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>())).ReturnsAsync(new UserProject()
+            _userProjectRepository.Setup(x => x.
+                GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>())).ReturnsAsync(new UserProject()
 //propertyler buraya yazılacak
 //{
 //UserProjectId = 1,

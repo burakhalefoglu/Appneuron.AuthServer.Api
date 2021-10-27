@@ -135,7 +135,6 @@ namespace Core.Utilities.Security.Jwt
             var claims = new List<Claim>();
             claims.AddNameIdentifier(clientClaimModel.ClientId);
             claims.AddRoles(clientClaimModel.OperationClaims);
-            claims.AddCustomerId(clientClaimModel.CustomerId);
             claims.AddProjectId(clientClaimModel.ProjectId);
 
             return claims;

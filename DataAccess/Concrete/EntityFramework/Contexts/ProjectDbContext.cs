@@ -60,9 +60,7 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<Log> Logs { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<Translate> Translates { get; set; }
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<ClientClaim> ClientClaims { get; set; }
-        public DbSet<ClientGroup> ClientGroups { get; set; }
         public DbSet<UserProject> UserProjects { get; set; }
+        public DbSet<Client> Clients { get; set; }
     }
 }

@@ -44,18 +44,25 @@ namespace Tests.Business.Handlers
             _mediator = new Mock<IMediator>();
             _cacheManager = new Mock<ICacheManager>();
 
-            _loginUserQueryHandler = new LoginUserQueryHandler(_userRepository.Object, _tokenHelper.Object, _mediator.Object, _cacheManager.Object);
+            _loginUserQueryHandler = new LoginUserQueryHandler(_userRepository.Object,
+                _tokenHelper.Object,
+                _mediator.Object,
+                _cacheManager.Object);
         }
 
         [Test]
         public async Task Handler_Login()
         {
             var user = DataHelper.GetUser("test");
-            HashingHelper.CreatePasswordHash("123456", out var passwordSalt, out var passwordHash);
+            HashingHelper.CreatePasswordHash("123456",
+                out var passwordSalt,
+                out var passwordHash);
             user.PasswordSalt = passwordSalt;
             user.PasswordHash = passwordHash;
             _userRepository.
-                            Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(() => Task.FromResult(user));
+                            Setup(x =>
+                                x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).
+                            Returns(() => Task.FromResult(user));
 
             _userRepository.Setup(x => x.GetClaims(It.IsAny<int>()))
                             .Returns(new List<OperationClaim>() { new() { Id = 1, Name = "test" } });

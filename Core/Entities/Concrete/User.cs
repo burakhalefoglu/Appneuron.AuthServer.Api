@@ -22,7 +22,6 @@ namespace Core.Entities.Concrete
 
         public virtual ICollection<UserGroup> UserGroups { get; set; }
         public virtual ICollection<UserClaim> UserClaims { get; set; }
-        public virtual ICollection<Client> Client { get; set; }
 
         public User()
         {
