@@ -12,9 +12,7 @@ namespace DataAccess.Concrete.Configurations
             builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
             builder.Property(x => x.Email).HasMaxLength(50).IsRequired();
             builder.Property(x => x.Status).IsRequired();
-            builder.Property(x => x.DashboardKey).IsRequired().HasMaxLength(500);
             builder.Property(x => x.RecordDate);
-            builder.Property(x => x.MobilePhones).HasMaxLength(30);
             builder.Property(x => x.ResetPasswordToken).HasMaxLength(500);
             builder.Property(x => x.ResetPasswordExpires);
         }

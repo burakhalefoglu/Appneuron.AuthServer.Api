@@ -144,7 +144,6 @@ namespace Business.MessageBrokers.Kafka
                             var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
                             {
                                 UserId = user.UserId,
-                                UniqueKey = user.DashboardKey,
                                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
                             }, ProjectIdList);
 

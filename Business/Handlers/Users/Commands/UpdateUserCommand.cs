@@ -20,7 +20,6 @@ namespace Business.Handlers.Users.Commands
     {
         public string Email { get; set; }
         public string FullName { get; set; }
-        public string MobilePhones { get; set; }
 
         public class UpdateAnimalCommandHandler : IRequestHandler<UpdateUserCommand, IResult>
         {
@@ -46,7 +45,6 @@ namespace Business.Handlers.Users.Commands
 
                 isUserExits.Name = request.FullName;
                 isUserExits.Email = request.Email;
-                isUserExits.MobilePhones = request.MobilePhones;
 
                 _userRepository.Update(isUserExits);
                 await _userRepository.SaveChangesAsync();

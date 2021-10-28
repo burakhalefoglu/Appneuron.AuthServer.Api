@@ -55,7 +55,7 @@ namespace Core.Utilities.Security.Jwt
             };
         }
 
-        public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel,List<string> ProjectIdList)
+        public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel, List<string> ProjectIdList)
             where TAccessToken : IAccessToken, new()
         {
             _accessTokenExpiration = DateTime.Now.AddMinutes(_tokenOptions.AccessTokenExpiration);
@@ -72,7 +72,7 @@ namespace Core.Utilities.Security.Jwt
             };
         }
 
-        public JwtSecurityToken CreateCustomerJwtSecurityToken(TokenOptions tokenOptions, UserClaimModel userClaimModel,
+        private JwtSecurityToken CreateCustomerJwtSecurityToken(TokenOptions tokenOptions, UserClaimModel userClaimModel,
                 SigningCredentials signingCredentials, List<string> ProjectIdList)
         {
             var jwt = new JwtSecurityToken(
@@ -99,12 +99,12 @@ namespace Core.Utilities.Security.Jwt
             var claims = new List<Claim>();
             claims.AddNameIdentifier(userClaimModel.UserId.ToString());
             claims.AddRoles(userClaimModel.OperationClaims);
-            claims.AddUniqueKey(userClaimModel.UniqueKey);
-            ProjectIdList.ForEach(x =>
-            {
-                claims.AddProjectId(x);
+            if (ProjectIdList.Count > 0)
+                ProjectIdList.ForEach(x =>
+                {
+                    claims.AddProjectId(x);
 
-            });
+                });
             return claims;
         }
 
@@ -139,5 +139,7 @@ namespace Core.Utilities.Security.Jwt
 
             return claims;
         }
+
+
     }
 }

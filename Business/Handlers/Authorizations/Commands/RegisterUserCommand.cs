@@ -69,7 +69,6 @@ namespace Business.Handlers.Authorizations.Commands
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                     Status = true,
-                    DashboardKey = SecurityKeyHelper.GetRandomHexNumber(32),
                 };
 
                 _userRepository.Add(user);
@@ -100,22 +99,11 @@ namespace Business.Handlers.Authorizations.Commands
                     OperationClaims = operationClaims,
                 });
 
-                var ProjectIdResult = await _mediator.Send(new GetUserProjectsInternalQuery
-                {
-                    UserId = user.UserId,
-                });
-                List<string> ProjectIdList = new List<string>();
-                ProjectIdResult.Data.ToList().ForEach(x =>
-                {
-                    ProjectIdList.Add(x.ProjectKey);
-                });
-
                 var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
                 {
                     UserId = user.UserId,
-                    UniqueKey = user.DashboardKey,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()
-                },ProjectIdList);
+                }, new List<string>());
 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }

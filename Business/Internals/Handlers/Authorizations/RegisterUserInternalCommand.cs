@@ -44,7 +44,6 @@ namespace Business.Fakes.Handlers.Authorizations
                     Name = request.FullName,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
-                    DashboardKey = SecurityKeyHelper.GetRandomHexNumber(32),
                     Status = true
                 };
 

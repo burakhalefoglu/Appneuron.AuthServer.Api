@@ -48,7 +48,6 @@ namespace Business.Handlers.Users.Commands
                     Email = request.Email,
                     Name = request.Name,
                     Status = true,
-                    MobilePhones = request.MobilePhones,
                 };
 
                 _userRepository.Add(user);
