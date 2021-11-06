@@ -1,5 +1,5 @@
-﻿using Business.Constants;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Business.Constants;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
@@ -13,13 +13,9 @@ using Core.Entities.Concrete;
 using Business.Fakes.Handlers.GroupClaims;
 using Business.Services.Authentication;
 using Core.Entities.ClaimModels;
-using Core.Entities.Dtos;
-using System.Collections.Generic;
 using System.Linq;
 using Business.Handlers.Clients.ValidationRules;
-using Business.MessageBrokers.Kafka;
 using Core.Aspects.Autofac.Validation;
-using Core.Utilities.IoC;
 
 namespace Business.Handlers.Clients.Commands
 {
@@ -53,8 +49,9 @@ namespace Business.Handlers.Clients.Commands
                 var projectInfo = await _mediator.Send(new GetUserProjectInternalQuery()
                 {
                     ProjectKey = request.ProjectId
-                });
-                if (projectInfo.Data == null) return new ErrorDataResult<AccessToken>(Messages.ProjectNotFound);
+                }, cancellationToken);
+                if (projectInfo.Data == null) 
+                    return new ErrorDataResult<AccessToken>(Messages.ProjectNotFound);
 
                 var result = await _clientRepository.GetAsync(c =>
                     c.ClientId == request.ClientId
@@ -67,10 +64,6 @@ namespace Business.Handlers.Clients.Commands
                         ClientId = request.ClientId,
                         ProjectId = request.ProjectId
                     });
-                    if (client == null)
-                    {
-                        return new ErrorResult(Messages.DefaultError);
-                    }
 
                     //await _kafkaMessageBroker.SendMessageAsync(new CreateClientMessageComamnd
                     //{
@@ -84,18 +77,14 @@ namespace Business.Handlers.Clients.Commands
                 var resultGroupClaim = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery()
                 {
                     GroupId = 2
-                });
+                }, cancellationToken);
 
                 var selectionItems = resultGroupClaim.Data.ToList();
 
-                var operationClaims = new List<OperationClaim>();
-
-                foreach (var item in selectionItems)
-                    operationClaims.Add(new OperationClaim
-                    {
-                        Id = int.Parse(item.Id),
-                        Name = item.Label
-                    });
+                var operationClaims = 
+                    selectionItems.Select(item => 
+                        new OperationClaim { Id = Convert.ToInt32(item.Id), Name = item.Label })
+                        .ToList();
 
                 var accessToken = _tokenHelper.CreateClientToken<DArchToken>(new ClientClaimModel
                 {

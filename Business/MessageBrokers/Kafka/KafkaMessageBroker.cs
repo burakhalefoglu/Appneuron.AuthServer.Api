@@ -68,7 +68,7 @@ namespace Business.MessageBrokers.Kafka
            .SetStatisticsHandler((_, json) => Console.WriteLine($"Statistics: {json}"))
            .Build())
             {
-                consumer.Subscribe("ProjectCreationTopic");
+                consumer.Subscribe("ProjectMessageCommand");
 
                 try
                 {

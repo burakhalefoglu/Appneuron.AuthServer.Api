@@ -1,8 +1,8 @@
-﻿using Business.Constants;
+﻿using System;
+using Business.Constants;
 using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserClaims;
 using Business.Handlers.Authorizations.ValidationRules;
-using Business.Handlers.UserProjects.Queries;
 using Business.Helpers;
 using Business.Services.Authentication;
 using Core.Aspects.Autofac.Caching;
@@ -16,7 +16,6 @@ using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
 using Core.Utilities.Results;
-using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
@@ -71,15 +70,14 @@ namespace Business.Handlers.Authorizations.Commands
                     Status = true,
                 };
 
-                _userRepository.Add(user);
+                var newUser = _userRepository.Add(user);
                 await _userRepository.SaveChangesAsync();
 
-                var newUser = _userRepository.Get(x => x.Email == user.Email);
 
                 var result = (await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery()
                 {
                     GroupId = 1
-                }));
+                }, cancellationToken));
 
                 List<SelectionItem> selectionItems = result.Data.ToList();
                 List<OperationClaim> operationClaims = new List<OperationClaim>();
@@ -88,7 +86,7 @@ namespace Business.Handlers.Authorizations.Commands
                 {
                     operationClaims.Add(new OperationClaim
                     {
-                        Id = int.Parse(item.Id),
+                        Id = Convert.ToInt32(item.Id),
                         Name = item.Label
                     });
                 }
@@ -97,7 +95,7 @@ namespace Business.Handlers.Authorizations.Commands
                 {
                     UserId = newUser.UserId,
                     OperationClaims = operationClaims,
-                });
+                }, cancellationToken);
 
                 var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
                 {

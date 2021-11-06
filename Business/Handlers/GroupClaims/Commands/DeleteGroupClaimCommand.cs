@@ -31,6 +31,11 @@ namespace Business.Handlers.GroupClaims.Commands
             {
                 var groupClaimToDelete = await _groupClaimRepository.GetAsync(x => x.GroupId == request.Id);
 
+                if (groupClaimToDelete == null)
+                {
+                    return new ErrorResult(Messages.GroupClaimNotFound);
+                }
+
                 _groupClaimRepository.Delete(groupClaimToDelete);
                 await _groupClaimRepository.SaveChangesAsync();
 

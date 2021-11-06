@@ -49,12 +49,12 @@ namespace Business.Handlers.Authorizations.Commands
                 if (user == null)
                     return new ErrorResult(Messages.WrongEmail);
 
-                string token = SecurityKeyHelper.GetRandomHexNumber(64);
-                string MailText = MailContentHepler.GetResetMailContent(user, token.ToLower());
+                var token = SecurityKeyHelper.GetRandomHexNumber(64);
+                var mailText = MailContentHepler.GetResetMailContent(user, token.ToLower());
 
                 await _mailService.Send(new EmailMessage()
                 {
-                    Content = MailText,
+                    Content = mailText,
                     FromAddresses =
                     {
                 new EmailAddress

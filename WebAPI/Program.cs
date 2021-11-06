@@ -47,6 +47,7 @@ namespace WebAPI
                         webBuilder.ConfigureKestrel(options => options.AddServerHeader = false);
                         webBuilder.UseStartup<Startup>();
                     })
+                    
         .ConfigureLogging(logging =>
         {
             logging.ClearProviders();

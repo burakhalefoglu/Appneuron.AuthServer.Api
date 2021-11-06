@@ -15,8 +15,7 @@ namespace Core.Utilities.Mail.Helpers
 
         private static string ReadMailText(string templateName)
         {
-            string path = Directory.GetCurrentDirectory();
-            string FilePath = Path.GetFullPath(Path.Combine(path, @"..\" + "\\Core\\Utilities\\Mail\\MailTemplates\\" + templateName));
+            string FilePath = Path.GetFullPath(Path.Combine(@"..\..\..\..\" +"\\Core\\Utilities\\Mail\\MailTemplates\\" + templateName));
 
             StreamReader str = new StreamReader(FilePath);
             string MailText = str.ReadToEnd();

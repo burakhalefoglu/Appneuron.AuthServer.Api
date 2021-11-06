@@ -1,4 +1,5 @@
-﻿using Business.Constants;
+﻿using System;
+using Business.Constants;
 using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserClaims;
 using Business.Handlers.UserProjects.Queries;
@@ -55,22 +56,27 @@ namespace Business.Handlers.Authorizations.Queries
                 if (!HashingHelper.VerifyPasswordHash(request.Password, user.PasswordSalt, user.PasswordHash))
                     return new ErrorDataResult<AccessToken>(Messages.PasswordError);
 
-                var result = (await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery()
+                var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery()
                 {
                     GroupId = 1
-                }));
+                });
 
-                List<SelectionItem> selectionItems = result.Data.ToList();
                 List<OperationClaim> operationClaims = new List<OperationClaim>();
 
-                foreach (var item in selectionItems)
+                if (result.Data.ToList().Count > 0)
                 {
-                    operationClaims.Add(new OperationClaim
+                    List<SelectionItem> selectionItems = result.Data.ToList();
+
+                    foreach (var item in selectionItems)
                     {
-                        Id = int.Parse(item.Id),
-                        Name = item.Label
-                    });
+                        operationClaims.Add(new OperationClaim
+                        {
+                            Id = Convert.ToInt32(item.Id),
+                            Name = item.Label
+                        });
+                    }
                 }
+
 
 
                 await _mediator.Send(new CreateUserClaimsInternalCommand
@@ -89,14 +95,11 @@ namespace Business.Handlers.Authorizations.Queries
                     ProjectIdList.Add(x.ProjectKey);
                 });
 
-                 var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
+                var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
                 {
                     UserId = user.UserId,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()
                 }, ProjectIdList);
-
-
-                _cacheManager.Add($"{CacheKeys.UserIdForClaim}={user.UserId}", selectionItems.Select(x => x.Label));
 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }

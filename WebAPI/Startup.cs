@@ -18,6 +18,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
 
 namespace WebAPI
 {
@@ -55,6 +56,7 @@ namespace WebAPI
                                 services.AddControllers().AddNewtonsoftJson(options =>
                                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
                             });
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             var corsPolicies = Configuration.GetSection("CorsPolicies").Get<String[]>();
             services.AddCors(options =>

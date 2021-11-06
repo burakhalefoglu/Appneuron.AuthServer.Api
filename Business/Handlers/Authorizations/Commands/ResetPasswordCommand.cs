@@ -24,12 +24,13 @@ namespace Business.Handlers.Authorizations.Commands
         {
             private readonly IUserRepository _userRepository;
             private readonly IMediator _mediator;
-            private readonly IHttpContextAccessor _httpContextAccessor;
+            public readonly IHttpContextAccessor _httpContextAccessor;
 
             public ResetPasswordCommandHandler(IUserRepository userRepository,
-                IMediator mediator)
+                IMediator mediator,
+                IHttpContextAccessor httpContextAccessor)
             {
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
                 _userRepository = userRepository;
                 _mediator = mediator;
             }
