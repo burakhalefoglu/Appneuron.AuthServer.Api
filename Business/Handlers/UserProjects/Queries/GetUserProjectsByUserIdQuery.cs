@@ -1,4 +1,5 @@
 ﻿
+using System;
 using Business.BusinessAspects;
 using Core.Utilities.Results;
 using Core.Aspects.Autofac.Performance;
@@ -21,17 +22,18 @@ namespace Business.Handlers.UserProjects.Queries
 
     public class GetUserProjectsByUserIdQuery : IRequest<IDataResult<IEnumerable<UserProject>>>
     {
-        public class GetAuthProjectModelsByUserIdQueryHandler : IRequestHandler<GetUserProjectsByUserIdQuery, IDataResult<IEnumerable<UserProject>>>
+        public class GetUserProjectsByUserIdQueryHandler : IRequestHandler<GetUserProjectsByUserIdQuery, IDataResult<IEnumerable<UserProject>>>
         {
             private readonly IUserProjectRepository _userProjectRepository;
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public GetAuthProjectModelsByUserIdQueryHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
+            public GetUserProjectsByUserIdQueryHandler(IUserProjectRepository userProjectRepository,
+                IMediator mediator, IHttpContextAccessor httpContextAccessor)
             {
                 _userProjectRepository = userProjectRepository;
                 _mediator = mediator;
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
 
             }
 
@@ -41,7 +43,8 @@ namespace Business.Handlers.UserProjects.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<UserProject>>> Handle(GetUserProjectsByUserIdQuery request, CancellationToken cancellationToken)
             {
-                var userId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
                 var result = await
                     _userProjectRepository.GetListAsync(p => p.UserId == userId);

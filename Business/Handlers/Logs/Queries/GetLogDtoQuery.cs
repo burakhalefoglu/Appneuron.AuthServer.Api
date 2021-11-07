@@ -38,17 +38,15 @@ namespace Business.Handlers.Logs.Queries
                 foreach (var item in result)
                 {
                     var jsonMessage = JsonConvert.DeserializeObject<LogDto>(item.MessageTemplate);
-                    dynamic msg = JsonConvert.DeserializeObject(item.MessageTemplate);
-                    var valueList = msg.Parameters[0];
-                    var exceptionMessage = msg.ExceptionMessage;
-                    valueList = valueList.Value.ToString();
+                    var valueList = jsonMessage.Value;
+                    var exceptionMessage = jsonMessage.ExceptionMessage;
 
                     var list = new LogDto
                     {
                         Id = item.Id,
                         Level = item.Level,
                         TimeStamp = item.TimeStamp,
-                        Type = msg.Parameters[0].Type,
+                        Type = jsonMessage.Type,
                         User = jsonMessage.User,
                         Value = valueList,
                         ExceptionMessage = exceptionMessage

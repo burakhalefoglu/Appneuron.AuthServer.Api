@@ -32,6 +32,11 @@ namespace Business.Handlers.OperationClaims.Commands
             public async Task<IResult> Handle(UpdateOperationClaimCommand request, CancellationToken cancellationToken)
             {
                 var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.Id == request.Id);
+                if (isOperationClaimsExits == null)
+                {
+                    return new ErrorResult(Messages.OperationClaimNotFound);
+                }
+
                 isOperationClaimsExits.Alias = request.Alias;
                 isOperationClaimsExits.Description = request.Description;
 

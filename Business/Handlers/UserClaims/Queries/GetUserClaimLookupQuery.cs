@@ -17,11 +17,11 @@ namespace Business.Handlers.UserClaims.Queries
     {
         public int UserId { get; set; }
 
-        public class GetUserClaimQueryHandler : IRequestHandler<GetUserClaimLookupQuery, IDataResult<IEnumerable<UserClaim>>>
+        public class GetUserClaimLookupQueryHandler : IRequestHandler<GetUserClaimLookupQuery, IDataResult<IEnumerable<UserClaim>>>
         {
             private readonly IUserClaimRepository _userClaimRepository;
 
-            public GetUserClaimQueryHandler(IUserClaimRepository userClaimRepository)
+            public GetUserClaimLookupQueryHandler(IUserClaimRepository userClaimRepository)
             {
                 _userClaimRepository = userClaimRepository;
             }

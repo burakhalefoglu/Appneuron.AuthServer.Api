@@ -33,7 +33,8 @@ namespace Business.Handlers.Translates.Queries
             [LogAspect(typeof(FileLogger))]
             public async Task<IDataResult<Dictionary<string, string>>> Handle(GetTranslateWordListQuery request, CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<Dictionary<string, string>>(await _translateRepository.GetTranslateWordList(request.Lang));
+                return new SuccessDataResult<Dictionary<string, string>>(
+                    await _translateRepository.GetTranslateWordList(request.Lang));
             }
         }
     }

@@ -30,7 +30,8 @@ namespace Business.Handlers.UserClaims.Queries
             [LogAspect(typeof(FileLogger))]
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetUserClaimLookupByUserIdQuery request, CancellationToken cancellationToken)
             {
-                var data = await _userClaimRepository.GetUserClaimSelectedList(request.Id);
+                var data = await
+                    _userClaimRepository.GetUserClaimSelectedList(request.Id);
                 return new SuccessDataResult<IEnumerable<SelectionItem>>(data);
             }
         }

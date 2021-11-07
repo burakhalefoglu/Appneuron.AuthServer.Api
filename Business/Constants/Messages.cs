@@ -8,7 +8,10 @@
         internal static string DefaultSuccess => "Success";
         internal static string DefaultError => "Error";
 
-        public static string GroupClaimNotFound = "GroupClaimNotFound"; 
+        public static string GroupNotFound => "GroupNotFound";
+        public static string UserClaimNotFound => "UserClaimNotFound";
+        public static string OperationClaimNotFound => "OperationClaimNotFound";
+        public static string GroupClaimNotFound => "GroupClaimNotFound"; 
         public static string StringLengthMustBeGreaterThanThree => "StringLengthMustBeGreaterThanThree";
         public static string CouldNotBeVerifyCid => "CouldNotBeVerifyCid";
         public static string VerifyCid => "VerifyCid";

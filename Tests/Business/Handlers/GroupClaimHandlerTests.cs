@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.GroupClaims.Commands;
 using Business.Handlers.GroupClaims.Queries;
+using Business.Handlers.Groups.Queries;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
 using DataAccess.Abstract;
@@ -24,7 +25,7 @@ using static Business.Handlers.GroupClaims.Queries.GetGroupClaimsQuery;
 namespace Tests.Business.Handlers
 {
     [TestFixture]
-    public class GroupClaimTests
+    public class GroupClaimHandlerTests
     {
         private Mock<IGroupClaimRepository> _groupClaimRepository;
         private Mock<IOperationClaimRepository> _operationClaimRepository;
@@ -36,7 +37,6 @@ namespace Tests.Business.Handlers
         private GetGroupClaimQueryHandler _getGroupClaimQueryHandler;
         private GetGroupClaimsLookupByGroupIdQueryHandler _getGroupClaimsLookupByGroupIdQueryHandler;
         private GetGroupClaimsQueryHandler _getGroupClaimsQueryHandler;
-
         [SetUp]
         public void Setup()
         {
@@ -257,6 +257,5 @@ namespace Tests.Business.Handlers
             result.Success.Should().BeTrue();
             result.Data.ToList().Count.Should().BeGreaterThan(1);
         }
-
     }
 }

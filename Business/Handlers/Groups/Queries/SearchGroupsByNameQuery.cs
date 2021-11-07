@@ -30,12 +30,16 @@ namespace Business.Handlers.Groups.Queries
             [LogAspect(typeof(FileLogger))]
             public async Task<IDataResult<IEnumerable<Group>>> Handle(SearchGroupsByNameQuery request, CancellationToken cancellationToken)
             {
-                var result = BusinessRules.Run(StringLengthMustBeGreaterThanThree(request.GroupName));
+                var result = 
+                    BusinessRules.Run(
+                        StringLengthMustBeGreaterThanThree(request.GroupName));
 
                 if (result != null)
                     return new ErrorDataResult<IEnumerable<Group>>(result.Message);
 
-                return new SuccessDataResult<IEnumerable<Group>>(await _groupRepository.GetListAsync(x => x.GroupName.ToLower().Contains(request.GroupName.ToLower())));
+                return new SuccessDataResult<IEnumerable<Group>>(await 
+                    _groupRepository.GetListAsync(x 
+                        => x.GroupName.ToLower().Contains(request.GroupName.ToLower())));
             }
 
             private static IResult StringLengthMustBeGreaterThanThree(string searchString)

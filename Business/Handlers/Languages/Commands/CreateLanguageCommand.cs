@@ -3,7 +3,7 @@ using Business.Constants;
 using Business.Handlers.Languages.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
-using Core.Aspects.Autofac.Validation;
+using Core.Aspects.Autofac.Validation; 
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
@@ -15,10 +15,6 @@ using System.Threading.Tasks;
 
 namespace Business.Handlers.Languages.Commands
 {
-    /// <summary>
-    ///
-    /// </summary>
-
     public class CreateLanguageCommand : IRequest<IResult>
     {
         public string Name { get; set; }
@@ -27,12 +23,10 @@ namespace Business.Handlers.Languages.Commands
         public class CreateLanguageCommandHandler : IRequestHandler<CreateLanguageCommand, IResult>
         {
             private readonly ILanguageRepository _languageRepository;
-            private readonly IMediator _mediator;
 
-            public CreateLanguageCommandHandler(ILanguageRepository languageRepository, IMediator mediator)
+            public CreateLanguageCommandHandler(ILanguageRepository languageRepository)
             {
                 _languageRepository = languageRepository;
-                _mediator = mediator;
             }
 
             [SecuredOperation(Priority = 1)]
@@ -41,7 +35,8 @@ namespace Business.Handlers.Languages.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(CreateLanguageCommand request, CancellationToken cancellationToken)
             {
-                var isThereLanguageRecord = _languageRepository.Query().Any(u => u.Name == request.Name);
+                var isThereLanguageRecord = _languageRepository.Query()
+                    .Any(u => u.Name == request.Name);
 
                 if (isThereLanguageRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);

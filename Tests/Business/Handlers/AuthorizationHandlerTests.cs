@@ -34,7 +34,7 @@ using Microsoft.AspNetCore.Http;
 namespace Tests.Business.Handlers
 {
     [TestFixture]
-    public class AuthorizationsTests
+    public class AuthorizationHandlerTests
     {
         private Mock<IUserRepository> _userRepository;
         private Mock<ITokenHelper> _tokenHelper;

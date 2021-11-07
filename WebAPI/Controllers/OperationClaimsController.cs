@@ -101,26 +101,5 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
-
-        ///<summary>
-        ///List OperationClaims
-        ///</summary>
-        ///<remarks>bla bla bla OperationClaims</remarks>
-        ///<return>OperationClaims List</return>
-        ///<response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<OperationClaim>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getuserclaimsfromcache")]
-        public async Task<IActionResult> GetUserClaimsFromCache()
-        {
-            var result = await Mediator.Send(new GetUserClaimsFromCacheQuery());
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
     }
 }

@@ -18,11 +18,11 @@ namespace Business.Handlers.UserGroups.Commands
         public int UserId { get; set; }
         public IEnumerable<UserGroup> UserGroups { get; set; }
 
-        public class CreateGroupClaimsCommandHandler : IRequestHandler<CreateUserGroupClaimsCommand, IResult>
+        public class CreateUserGroupClaimsCommandHandler : IRequestHandler<CreateUserGroupClaimsCommand, IResult>
         {
             private readonly IUserGroupRepository _userGroupRepository;
 
-            public CreateGroupClaimsCommandHandler(IUserGroupRepository userGroupRepository)
+            public CreateUserGroupClaimsCommandHandler(IUserGroupRepository userGroupRepository)
             {
                 _userGroupRepository = userGroupRepository;
             }

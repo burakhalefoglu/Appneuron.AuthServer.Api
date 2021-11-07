@@ -30,7 +30,10 @@ namespace Business.Handlers.UserClaims.Commands
             public async Task<IResult> Handle(DeleteUserClaimCommand request, CancellationToken cancellationToken)
             {
                 var entityToDelete = await _userClaimRepository.GetAsync(x => x.UsersId == request.Id);
-
+                if (entityToDelete == null)
+                {
+                    return new ErrorResult(Messages.UserClaimNotFound);
+                }
                 _userClaimRepository.Delete(entityToDelete);
                 await _userClaimRepository.SaveChangesAsync();
 

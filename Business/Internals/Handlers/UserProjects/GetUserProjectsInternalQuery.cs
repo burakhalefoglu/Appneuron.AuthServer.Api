@@ -17,12 +17,12 @@ namespace Business.Handlers.UserProjects.Queries
     {
         public long UserId { get; set; }
 
-        public class GetUserProjectsQueryHandler : IRequestHandler<GetUserProjectsInternalQuery, IDataResult<IEnumerable<UserProject>>>
+        public class GetUserProjectsInternalQueryHandler : IRequestHandler<GetUserProjectsInternalQuery, IDataResult<IEnumerable<UserProject>>>
         {
             private readonly IUserProjectRepository _userProjectRepository;
             private readonly IMediator _mediator;
 
-            public GetUserProjectsQueryHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
+            public GetUserProjectsInternalQueryHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
             {
                 _userProjectRepository = userProjectRepository;
                 _mediator = mediator;

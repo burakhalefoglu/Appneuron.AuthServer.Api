@@ -27,7 +27,8 @@ namespace Business.Handlers.OperationClaims.Queries
             [LogAspect(typeof(FileLogger))]
             public async Task<IDataResult<OperationClaim>> Handle(GetOperationClaimQuery request, CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<OperationClaim>(await _operationClaimRepository.GetAsync(x => x.Id == request.Id));
+                return new SuccessDataResult<OperationClaim>(await _operationClaimRepository
+                    .GetAsync(x => x.Id == request.Id));
             }
         }
     }

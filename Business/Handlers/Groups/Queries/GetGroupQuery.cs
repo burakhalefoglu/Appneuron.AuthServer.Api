@@ -27,7 +27,8 @@ namespace Business.Handlers.Groups.Queries
             [LogAspect(typeof(FileLogger))]
             public async Task<IDataResult<Group>> Handle(GetGroupQuery request, CancellationToken cancellationToken)
             {
-                var group = await _groupRepository.GetAsync(x => x.Id == request.GroupId);
+                var group = await _groupRepository
+                    .GetAsync(x => x.Id == request.GroupId);
 
                 return new SuccessDataResult<Group>(group);
             }

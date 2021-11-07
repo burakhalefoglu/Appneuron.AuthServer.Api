@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Business.Handlers.Translates.Queries
 {
-    public class GetTranslatesByLangQuery : IRequest<IDataResult<Dictionary<string, string>>>
+    public class GetTranslatesByLangQuery : IRequest<IDataResult<string>>
     {
         public string Lang { get; set; }
 
-        public class GetTranslatesByLangQueryHandler : IRequestHandler<GetTranslatesByLangQuery, IDataResult<Dictionary<string, string>>>
+        public class GetTranslatesByLangQueryHandler : IRequestHandler<GetTranslatesByLangQuery, IDataResult<string>>
         {
             private readonly ITranslateRepository _translateRepository;
             private readonly IMediator _mediator;
@@ -25,9 +25,10 @@ namespace Business.Handlers.Translates.Queries
             }
 
             [LogAspect(typeof(FileLogger))]
-            public async Task<IDataResult<Dictionary<string, string>>> Handle(GetTranslatesByLangQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<string>> Handle(GetTranslatesByLangQuery request, CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<Dictionary<string, string>>(await _translateRepository.GetTranslatesByLang(request.Lang));
+                return new SuccessDataResult<string>(
+                   data: await _translateRepository.GetTranslatesByLang(request.Lang));
             }
         }
     }

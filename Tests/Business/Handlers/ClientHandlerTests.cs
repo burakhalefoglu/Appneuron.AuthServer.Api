@@ -24,7 +24,7 @@ using static Business.Handlers.Clients.Commands.CreateTokenCommand;
 namespace Tests.Business.Handlers
 {
     [TestFixture]
-    public class ClientTests
+    public class ClientHandlerTests
     {
         private Mock<ITokenHelper> _tokenHelper;
         private Mock<IClientRepository> _clientRepository;

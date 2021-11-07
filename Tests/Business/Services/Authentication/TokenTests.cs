@@ -19,7 +19,8 @@ namespace Tests.Business.Services.Authentication
         {
             //Arrange
             var token = MockJwtTokens.GenerateJwtToken(ClaimsData.GetClaims());
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(AuthenticationScheme, token);
+            Client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue(AuthenticationScheme, token);
 
             //Act
             var response = await Client.GetAsync(RequestUri);

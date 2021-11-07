@@ -31,7 +31,8 @@ namespace Business.Handlers.UserGroups.Queries
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetUsersInGroupLookupByGroupIdQuery request, CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<SelectionItem>>
-                                (await _userGroupRepository.GetUsersInGroupSelectedListByGroupId(request.GroupId));
+                                (await _userGroupRepository
+                                    .GetUsersInGroupSelectedListByGroupId(request.GroupId));
             }
         }
     }

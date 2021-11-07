@@ -21,12 +21,10 @@ namespace Business.Handlers.UserClaims.Commands
         public class CreateUserClaimCommandHandler : IRequestHandler<CreateUserClaimCommand, IResult>
         {
             private readonly IUserClaimRepository _userClaimRepository;
-            private readonly ICacheManager _cacheManager;
 
-            public CreateUserClaimCommandHandler(IUserClaimRepository userClaimRepository, ICacheManager cacheManager)
+            public CreateUserClaimCommandHandler(IUserClaimRepository userClaimRepository)
             {
                 _userClaimRepository = userClaimRepository;
-                _cacheManager = cacheManager;
             }
 
             [SecuredOperation(Priority = 1)]
@@ -41,9 +39,6 @@ namespace Business.Handlers.UserClaims.Commands
                 };
                 _userClaimRepository.Add(userClaim);
                 await _userClaimRepository.SaveChangesAsync();
-
-                _cacheManager.Remove($"{CacheKeys.UserIdForClaim}={request.UserId}");
-
                 return new SuccessResult(Messages.Added);
             }
         }

@@ -31,7 +31,7 @@ namespace Business.Handlers.OperationClaims.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(CreateOperationClaimCommand request, CancellationToken cancellationToken)
             {
-                if (IsClaimExists(request.ClaimName))
+                if (!(await IsClaimExists(request.ClaimName)))
                     return new ErrorResult(Messages.OperationClaimExists);
 
                 var operationClaim = new OperationClaim
@@ -44,9 +44,10 @@ namespace Business.Handlers.OperationClaims.Commands
                 return new SuccessResult(Messages.Added);
             }
 
-            private bool IsClaimExists(string claimName)
+            private async Task<bool> IsClaimExists(string claimName)
             {
-                return _operationClaimRepository.Query().Any(x => x.Name == claimName);
+                return await _operationClaimRepository.GetAsync(x 
+                    => x.Name == claimName) is null;
             }
         }
     }

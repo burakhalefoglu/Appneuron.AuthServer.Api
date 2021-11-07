@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Business.Constants;
 
 namespace Business.Handlers.OperationClaims.Queries
 {
@@ -28,7 +29,11 @@ namespace Business.Handlers.OperationClaims.Queries
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetOperationClaimLookupQuery request, CancellationToken cancellationToken)
             {
                 var list = await _operationClaimRepository.GetListAsync();
-
+                if (list == null)
+                {
+                    return new ErrorDataResult
+                        <IEnumerable<SelectionItem>>(Messages.OperationClaimNotFound);
+                }
                 var operationClaim = list.Select(x => new SelectionItem()
                 {
                     Id = x.Id.ToString(),
