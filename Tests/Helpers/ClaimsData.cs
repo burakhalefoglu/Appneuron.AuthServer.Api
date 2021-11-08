@@ -10,7 +10,8 @@ namespace Tests.Helpers
             return new()
             {
                 new Claim("username", "deneme"),
-                new Claim("email", "test@test.com")
+                new Claim("email", "test@test.com"),
+                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "10")
             };
         }
     }

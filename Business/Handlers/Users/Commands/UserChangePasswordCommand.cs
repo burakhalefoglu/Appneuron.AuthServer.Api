@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Logging;
@@ -27,20 +28,23 @@ namespace Business.Handlers.Users.Commands
             private readonly IMapper _mapper;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public UserChangePasswordCommandHandler(IUserRepository userRepository, IMediator mediator, IMapper mapper)
+            public UserChangePasswordCommandHandler(IUserRepository userRepository,
+                IMediator mediator,
+                IMapper mapper,
+                IHttpContextAccessor httpContextAccessor)
             {
                 _userRepository = userRepository;
                 _mapper = mapper;
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
             }
 
             [SecuredOperation(Priority = 1)]
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(UserChangePasswordCommand request, CancellationToken cancellationToken)
             {
-                var UserId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
-                var user = await _userRepository.GetAsync(u => u.UserId == UserId);
+                var user = await _userRepository.GetAsync(u => u.UserId == userId);
                 if (user == null)
                     return new ErrorResult(Messages.UserNotFound);
 

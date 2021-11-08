@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
@@ -19,21 +20,22 @@ namespace Business.Handlers.Users.Commands
 {
     public class DeleteUserCommand : IRequest<IResult>
     {
-        public class DeleteAnimalCommandHandler : IRequestHandler<DeleteUserCommand, IResult>
+        public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, IResult>
         {
             private readonly IUserRepository _userRepository;
             private readonly IMapper _mapper;
             private readonly IHttpContextAccessor _httpContextAccessor;
             private readonly IMediator _mediator;
 
-            public DeleteAnimalCommandHandler(IUserRepository userRepository,
+            public DeleteUserCommandHandler(IUserRepository userRepository,
                 IMapper mapper,
-               IMediator mediator)
+               IMediator mediator,
+                IHttpContextAccessor httpContextAccessor)
             {
                 _userRepository = userRepository;
                 _mapper = mapper;
                 _mediator = mediator;
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
             }
 
             [SecuredOperation(Priority = 1)]
@@ -42,10 +44,15 @@ namespace Business.Handlers.Users.Commands
             [TransactionScopeAspectAsync]
             public async Task<IResult> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
             {
-                var UserId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var UserId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
                 var userToDelete = _userRepository.Get(p => p.UserId == UserId);
+                if (userToDelete == null)
+                {
+                    return new ErrorResult(Messages.UserNotFound);
+                }
                 userToDelete.Status = false;
+
 
                 //var result = await _mediator.Send(new GetUserClaimLookupInternalQuery()
                 //{
