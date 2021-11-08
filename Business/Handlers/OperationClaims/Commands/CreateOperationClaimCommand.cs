@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -7,9 +9,6 @@ using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.OperationClaims.Commands
 {
@@ -31,7 +30,7 @@ namespace Business.Handlers.OperationClaims.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(CreateOperationClaimCommand request, CancellationToken cancellationToken)
             {
-                if (!(await IsClaimExists(request.ClaimName)))
+                if (!await IsClaimExists(request.ClaimName))
                     return new ErrorResult(Messages.OperationClaimExists);
 
                 var operationClaim = new OperationClaim
@@ -46,7 +45,7 @@ namespace Business.Handlers.OperationClaims.Commands
 
             private async Task<bool> IsClaimExists(string claimName)
             {
-                return await _operationClaimRepository.GetAsync(x 
+                return await _operationClaimRepository.GetAsync(x
                     => x.Name == claimName) is null;
             }
         }

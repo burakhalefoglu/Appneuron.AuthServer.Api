@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Business.Constants;
 using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserClaims;
@@ -14,16 +18,11 @@ using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
-using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using MediatR;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Authorizations.Commands
 {
@@ -34,14 +33,14 @@ namespace Business.Handlers.Authorizations.Commands
 
         public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, IResult>
         {
-            private readonly IUserRepository _userRepository;
             private readonly IMediator _mediator;
             private readonly ITokenHelper _tokenHelper;
+            private readonly IUserRepository _userRepository;
 
             public RegisterUserCommandHandler(IUserRepository userRepository,
                 IMediator mediator,
-                 ITokenHelper tokenHelper,
-                  ICacheManager cacheManager)
+                ITokenHelper tokenHelper,
+                ICacheManager cacheManager)
             {
                 _userRepository = userRepository;
                 _mediator = mediator;
@@ -67,34 +66,32 @@ namespace Business.Handlers.Authorizations.Commands
                     Name = UserNameCreationHelper.EmailToUsername(request.Email),
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
-                    Status = true,
+                    Status = true
                 };
 
                 var newUser = _userRepository.Add(user);
                 await _userRepository.SaveChangesAsync();
 
 
-                var result = (await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery()
+                var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
                 {
                     GroupId = 1
-                }, cancellationToken));
+                }, cancellationToken);
 
-                List<SelectionItem> selectionItems = result.Data.ToList();
-                List<OperationClaim> operationClaims = new List<OperationClaim>();
+                var selectionItems = result.Data.ToList();
+                var operationClaims = new List<OperationClaim>();
 
                 foreach (var item in selectionItems)
-                {
                     operationClaims.Add(new OperationClaim
                     {
                         Id = Convert.ToInt32(item.Id),
                         Name = item.Label
                     });
-                }
 
                 await _mediator.Send(new CreateUserClaimsInternalCommand
                 {
                     UserId = newUser.UserId,
-                    OperationClaims = operationClaims,
+                    OperationClaims = operationClaims
                 }, cancellationToken);
 
                 var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel

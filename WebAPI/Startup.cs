@@ -1,4 +1,8 @@
-﻿using Business;
+﻿using System;
+using System.Globalization;
+using System.IO;
+using System.Text.Json.Serialization;
+using Business;
 using Business.Helpers;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
@@ -9,39 +13,35 @@ using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace WebAPI
 {
     /// <summary>
-    ///
     /// </summary>
-    public partial class Startup : BusinessStartup
+    public class Startup : BusinessStartup
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="configuration"></param>
         /// <param name="hostEnvironment"></param>
         public Startup(IConfiguration configuration, IHostEnvironment hostEnvironment)
-                        : base(configuration, hostEnvironment)
+            : base(configuration, hostEnvironment)
         {
         }
 
         /// <summary>
-        /// This method gets called by the runtime. Use this method to add services to the container.
+        ///     This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
         /// <remarks>
-        /// It is common to all configurations and must be called. Aspnet core does not call this method because there are other methods.
+        ///     It is common to all configurations and must be called. Aspnet core does not call this method because there are
+        ///     other methods.
         /// </remarks>
         /// <param name="services"></param>
         public override void ConfigureServices(IServiceCollection services)
@@ -49,23 +49,23 @@ namespace WebAPI
             // Business katmanında olan dependency tanımlarının bir metot üzerinden buraya implemente edilmesi.
 
             services.AddControllers()
-                            .AddJsonOptions(options =>
-                            {
-                                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                                options.JsonSerializerOptions.IgnoreNullValues = true;
-                                services.AddControllers().AddNewtonsoftJson(options =>
-                                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-                            });
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    options.JsonSerializerOptions.IgnoreNullValues = true;
+                    services.AddControllers().AddNewtonsoftJson(options =>
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+                });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            var corsPolicies = Configuration.GetSection("CorsPolicies").Get<String[]>();
+            var corsPolicies = Configuration.GetSection("CorsPolicies").Get<string[]>();
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-           builder => builder.WithOrigins(corsPolicies)
-           .AllowAnyMethod()
-           .AllowAnyHeader()
-           .AllowCredentials());
+                    builder => builder.WithOrigins(corsPolicies)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
             });
             services.AddControllers();
 
@@ -75,20 +75,20 @@ namespace WebAPI
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                                            .AddJwtBearer(options =>
-                                            {
-                                                options.TokenValidationParameters = new TokenValidationParameters
-                                                {
-                                                    ValidateIssuer = true,
-                                                    ValidateAudience = true,
-                                                    ValidateLifetime = true,
-                                                    ValidIssuer = tokenOptions.Issuer,
-                                                    ValidAudiences = tokenOptions.Audience,
-                                                    ValidateIssuerSigningKey = true,
-                                                    IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
-                                                    ClockSkew = TimeSpan.Zero
-                                                };
-                                            });
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidIssuer = tokenOptions.Issuer,
+                        ValidAudiences = tokenOptions.Audience,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
             services.AddSwaggerGen(c =>
             {
                 c.IncludeXmlComments(Path.ChangeExtension(typeof(Startup).Assembly.Location, ".xml"));
@@ -102,7 +102,7 @@ namespace WebAPI
         }
 
         /// <summary>
-        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        ///     This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
@@ -124,6 +124,7 @@ namespace WebAPI
                 case ApplicationMode.Production:
                     break;
             }
+
             if (configurationManager.Mode == ApplicationMode.Development)
             {
                 app.UseDbFakeDataCreator();
@@ -139,10 +140,7 @@ namespace WebAPI
 
             app.UseSwagger();
 
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture");
-            });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture"); });
             app.UseHttpsRedirection();
 
             app.UseCors("CorsPolicy");
@@ -156,7 +154,7 @@ namespace WebAPI
             // Make Turkish your default language. It shouldn't change according to the server.
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
-                DefaultRequestCulture = new RequestCulture("tr-TR"),
+                DefaultRequestCulture = new RequestCulture("tr-TR")
             });
 
             var cultureInfo = new CultureInfo("tr-TR");
@@ -167,10 +165,7 @@ namespace WebAPI
 
             app.UseStaticFiles();
 
-            app.UseEndpoints(endpoints =>
-            {                
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

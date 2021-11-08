@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -6,8 +8,6 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.UserClaims.Commands
 {
@@ -30,10 +30,7 @@ namespace Business.Handlers.UserClaims.Commands
             public async Task<IResult> Handle(DeleteUserClaimCommand request, CancellationToken cancellationToken)
             {
                 var entityToDelete = await _userClaimRepository.GetAsync(x => x.UsersId == request.Id);
-                if (entityToDelete == null)
-                {
-                    return new ErrorResult(Messages.UserClaimNotFound);
-                }
+                if (entityToDelete == null) return new ErrorResult(Messages.UserClaimNotFound);
                 _userClaimRepository.Delete(entityToDelete);
                 await _userClaimRepository.SaveChangesAsync();
 

@@ -7,37 +7,23 @@ using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.OperationClaims.Commands;
 using Business.Handlers.OperationClaims.Queries;
-using Core.CrossCuttingConcerns.Caching;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using FluentAssertions;
-using MediatR;
-using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
-using static  Business.Handlers.OperationClaims.Commands.CreateOperationClaimCommand;
-using static  Business.Handlers.OperationClaims.Commands.DeleteOperationClaimCommand;
-using static  Business.Handlers.OperationClaims.Commands.UpdateOperationClaimCommand;
-using static  Business.Handlers.OperationClaims.Queries.GetOperationClaimLookupQuery;
-using static  Business.Handlers.OperationClaims.Queries.GetOperationClaimQuery;
-using static  Business.Handlers.OperationClaims.Queries.GetOperationClaimsQuery;
+using static Business.Handlers.OperationClaims.Commands.CreateOperationClaimCommand;
+using static Business.Handlers.OperationClaims.Commands.DeleteOperationClaimCommand;
+using static Business.Handlers.OperationClaims.Commands.UpdateOperationClaimCommand;
+using static Business.Handlers.OperationClaims.Queries.GetOperationClaimLookupQuery;
+using static Business.Handlers.OperationClaims.Queries.GetOperationClaimQuery;
+using static Business.Handlers.OperationClaims.Queries.GetOperationClaimsQuery;
 
 namespace Tests.Business.Handlers
 {
     [TestFixture]
     public class OperationClaimHandlerTests
     {
-        private Mock<IOperationClaimRepository> _operationClaimRepository;
-
-        private CreateOperationClaimCommandHandler _createOperationClaimCommandHandler;
-        private UpdateOperationClaimCommandHandler _updateOperationClaimCommandHandler;
-        private DeleteOperationClaimCommandHandler _deleteOperationClaimCommandHandler;
-
-        private GetOperationClaimLookupQueryHandler _getOperationClaimLookupQueryHandler;
-        private GetOperationClaimQueryHandler _getOperationClaimQueryHandler;
-        private GetOperationClaimsQueryHandler _getOperationClaimsQueryHandler;
-
-
         [SetUp]
         public void Setup()
         {
@@ -55,6 +41,16 @@ namespace Tests.Business.Handlers
             _getOperationClaimsQueryHandler = new GetOperationClaimsQueryHandler(_operationClaimRepository.Object);
         }
 
+        private Mock<IOperationClaimRepository> _operationClaimRepository;
+
+        private CreateOperationClaimCommandHandler _createOperationClaimCommandHandler;
+        private UpdateOperationClaimCommandHandler _updateOperationClaimCommandHandler;
+        private DeleteOperationClaimCommandHandler _deleteOperationClaimCommandHandler;
+
+        private GetOperationClaimLookupQueryHandler _getOperationClaimLookupQueryHandler;
+        private GetOperationClaimQueryHandler _getOperationClaimQueryHandler;
+        private GetOperationClaimsQueryHandler _getOperationClaimsQueryHandler;
+
         [Test]
         public async Task Handler_CreateOperationClaim_ClaimExists()
         {
@@ -65,12 +61,11 @@ namespace Tests.Business.Handlers
 
             _operationClaimRepository.Setup(x =>
                     x.GetAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
-                .Returns(Task.FromResult<OperationClaim>(new OperationClaim()));
+                .Returns(Task.FromResult(new OperationClaim()));
 
             var result = await _createOperationClaimCommandHandler.Handle(command, new CancellationToken());
-           result.Success.Should().BeFalse();
-           result.Message.Should().Be(Messages.OperationClaimExists);
-
+            result.Success.Should().BeFalse();
+            result.Message.Should().Be(Messages.OperationClaimExists);
         }
 
 
@@ -92,14 +87,13 @@ namespace Tests.Business.Handlers
             var result = await _createOperationClaimCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Added);
-
         }
 
 
         [Test]
         public async Task Handler_UpdateOperationClaim_OperationClaimNotFound()
         {
-            var command = new UpdateOperationClaimCommand()
+            var command = new UpdateOperationClaimCommand
             {
                 Alias = "Test",
                 Description = "Test",
@@ -110,20 +104,19 @@ namespace Tests.Business.Handlers
                     x.GetAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
                 .Returns(Task.FromResult<OperationClaim>(null));
 
-            _operationClaimRepository.Setup(x => 
+            _operationClaimRepository.Setup(x =>
                 x.Update(It.IsAny<OperationClaim>()));
 
 
             var result = await _updateOperationClaimCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.OperationClaimNotFound);
+        }
 
-        } 
-        
         [Test]
         public async Task Handler_UpdateOperationClaim_Success()
         {
-            var command = new UpdateOperationClaimCommand()
+            var command = new UpdateOperationClaimCommand
             {
                 Alias = "Test",
                 Description = "Test",
@@ -132,19 +125,18 @@ namespace Tests.Business.Handlers
 
             _operationClaimRepository.Setup(x =>
                     x.GetAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
-                .Returns(Task.FromResult<OperationClaim>(new OperationClaim()));
+                .Returns(Task.FromResult(new OperationClaim()));
 
-            _operationClaimRepository.Setup(x => 
+            _operationClaimRepository.Setup(x =>
                 x.Update(It.IsAny<OperationClaim>()));
 
 
             var result = await _updateOperationClaimCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Updated);
-
         }
-        
-        
+
+
         [Test]
         public async Task Handler_DeleteOperationClaim_Success()
         {
@@ -155,16 +147,15 @@ namespace Tests.Business.Handlers
 
             _operationClaimRepository.Setup(x =>
                     x.GetAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
-                .Returns(Task.FromResult<OperationClaim>(new OperationClaim()));
+                .Returns(Task.FromResult(new OperationClaim()));
 
-            _operationClaimRepository.Setup(x => 
+            _operationClaimRepository.Setup(x =>
                 x.Update(It.IsAny<OperationClaim>()));
 
 
             var result = await _deleteOperationClaimCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Deleted);
-
         }
 
 
@@ -187,7 +178,6 @@ namespace Tests.Business.Handlers
             var result = await _deleteOperationClaimCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.OperationClaimNotFound);
-
         }
 
 
@@ -204,7 +194,6 @@ namespace Tests.Business.Handlers
             var result = await _getOperationClaimLookupQueryHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.OperationClaimNotFound);
-
         }
 
 
@@ -218,7 +207,7 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult<IEnumerable<OperationClaim>>(
                     new List<OperationClaim>
                     {
-                        new OperationClaim
+                        new()
                         {
                             Alias = "Test",
                             Description = "Test",
@@ -228,7 +217,7 @@ namespace Tests.Business.Handlers
                             UserClaims = new List<UserClaim>()
                         },
 
-                        new OperationClaim
+                        new()
                         {
                             Alias = "Test1",
                             Description = "Test1",
@@ -242,7 +231,6 @@ namespace Tests.Business.Handlers
             var result = await _getOperationClaimLookupQueryHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Data.Count().Should().BeGreaterThan(1);
-
         }
 
         [Test]
@@ -252,7 +240,7 @@ namespace Tests.Business.Handlers
 
             _operationClaimRepository.Setup(x =>
                     x.GetAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
-                .Returns(Task.FromResult<OperationClaim>(
+                .Returns(Task.FromResult(
                     new OperationClaim
                     {
                         Alias = "Test",
@@ -278,7 +266,7 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult<IEnumerable<OperationClaim>>(
                     new List<OperationClaim>
                     {
-                        new OperationClaim
+                        new()
                         {
                             Alias = "Test",
                             Description = "Test",
@@ -288,7 +276,7 @@ namespace Tests.Business.Handlers
                             UserClaims = new List<UserClaim>()
                         },
 
-                        new OperationClaim
+                        new()
                         {
                             Alias = "Test1",
                             Description = "Test1",
@@ -304,6 +292,5 @@ namespace Tests.Business.Handlers
             result.Success.Should().BeTrue();
             result.Data.Count().Should().BeGreaterThan(1);
         }
-
     }
 }

@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.Translates.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -9,14 +12,10 @@ using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Translates.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateTranslateCommand : IRequest<IResult>
     {
@@ -26,8 +25,8 @@ namespace Business.Handlers.Translates.Commands
 
         public class CreateTranslateCommandHandler : IRequestHandler<CreateTranslateCommand, IResult>
         {
-            private readonly ITranslateRepository _translateRepository;
             private readonly IMediator _mediator;
+            private readonly ITranslateRepository _translateRepository;
 
             public CreateTranslateCommandHandler(ITranslateRepository translateRepository, IMediator mediator)
             {
@@ -41,7 +40,8 @@ namespace Business.Handlers.Translates.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(CreateTranslateCommand request, CancellationToken cancellationToken)
             {
-                var isThereTranslateRecord = _translateRepository.Query().Any(u => u.LangId == request.LangId && u.Code == request.Code);
+                var isThereTranslateRecord = _translateRepository.Query()
+                    .Any(u => u.LangId == request.LangId && u.Code == request.Code);
 
                 if (isThereTranslateRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -50,7 +50,7 @@ namespace Business.Handlers.Translates.Commands
                 {
                     LangId = request.LangId,
                     Value = request.Value,
-                    Code = request.Code,
+                    Code = request.Code
                 };
 
                 _translateRepository.Add(addedTranslate);

@@ -1,23 +1,22 @@
-﻿using Core.Entities.ClaimModels;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Core.Entities.ClaimModels;
 using Core.Extensions;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace Core.Utilities.Security.Jwt
 {
     public class JwtHelper : ITokenHelper
     {
-        public IConfiguration Configuration { get; }
+        private readonly ClientOptions _clientOptions;
+        private readonly CustomerOptions _customerOptions;
         private readonly OperationClaimCrypto _operationClaimCrypto;
         private readonly TokenOptions _tokenOptions;
-        private readonly CustomerOptions _customerOptions;
-        private readonly ClientOptions _clientOptions;
 
         private DateTime _accessTokenExpiration;
 
@@ -30,16 +29,10 @@ namespace Core.Utilities.Security.Jwt
             _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
         }
 
-        public string DecodeToken(string input)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            if (input.StartsWith("Bearer "))
-                input = input.Substring("Bearer ".Length);
-            return handler.ReadJwtToken(input).ToString();
-        }
+        public IConfiguration Configuration { get; }
 
         public TAccessToken CreateClientToken<TAccessToken>(ClientClaimModel clientClaimModel)
-          where TAccessToken : IAccessToken, new()
+            where TAccessToken : IAccessToken, new()
         {
             _accessTokenExpiration = DateTime.Now.AddMinutes(_clientOptions.AccessTokenExpiration);
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
@@ -48,7 +41,7 @@ namespace Core.Utilities.Security.Jwt
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwt);
 
-            return new TAccessToken()
+            return new TAccessToken
             {
                 Token = token,
                 Expiration = _accessTokenExpiration
@@ -65,72 +58,72 @@ namespace Core.Utilities.Security.Jwt
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwt);
 
-            return new TAccessToken()
+            return new TAccessToken
             {
                 Token = token,
                 Expiration = _accessTokenExpiration
             };
         }
 
-        private JwtSecurityToken CreateCustomerJwtSecurityToken(TokenOptions tokenOptions, UserClaimModel userClaimModel,
-                SigningCredentials signingCredentials, List<string> ProjectIdList)
+        public string DecodeToken(string input)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            if (input.StartsWith("Bearer "))
+                input = input.Substring("Bearer ".Length);
+            return handler.ReadJwtToken(input).ToString();
+        }
+
+        private JwtSecurityToken CreateCustomerJwtSecurityToken(TokenOptions tokenOptions,
+            UserClaimModel userClaimModel,
+            SigningCredentials signingCredentials, List<string> ProjectIdList)
         {
             var jwt = new JwtSecurityToken(
-
-                    issuer: tokenOptions.Issuer,
-                    audience: _customerOptions.Audience,
-                    expires: _accessTokenExpiration,
-                    notBefore: DateTime.Now,
-                    claims: SetUserClaims(userClaimModel, ProjectIdList),
-                    signingCredentials: signingCredentials
+                tokenOptions.Issuer,
+                _customerOptions.Audience,
+                expires: _accessTokenExpiration,
+                notBefore: DateTime.Now,
+                claims: SetUserClaims(userClaimModel, ProjectIdList),
+                signingCredentials: signingCredentials
             );
             return jwt;
         }
 
         private IEnumerable<Claim> SetUserClaims(UserClaimModel userClaimModel, List<string> ProjectIdList)
         {
-            for (int i = 0; i < userClaimModel.OperationClaims.Length; i++)
-            {
+            for (var i = 0; i < userClaimModel.OperationClaims.Length; i++)
                 userClaimModel.OperationClaims[i] =
                     SecurityKeyHelper.EncryptString(_operationClaimCrypto.Key,
-                    userClaimModel.OperationClaims[i]);
-            }
+                        userClaimModel.OperationClaims[i]);
 
             var claims = new List<Claim>();
             claims.AddNameIdentifier(userClaimModel.UserId.ToString());
             claims.AddRoles(userClaimModel.OperationClaims);
             if (ProjectIdList.Count > 0)
-                ProjectIdList.ForEach(x =>
-                {
-                    claims.AddProjectId(x);
-
-                });
+                ProjectIdList.ForEach(x => { claims.AddProjectId(x); });
             return claims;
         }
 
-        private JwtSecurityToken CreateClientJwtSecurityToken(TokenOptions tokenOptions, ClientClaimModel clientClaimModel,
-               SigningCredentials signingCredentials)
+        private JwtSecurityToken CreateClientJwtSecurityToken(TokenOptions tokenOptions,
+            ClientClaimModel clientClaimModel,
+            SigningCredentials signingCredentials)
         {
             var jwt = new JwtSecurityToken(
-
-                    issuer: tokenOptions.Issuer,
-                    audience: _clientOptions.Audience,
-                    expires: _accessTokenExpiration,
-                    notBefore: DateTime.Now,
-                    claims: SetClaimsforClient(clientClaimModel),
-                    signingCredentials: signingCredentials
+                tokenOptions.Issuer,
+                _clientOptions.Audience,
+                expires: _accessTokenExpiration,
+                notBefore: DateTime.Now,
+                claims: SetClaimsforClient(clientClaimModel),
+                signingCredentials: signingCredentials
             );
             return jwt;
         }
 
         private IEnumerable<Claim> SetClaimsforClient(ClientClaimModel clientClaimModel)
         {
-            for (int i = 0; i < clientClaimModel.OperationClaims.Length; i++)
-            {
+            for (var i = 0; i < clientClaimModel.OperationClaims.Length; i++)
                 clientClaimModel.OperationClaims[i] =
                     SecurityKeyHelper.EncryptString(_operationClaimCrypto.Key,
-                    clientClaimModel.OperationClaims[i]);
-            }
+                        clientClaimModel.OperationClaims[i]);
 
             var claims = new List<Claim>();
             claims.AddNameIdentifier(clientClaimModel.ClientId);
@@ -139,7 +132,5 @@ namespace Core.Utilities.Security.Jwt
 
             return claims;
         }
-
-
     }
 }

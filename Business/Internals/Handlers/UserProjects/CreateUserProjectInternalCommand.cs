@@ -1,4 +1,7 @@
-﻿using Business.Constants;
+﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.Constants;
 using Business.Handlers.UserProjects.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -8,9 +11,6 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Fakes.Handlers.UserProjects
 {
@@ -19,12 +19,14 @@ namespace Business.Fakes.Handlers.UserProjects
         public int UserId { get; set; }
         public string ProjectKey { get; set; }
 
-        public class CreateUserProjectInternalCommandHandler : IRequestHandler<CreateUserProjectInternalCommand, IResult>
+        public class
+            CreateUserProjectInternalCommandHandler : IRequestHandler<CreateUserProjectInternalCommand, IResult>
         {
-            private readonly IUserProjectRepository _userProjectRepository;
             private readonly IMediator _mediator;
+            private readonly IUserProjectRepository _userProjectRepository;
 
-            public CreateUserProjectInternalCommandHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
+            public CreateUserProjectInternalCommandHandler(IUserProjectRepository userProjectRepository,
+                IMediator mediator)
             {
                 _userProjectRepository = userProjectRepository;
                 _mediator = mediator;
@@ -33,9 +35,11 @@ namespace Business.Fakes.Handlers.UserProjects
             [ValidationAspect(typeof(CreateUserProjectValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
-            public async Task<IResult> Handle(CreateUserProjectInternalCommand request, CancellationToken cancellationToken)
+            public async Task<IResult> Handle(CreateUserProjectInternalCommand request,
+                CancellationToken cancellationToken)
             {
-                var isThereUserProjectRecord = _userProjectRepository.Query().Any(u => u.ProjectKey == request.ProjectKey);
+                var isThereUserProjectRecord =
+                    _userProjectRepository.Query().Any(u => u.ProjectKey == request.ProjectKey);
 
                 if (isThereUserProjectRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -43,7 +47,7 @@ namespace Business.Fakes.Handlers.UserProjects
                 var addedUserProject = new UserProject
                 {
                     UserId = request.UserId,
-                    ProjectKey = request.ProjectKey,
+                    ProjectKey = request.ProjectKey
                 };
 
                 _userProjectRepository.Add(addedUserProject);

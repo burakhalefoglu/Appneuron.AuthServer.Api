@@ -1,4 +1,7 @@
-﻿using Business.Constants;
+﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.Constants;
 using Business.Handlers.Languages.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
@@ -6,14 +9,10 @@ using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Fakes.Handlers.Languages
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateLanguageInternalCommand : IRequest<IResult>
     {
@@ -33,7 +32,8 @@ namespace Business.Fakes.Handlers.Languages
 
             [ValidationAspect(typeof(CreateLanguageValidator), Priority = 2)]
             [CacheRemoveAspect("Get")]
-            public async Task<IResult> Handle(CreateLanguageInternalCommand request, CancellationToken cancellationToken)
+            public async Task<IResult> Handle(CreateLanguageInternalCommand request,
+                CancellationToken cancellationToken)
             {
                 var isThereLanguageRecord = _languageRepository.Query().Any(u => u.Name == request.Name);
 
@@ -43,7 +43,7 @@ namespace Business.Fakes.Handlers.Languages
                 var addedLanguage = new Language
                 {
                     Name = request.Name,
-                    Code = request.Code,
+                    Code = request.Code
                 };
 
                 _languageRepository.Add(addedLanguage);

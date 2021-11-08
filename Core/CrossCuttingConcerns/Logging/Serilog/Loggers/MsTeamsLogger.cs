@@ -1,9 +1,10 @@
-﻿using Core.CrossCuttingConcerns.Logging.Serilog.ConfigurationModels;
+﻿using System;
+using Core.CrossCuttingConcerns.Logging.Serilog.ConfigurationModels;
 using Core.Utilities.IoC;
+using Core.Utilities.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using System;
 
 namespace Core.CrossCuttingConcerns.Logging.Serilog.Loggers
 {
@@ -14,11 +15,11 @@ namespace Core.CrossCuttingConcerns.Logging.Serilog.Loggers
             var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
 
             var logConfig = configuration.GetSection("SeriLogConfigurations:MsTeamsConfiguration")
-                .Get<MsTeamsConfiguration>() ?? throw new Exception(Utilities.Messages.SerilogMessages.NullOptionsMessage);
+                .Get<MsTeamsConfiguration>() ?? throw new Exception(SerilogMessages.NullOptionsMessage);
 
             Logger = new LoggerConfiguration()
-                    .WriteTo.MicrosoftTeams(logConfig.ChannelHookAddress)
-                    .CreateLogger();
+                .WriteTo.MicrosoftTeams(logConfig.ChannelHookAddress)
+                .CreateLogger();
         }
     }
 }

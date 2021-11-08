@@ -1,7 +1,7 @@
-﻿using Core.Entities.Concrete;
-using Core.Utilities.Security.Hashing;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Core.Entities.Concrete;
+using Core.Utilities.Security.Hashing;
 
 namespace Tests.Helpers
 {
@@ -11,7 +11,7 @@ namespace Tests.Helpers
         {
             HashingHelper.CreatePasswordHash("123456", out var passwordSalt, out var passwordHash);
 
-            return new User()
+            return new User
             {
                 UserId = 1,
                 Email = "test@test.com",
@@ -31,7 +31,7 @@ namespace Tests.Helpers
 
             for (var i = 1; i <= 5; i++)
             {
-                var user = new User()
+                var user = new User
                 {
                     UserId = i,
                     Email = "test@test.com",

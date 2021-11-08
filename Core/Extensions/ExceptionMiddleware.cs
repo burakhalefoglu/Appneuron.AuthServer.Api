@@ -1,10 +1,10 @@
-﻿using Core.Utilities.Messages;
-using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Net;
 using System.Security;
 using System.Threading.Tasks;
+using Core.Utilities.Messages;
+using FluentValidation;
+using Microsoft.AspNetCore.Http;
 
 namespace Core.Extensions
 {
@@ -38,25 +38,15 @@ namespace Core.Extensions
             message = e.Message;
 
             if (e.GetType() == typeof(ValidationException))
-            {
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            }
             else if (e.GetType() == typeof(ApplicationException))
-            {
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            }
             else if (e.GetType() == typeof(UnauthorizedAccessException))
-            {
                 httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            }
             else if (e.GetType() == typeof(SecurityException))
-            {
                 httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            }
             else
-            {
                 message = ExceptionMessage.InternalServerError;
-            }
 
             await httpContext.Response.WriteAsync(message);
         }

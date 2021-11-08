@@ -1,22 +1,14 @@
-﻿using ServiceStack.Redis;
-using System;
+﻿using System;
+using ServiceStack.Redis;
 
 namespace Core.CrossCuttingConcerns.Caching.Redis
 {
     /// <summary>
-    /// RedisCacheManager
+    ///     RedisCacheManager
     /// </summary>
     public class RedisCacheManager : ICacheManager
     {
         private readonly RedisEndpoint _redisEndpoint;
-
-        private void RedisInvoker(Action<RedisClient> redisAction)
-        {
-            using (var client = new RedisClient(_redisEndpoint))
-            {
-                redisAction.Invoke(client);
-            }
-        }
 
         public RedisCacheManager()
         {
@@ -62,6 +54,14 @@ namespace Core.CrossCuttingConcerns.Caching.Redis
         public void RemoveByPattern(string pattern)
         {
             RedisInvoker(x => x.RemoveByPattern(pattern));
+        }
+
+        private void RedisInvoker(Action<RedisClient> redisAction)
+        {
+            using (var client = new RedisClient(_redisEndpoint))
+            {
+                redisAction.Invoke(client);
+            }
         }
 
         public void Clear()

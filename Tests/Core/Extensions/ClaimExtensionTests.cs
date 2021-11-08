@@ -1,25 +1,25 @@
-﻿using Core.Extensions;
-using FluentAssertions;
-using NUnit.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using Core.Extensions;
+using FluentAssertions;
+using NUnit.Framework;
 
 namespace Tests.Core.Extensions
 {
     [TestFixture]
     public class ClaimExtensionTests
     {
-        private List<Claim> _claimList;
-        private string[] _roles;
-
         [SetUp]
         public void Setup()
         {
             _claimList = new List<Claim>();
             _roles = new string[3] { "Admin", "User", "MasterUser" };
         }
+
+        private List<Claim> _claimList;
+        private string[] _roles;
 
         [Test]
         [TestCase("test@test.com")]

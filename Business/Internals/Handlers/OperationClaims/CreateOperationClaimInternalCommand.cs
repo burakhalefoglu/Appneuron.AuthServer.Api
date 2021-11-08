@@ -1,11 +1,11 @@
-﻿using Business.Constants;
+﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.Constants;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Fakes.Handlers.OperationClaims
 {
@@ -13,7 +13,8 @@ namespace Business.Fakes.Handlers.OperationClaims
     {
         public string ClaimName { get; set; }
 
-        public class CreateOperationClaimInternalCommandHandler : IRequestHandler<CreateOperationClaimInternalCommand, IResult>
+        public class
+            CreateOperationClaimInternalCommandHandler : IRequestHandler<CreateOperationClaimInternalCommand, IResult>
         {
             private readonly IOperationClaimRepository _operationClaimRepository;
 
@@ -22,7 +23,8 @@ namespace Business.Fakes.Handlers.OperationClaims
                 _operationClaimRepository = operationClaimRepository;
             }
 
-            public async Task<IResult> Handle(CreateOperationClaimInternalCommand request, CancellationToken cancellationToken)
+            public async Task<IResult> Handle(CreateOperationClaimInternalCommand request,
+                CancellationToken cancellationToken)
             {
                 if (IsClaimExists(request.ClaimName))
                     return new ErrorResult(Messages.OperationClaimExists);

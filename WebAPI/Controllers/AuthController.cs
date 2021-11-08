@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Threading.Tasks;
 using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
-using Business.Handlers.Clients.Commands;
 using Business.Handlers.Users.Commands;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
@@ -9,12 +8,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
     /// <summary>
-    /// Make it Authorization operations
+    ///     Make it Authorization operations
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -23,7 +21,7 @@ namespace WebAPI.Controllers
         private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Dependency injection is provided by constructor injection.
+        ///     Dependency injection is provided by constructor injection.
         /// </summary>
         /// <param name="configuration"></param>
         public AuthController(IConfiguration configuration)
@@ -32,7 +30,7 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// Make it User Login operations
+        ///     Make it User Login operations
         /// </summary>
         /// <param name="loginModel"></param>
         /// <returns></returns>
@@ -46,16 +44,13 @@ namespace WebAPI.Controllers
         {
             var result = await Mediator.Send(loginModel);
 
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return Unauthorized(result);
         }
 
         /// <summary>
-        ///  Make it User Register operations
+        ///     Make it User Register operations
         /// </summary>
         /// <param name="createUser"></param>
         /// <returns></returns>
@@ -69,19 +64,16 @@ namespace WebAPI.Controllers
         {
             var result = await Mediator.Send(createUser);
 
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
             return Unauthorized(result);
         }
 
 
-        ///<summary>
-        ///Make it Forgot Password operations
-        ///</summary>
-        ///<return></return>
-        ///<response code="200"></response>
+        /// <summary>
+        ///     Make it Forgot Password operations
+        /// </summary>
+        /// <return></return>
+        /// <response code="200"></response>
         [AllowAnonymous]
         [Consumes("application/json")]
         [Produces("application/json", "text/plain")]
@@ -92,19 +84,16 @@ namespace WebAPI.Controllers
         {
             var result = await Mediator.Send(forgotPassword);
 
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }
 
-        ///<summary>
-        ///Make it Reset Password operations
-        ///</summary>
-        ///<return></return>
-        ///<response code="200"></response>
+        /// <summary>
+        ///     Make it Reset Password operations
+        /// </summary>
+        /// <return></return>
+        /// <response code="200"></response>
         [AllowAnonymous]
         [Consumes("application/json")]
         [Produces("application/json", "text/plain")]
@@ -115,16 +104,13 @@ namespace WebAPI.Controllers
         {
             var result = await Mediator.Send(resetPassword);
 
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }
 
         /// <summary>
-        /// Make it Change Password operation
+        ///     Make it Change Password operation
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
@@ -137,10 +123,7 @@ namespace WebAPI.Controllers
         {
             var result = await Mediator.Send(command);
 
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }

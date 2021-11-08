@@ -1,5 +1,6 @@
-﻿using Castle.DynamicProxy;
+﻿using System;
 using System.Threading.Tasks;
+using Castle.DynamicProxy;
 
 namespace Core.Utilities.Interceptors
 {
@@ -13,7 +14,7 @@ namespace Core.Utilities.Interceptors
         {
         }
 
-        protected virtual void OnException(IInvocation invocation, System.Exception e)
+        protected virtual void OnException(IInvocation invocation, Exception e)
         {
         }
 
@@ -32,7 +33,7 @@ namespace Core.Utilities.Interceptors
                 if (result != null)
                     result.Wait();
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 isSuccess = false;
                 OnException(invocation, e);
@@ -40,11 +41,9 @@ namespace Core.Utilities.Interceptors
             }
             finally
             {
-                if (isSuccess)
-                {
-                    OnSuccess(invocation);
-                }
+                if (isSuccess) OnSuccess(invocation);
             }
+
             OnAfter(invocation);
         }
     }

@@ -1,27 +1,27 @@
-﻿using Business.Handlers.Users.Commands;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Business.Handlers.Users.Commands;
 using Business.Handlers.Users.Queries;
 using Core.Entities.Dtos;
+using Core.Utilities.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Core.Utilities.Results;
 
 namespace WebAPI.Controllers
 {
     /// <summary>
-    /// If controller methods will not be Authorize, [AllowAnonymous] is used.
+    ///     If controller methods will not be Authorize, [AllowAnonymous] is used.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : BaseApiController
     {
-        ///<summary>
-        ///List Users
-        ///</summary>
-        ///<remarks>bla bla bla Users</remarks>
-        ///<return>Users List</return>
-        ///<response code="200"></response>
+        /// <summary>
+        ///     List Users
+        /// </summary>
+        /// <remarks>bla bla bla Users</remarks>
+        /// <return>Users List</return>
+        /// <response code="200"></response>
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<UserDto>>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
@@ -29,20 +29,17 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetList()
         {
             var result = await Mediator.Send(new GetUsersQuery());
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }
 
-        ///<summary>
-        ///User Lookup
-        ///</summary>
-        ///<remarks>bla bla bla Users</remarks>
-        ///<return>Users List</return>
-        ///<response code="200"></response>
+        /// <summary>
+        ///     User Lookup
+        /// </summary>
+        /// <remarks>bla bla bla Users</remarks>
+        /// <return>Users List</return>
+        /// <response code="200"></response>
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<SelectionItem>>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
@@ -50,37 +47,31 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetUserLookup()
         {
             var result = await Mediator.Send(new GetUserLookupQuery());
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }
 
-        ///<summary>
-        ///It brings the details according to its id.
-        ///</summary>
-        ///<remarks>bla bla bla </remarks>
-        ///<return>Users List</return>
-        ///<response code="200"></response>
+        /// <summary>
+        ///     It brings the details according to its id.
+        /// </summary>
+        /// <remarks>bla bla bla </remarks>
+        /// <return>Users List</return>
+        /// <response code="200"></response>
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpGet]
         public async Task<IActionResult> GetById()
         {
-            var result = await Mediator.Send(new GetUserQuery { });
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            var result = await Mediator.Send(new GetUserQuery());
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }
 
         /// <summary>
-        /// Add User.
+        ///     Add User.
         /// </summary>
         /// <param name="createUser"></param>
         /// <returns></returns>
@@ -92,16 +83,13 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Add([FromBody] CreateUserCommand createUser)
         {
             var result = await Mediator.Send(createUser);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }
 
         /// <summary>
-        /// Update User.
+        ///     Update User.
         /// </summary>
         /// <param name="updateUser"></param>
         /// <returns></returns>
@@ -113,16 +101,13 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Update([FromBody] UpdateUserCommand updateUser)
         {
             var result = await Mediator.Send(updateUser);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }
 
         /// <summary>
-        /// Delete User.
+        ///     Delete User.
         /// </summary>
         /// <param name="deleteUser"></param>
         /// <returns></returns>
@@ -134,10 +119,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Delete([FromBody] DeleteUserCommand deleteUser)
         {
             var result = await Mediator.Send(deleteUser);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }

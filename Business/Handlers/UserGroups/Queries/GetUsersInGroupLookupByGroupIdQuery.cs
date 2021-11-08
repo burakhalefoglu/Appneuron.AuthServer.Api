@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
@@ -6,9 +9,6 @@ using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.UserGroups.Queries
 {
@@ -16,7 +16,8 @@ namespace Business.Handlers.UserGroups.Queries
     {
         public int GroupId { get; set; }
 
-        public class GetUsersInGroupLookupByGroupIdQueryHandler : IRequestHandler<GetUsersInGroupLookupByGroupIdQuery, IDataResult<IEnumerable<SelectionItem>>>
+        public class GetUsersInGroupLookupByGroupIdQueryHandler : IRequestHandler<GetUsersInGroupLookupByGroupIdQuery,
+            IDataResult<IEnumerable<SelectionItem>>>
         {
             private readonly IUserGroupRepository _userGroupRepository;
 
@@ -28,11 +29,12 @@ namespace Business.Handlers.UserGroups.Queries
             [SecuredOperation(Priority = 1)]
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
-            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetUsersInGroupLookupByGroupIdQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(
+                GetUsersInGroupLookupByGroupIdQuery request, CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<SelectionItem>>
-                                (await _userGroupRepository
-                                    .GetUsersInGroupSelectedListByGroupId(request.GroupId));
+                (await _userGroupRepository
+                    .GetUsersInGroupSelectedListByGroupId(request.GroupId));
             }
         }
     }

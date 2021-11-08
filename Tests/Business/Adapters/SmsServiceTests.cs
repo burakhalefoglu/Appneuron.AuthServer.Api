@@ -9,15 +9,15 @@ namespace Tests.Business.Adapters
     [TestFixture]
     public class SmsServiceTests
     {
-        private Mock<ISmsService> _smsService;
-        private SmsServiceHelper _smsServiceHelper;
-
         [SetUp]
         public void Setup()
         {
             _smsService = new Mock<ISmsService>();
             _smsServiceHelper = new SmsServiceHelper(_smsService.Object);
         }
+
+        private Mock<ISmsService> _smsService;
+        private SmsServiceHelper _smsServiceHelper;
 
         [Test]
         [TestCase("11111", "test", "123456")]

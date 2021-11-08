@@ -1,9 +1,9 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.Extensions.Configuration;
-using MimeKit;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using MailKit.Net.Smtp;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
 
 namespace Core.Utilities.Mail
 {
@@ -31,9 +31,10 @@ namespace Core.Utilities.Mail
             {
                 emailClient.Connect(_configuration.GetSection("EmailConfiguration").GetSection("SmtpServer").Value,
                     Convert.ToInt32(_configuration.GetSection("EmailConfiguration").GetSection("SmtpPort").Value),
-                   true);
+                    true);
                 emailClient.AuthenticationMechanisms.Remove("XOAUTH2");
-                emailClient.Authenticate(_configuration.GetSection("EmailConfiguration").GetSection("SmtpUsername").Value,
+                emailClient.Authenticate(
+                    _configuration.GetSection("EmailConfiguration").GetSection("SmtpUsername").Value,
                     _configuration.GetSection("EmailConfiguration").GetSection("SmtpPassword").Value);
                 await emailClient.SendAsync(message);
                 emailClient.Disconnect(true);

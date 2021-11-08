@@ -1,22 +1,21 @@
-﻿using Core.Entities;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Core.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.DataAccess.EntityFramework
 {
     /// <summary>
-    ///
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TContext"></typeparam>
     public class EfEntityRepositoryBase<TEntity, TContext>
-            : IEntityRepository<TEntity>
-            where TEntity : class, IEntity
-            where TContext : DbContext
+        : IEntityRepository<TEntity>
+        where TEntity : class, IEntity
+        where TContext : DbContext
     {
         protected readonly TContext Context;
 
@@ -53,13 +52,16 @@ namespace Core.DataAccess.EntityFramework
 
         public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> expression = null)
         {
-            return expression == null ? Context.Set<TEntity>().AsNoTracking() : Context.Set<TEntity>().Where(expression).AsNoTracking();
+            return expression == null
+                ? Context.Set<TEntity>().AsNoTracking()
+                : Context.Set<TEntity>().Where(expression).AsNoTracking();
         }
 
         public async Task<IEnumerable<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> expression = null)
         {
-            return expression == null ? await Context.Set<TEntity>().ToListAsync() :
-                 await Context.Set<TEntity>().Where(expression).ToListAsync();
+            return expression == null
+                ? await Context.Set<TEntity>().ToListAsync()
+                : await Context.Set<TEntity>().Where(expression).ToListAsync();
         }
 
         public int SaveChanges()
@@ -83,14 +85,15 @@ namespace Core.DataAccess.EntityFramework
         }
 
         /// <summary>
-        /// Transactional operations is prohibited when working with InMemoryDb!
+        ///     Transactional operations is prohibited when working with InMemoryDb!
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="action"></param>
         /// <param name="successAction"></param>
         /// <param name="exceptionAction"></param>
         /// <returns></returns>
-        public TResult InTransaction<TResult>(Func<TResult> action, Action successAction = null, Action<Exception> exceptionAction = null)
+        public TResult InTransaction<TResult>(Func<TResult> action, Action successAction = null,
+            Action<Exception> exceptionAction = null)
         {
             var result = default(TResult);
             try
@@ -124,9 +127,9 @@ namespace Core.DataAccess.EntityFramework
             {
                 if (exceptionAction == null)
                     throw;
-                else
-                    exceptionAction(ex);
+                exceptionAction(ex);
             }
+
             return result;
         }
 
@@ -134,16 +137,14 @@ namespace Core.DataAccess.EntityFramework
         {
             if (expression == null)
                 return await Context.Set<TEntity>().CountAsync();
-            else
-                return await Context.Set<TEntity>().CountAsync(expression);
+            return await Context.Set<TEntity>().CountAsync(expression);
         }
 
         public int GetCount(Expression<Func<TEntity, bool>> expression = null)
         {
             if (expression == null)
                 return Context.Set<TEntity>().Count();
-            else
-                return Context.Set<TEntity>().Count(expression);
+            return Context.Set<TEntity>().Count(expression);
         }
     }
 }

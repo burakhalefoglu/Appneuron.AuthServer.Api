@@ -1,11 +1,12 @@
-﻿using Entities.Concrete;
+﻿using System;
+using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
 namespace Entities
 {
-    public partial class FakeDbContext : DbContext
+    public class FakeDbContext : DbContext
     {
         public FakeDbContext()
         {
@@ -22,8 +23,9 @@ namespace Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=Appneuron.Auth;Username=burak;Password=Developer123");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https: //go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseNpgsql(
+                    "Host=localhost;Port=5432;Database=Appneuron.Auth;Username=burak;Password=Developer123");
             }
         }
 
@@ -41,6 +43,9 @@ namespace Entities
             OnModelCreatingPartial(modelBuilder);
         }
 
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        private void OnModelCreatingPartial(ModelBuilder modelBuilder)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

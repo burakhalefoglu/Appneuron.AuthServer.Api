@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Business.Constants;
 using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserClaims;
@@ -9,16 +13,11 @@ using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
-using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using MediatR;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Authorizations.Queries
 {
@@ -29,10 +28,10 @@ namespace Business.Handlers.Authorizations.Queries
 
         public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, IDataResult<AccessToken>>
         {
-            private readonly IUserRepository _userRepository;
-            private readonly ITokenHelper _tokenHelper;
-            private readonly IMediator _mediator;
             private readonly ICacheManager _cacheManager;
+            private readonly IMediator _mediator;
+            private readonly ITokenHelper _tokenHelper;
+            private readonly IUserRepository _userRepository;
 
             public LoginUserQueryHandler(IUserRepository userRepository,
                 ITokenHelper tokenHelper,
@@ -46,7 +45,8 @@ namespace Business.Handlers.Authorizations.Queries
             }
 
             [LogAspect(typeof(FileLogger))]
-            public async Task<IDataResult<AccessToken>> Handle(LoginUserQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<AccessToken>> Handle(LoginUserQuery request,
+                CancellationToken cancellationToken)
             {
                 var user = await _userRepository.GetAsync(u => u.Email == request.Email);
 
@@ -56,44 +56,38 @@ namespace Business.Handlers.Authorizations.Queries
                 if (!HashingHelper.VerifyPasswordHash(request.Password, user.PasswordSalt, user.PasswordHash))
                     return new ErrorDataResult<AccessToken>(Messages.PasswordError);
 
-                var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery()
+                var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
                 {
                     GroupId = 1
                 });
 
-                List<OperationClaim> operationClaims = new List<OperationClaim>();
+                var operationClaims = new List<OperationClaim>();
 
                 if (result.Data.ToList().Count > 0)
                 {
-                    List<SelectionItem> selectionItems = result.Data.ToList();
+                    var selectionItems = result.Data.ToList();
 
                     foreach (var item in selectionItems)
-                    {
                         operationClaims.Add(new OperationClaim
                         {
                             Id = Convert.ToInt32(item.Id),
                             Name = item.Label
                         });
-                    }
                 }
-
 
 
                 await _mediator.Send(new CreateUserClaimsInternalCommand
                 {
                     UserId = user.UserId,
-                    OperationClaims = operationClaims,
+                    OperationClaims = operationClaims
                 });
 
                 var ProjectIdResult = await _mediator.Send(new GetUserProjectsInternalQuery
                 {
-                    UserId = user.UserId,
+                    UserId = user.UserId
                 });
-                List<string> ProjectIdList = new List<string>();
-                ProjectIdResult.Data.ToList().ForEach(x =>
-                {
-                    ProjectIdList.Add(x.ProjectKey);
-                });
+                var ProjectIdList = new List<string>();
+                ProjectIdResult.Data.ToList().ForEach(x => { ProjectIdList.Add(x.ProjectKey); });
 
                 var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
                 {

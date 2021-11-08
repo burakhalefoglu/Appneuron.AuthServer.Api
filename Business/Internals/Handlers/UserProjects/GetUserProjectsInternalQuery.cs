@@ -1,15 +1,10 @@
-﻿using Business.BusinessAspects;
-using Core.Aspects.Autofac.Caching;
-using Core.Aspects.Autofac.Logging;
-using Core.Aspects.Autofac.Performance;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.UserProjects.Queries
 {
@@ -17,10 +12,11 @@ namespace Business.Handlers.UserProjects.Queries
     {
         public long UserId { get; set; }
 
-        public class GetUserProjectsInternalQueryHandler : IRequestHandler<GetUserProjectsInternalQuery, IDataResult<IEnumerable<UserProject>>>
+        public class GetUserProjectsInternalQueryHandler : IRequestHandler<GetUserProjectsInternalQuery,
+            IDataResult<IEnumerable<UserProject>>>
         {
-            private readonly IUserProjectRepository _userProjectRepository;
             private readonly IMediator _mediator;
+            private readonly IUserProjectRepository _userProjectRepository;
 
             public GetUserProjectsInternalQueryHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
             {
@@ -28,9 +24,11 @@ namespace Business.Handlers.UserProjects.Queries
                 _mediator = mediator;
             }
 
-            public async Task<IDataResult<IEnumerable<UserProject>>> Handle(GetUserProjectsInternalQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<UserProject>>> Handle(GetUserProjectsInternalQuery request,
+                CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<UserProject>>(await _userProjectRepository.GetListAsync(p => p.UserId == request.UserId));
+                return new SuccessDataResult<IEnumerable<UserProject>>(
+                    await _userProjectRepository.GetListAsync(p => p.UserId == request.UserId));
             }
         }
     }

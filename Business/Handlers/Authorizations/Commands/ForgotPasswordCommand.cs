@@ -1,4 +1,7 @@
-﻿using Business.Constants;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -10,9 +13,6 @@ using Core.Utilities.Results;
 using Core.Utilities.Security.Encyption;
 using DataAccess.Abstract;
 using MediatR;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Authorizations.Commands
 {
@@ -37,7 +37,6 @@ namespace Business.Handlers.Authorizations.Commands
             /// <param name="request"></param>
             /// <param name="cancellationToken"></param>
             /// <returns></returns>
-            ///
             [PerformanceAspect(5)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
@@ -52,24 +51,26 @@ namespace Business.Handlers.Authorizations.Commands
                 var token = SecurityKeyHelper.GetRandomHexNumber(64);
                 var mailText = MailContentHepler.GetResetMailContent(user, token.ToLower());
 
-                await _mailService.Send(new EmailMessage()
+                await _mailService.Send(new EmailMessage
                 {
                     Content = mailText,
                     FromAddresses =
                     {
-                new EmailAddress
-                {
-                    Address = "info@appneuron.com",
-                    Name = "Appneuron"
-                }
+                        new EmailAddress
+                        {
+                            Address = "info@appneuron.com",
+                            Name = "Appneuron"
+                        }
                     },
                     Subject = "Reset password Mail...",
-                    ToAddresses = {
-                new EmailAddress
-                {
-                    Address = user.Email,
-                    Name = user.Name
-                }   }
+                    ToAddresses =
+                    {
+                        new EmailAddress
+                        {
+                            Address = user.Email,
+                            Name = user.Name
+                        }
+                    }
                 });
 
                 user.ResetPasswordToken = token.ToLower();

@@ -11,7 +11,7 @@ namespace DataAccess.Concrete.Configurations
             builder.HasKey(e => new { e.ClaimId, e.UsersId });
 
             builder.HasIndex(e => new { e.UsersId, e.ClaimId }, "Uk_Uniqe")
-                              .IsUnique();
+                .IsUnique();
 
             builder.HasOne(d => d.Claim)
                 .WithMany(p => p.UserClaims)

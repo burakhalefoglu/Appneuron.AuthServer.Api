@@ -1,7 +1,7 @@
 ﻿namespace Core.CrossCuttingConcerns.Caching
 {
     /// <summary>
-    /// Tüm Cache Managerlar bu interface i kullanacaktır.
+    ///     Tüm Cache Managerlar bu interface i kullanacaktır.
     /// </summary>
     public interface ICacheManager
     {

@@ -1,10 +1,10 @@
-﻿using Core.Entities.Dtos;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Fakes.Handlers.GroupClaims
 {
@@ -12,7 +12,8 @@ namespace Business.Fakes.Handlers.GroupClaims
     {
         public int GroupId { get; set; }
 
-        public class GetGroupClaimsLookupByGroupIdQueryHandler : IRequestHandler<GetGroupClaimsLookupByGroupIdInternalQuery, IDataResult<IEnumerable<SelectionItem>>>
+        public class GetGroupClaimsLookupByGroupIdQueryHandler : IRequestHandler<
+            GetGroupClaimsLookupByGroupIdInternalQuery, IDataResult<IEnumerable<SelectionItem>>>
         {
             private readonly IGroupClaimRepository _groupClaimRepository;
 
@@ -21,7 +22,8 @@ namespace Business.Fakes.Handlers.GroupClaims
                 _groupClaimRepository = groupClaimRepository;
             }
 
-            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetGroupClaimsLookupByGroupIdInternalQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(
+                GetGroupClaimsLookupByGroupIdInternalQuery request, CancellationToken cancellationToken)
             {
                 var data = await _groupClaimRepository.GetGroupClaimsSelectedList(request.GroupId);
                 return new SuccessDataResult<IEnumerable<SelectionItem>>(data);

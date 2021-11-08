@@ -1,13 +1,13 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using System;
+using System.Linq;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Linq;
 
 namespace Core.ApiDoc
 {
     /// <summary>
-    /// Plugin made to send Enum values and names correctly in APIs.
+    ///     Plugin made to send Enum values and names correctly in APIs.
     /// </summary>
     internal class EnumSchemaFilter : ISchemaFilter
     {

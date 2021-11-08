@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -6,8 +8,6 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.OperationClaims.Commands
 {
@@ -32,10 +32,7 @@ namespace Business.Handlers.OperationClaims.Commands
             public async Task<IResult> Handle(UpdateOperationClaimCommand request, CancellationToken cancellationToken)
             {
                 var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.Id == request.Id);
-                if (isOperationClaimsExits == null)
-                {
-                    return new ErrorResult(Messages.OperationClaimNotFound);
-                }
+                if (isOperationClaimsExits == null) return new ErrorResult(Messages.OperationClaimNotFound);
 
                 isOperationClaimsExits.Alias = request.Alias;
                 isOperationClaimsExits.Description = request.Description;

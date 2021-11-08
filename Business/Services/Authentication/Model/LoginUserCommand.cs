@@ -1,30 +1,29 @@
-﻿using Core.Utilities.Results;
+﻿using System.Text.RegularExpressions;
+using Core.Utilities.Results;
 using MediatR;
-using System.Text.RegularExpressions;
 
 namespace Business.Services.Authentication.Model
 {
     /// <summary>
-    /// It contains login information for different user profiles.
+    ///     It contains login information for different user profiles.
     /// </summary>
     public class LoginUserCommand : IRequest<IDataResult<LoginUserResult>>
     {
         /// <summary>
-        /// It is the user number that changes according to the provider.
-        ///
-        /// Person: CitizenId
-        /// Staff: Personnel registration number
-        /// Agent: External staff registration number
+        ///     It is the user number that changes according to the provider.
+        ///     Person: CitizenId
+        ///     Staff: Personnel registration number
+        ///     Agent: External staff registration number
         /// </summary>
         public string Email { get; set; }
 
         /// <summary>
-        /// After the number is selected, this field is filled and SMS verification phase is started.
+        ///     After the number is selected, this field is filled and SMS verification phase is started.
         /// </summary>
         public string MobilePhone { get; set; }
 
         /// <summary>
-        /// It is used for personnel and external personal logins.
+        ///     It is used for personnel and external personal logins.
         /// </summary>
         public string Password { get; set; }
 
@@ -33,18 +32,18 @@ namespace Business.Services.Authentication.Model
             get
             {
                 if (string.IsNullOrWhiteSpace(MobilePhone))
-                    return false;
-                else
                 {
-                    PostProcess();
-                    MobilePhone = Regex.Replace(MobilePhone, "[^0-9]", "");
-                    return MobilePhone.StartsWith("05") && MobilePhone.Length == 11;
+                    return false;
                 }
+
+                PostProcess();
+                MobilePhone = Regex.Replace(MobilePhone, "[^0-9]", "");
+                return MobilePhone.StartsWith("05") && MobilePhone.Length == 11;
             }
         }
 
         /// <summary>
-        /// Normalizes areas such as mobile phones.
+        ///     Normalizes areas such as mobile phones.
         /// </summary>
         public void PostProcess()
         {

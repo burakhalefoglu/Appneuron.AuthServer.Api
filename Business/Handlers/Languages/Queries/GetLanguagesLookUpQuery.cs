@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -7,15 +10,14 @@ using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Languages.Queries
 {
     public class GetLanguagesLookUpQuery : IRequest<IDataResult<IEnumerable<SelectionItem>>>
     {
-        public class GetLanguagesLookUpQueryHandler : IRequestHandler<GetLanguagesLookUpQuery, IDataResult<IEnumerable<SelectionItem>>>
+        public class
+            GetLanguagesLookUpQueryHandler : IRequestHandler<GetLanguagesLookUpQuery,
+                IDataResult<IEnumerable<SelectionItem>>>
         {
             private readonly ILanguageRepository _languageRepository;
             private readonly IMediator _mediator;
@@ -30,9 +32,11 @@ namespace Business.Handlers.Languages.Queries
             [PerformanceAspect(5)]
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
-            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetLanguagesLookUpQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetLanguagesLookUpQuery request,
+                CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<SelectionItem>>(await _languageRepository.GetLanguagesLookUp());
+                return new SuccessDataResult<IEnumerable<SelectionItem>>(
+                    await _languageRepository.GetLanguagesLookUp());
             }
         }
     }

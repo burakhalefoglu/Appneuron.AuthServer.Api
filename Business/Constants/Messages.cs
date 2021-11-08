@@ -1,7 +1,7 @@
 ﻿namespace Business.Constants
 {
     /// <summary>
-    /// This class was created to get rid of magic strings and write more readable code.
+    ///     This class was created to get rid of magic strings and write more readable code.
     /// </summary>
     public static class Messages
     {
@@ -11,7 +11,7 @@
         public static string GroupNotFound => "GroupNotFound";
         public static string UserClaimNotFound => "UserClaimNotFound";
         public static string OperationClaimNotFound => "OperationClaimNotFound";
-        public static string GroupClaimNotFound => "GroupClaimNotFound"; 
+        public static string GroupClaimNotFound => "GroupClaimNotFound";
         public static string StringLengthMustBeGreaterThanThree => "StringLengthMustBeGreaterThanThree";
         public static string CouldNotBeVerifyCid => "CouldNotBeVerifyCid";
         public static string VerifyCid => "VerifyCid";

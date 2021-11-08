@@ -26,12 +26,6 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class ClientHandlerTests
     {
-        private Mock<ITokenHelper> _tokenHelper;
-        private Mock<IClientRepository> _clientRepository;
-        private Mock<IMediator> _mediator;
-
-        private CreateTokenCommandHandler _createTokenCommandHandler;
-
         [SetUp]
         public void Setup()
         {
@@ -42,6 +36,12 @@ namespace Tests.Business.Handlers
             _createTokenCommandHandler = new CreateTokenCommandHandler(_clientRepository.Object,
                 _tokenHelper.Object, _mediator.Object);
         }
+
+        private Mock<ITokenHelper> _tokenHelper;
+        private Mock<IClientRepository> _clientRepository;
+        private Mock<IMediator> _mediator;
+
+        private CreateTokenCommandHandler _createTokenCommandHandler;
 
 
         [Test]
@@ -74,7 +74,7 @@ namespace Tests.Business.Handlers
 
             _mediator.Setup(x => x.Send(It.IsAny<GetUserProjectInternalQuery>(),
                     It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new SuccessDataResult<UserProject>(new UserProject()
+                .ReturnsAsync(new SuccessDataResult<UserProject>(new UserProject
                 {
                     ProjectKey = "sadasd",
                     Id = 1,
@@ -86,7 +86,7 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult<Client>(null));
 
             _clientRepository.Setup(x => x.Add(It.IsAny<Client>()))
-                .Returns(new Client()
+                .Returns(new Client
                 {
                     ClientId = "ljhjhdfhft",
                     Id = 2,
@@ -96,17 +96,17 @@ namespace Tests.Business.Handlers
             _mediator.Setup(x => x.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult<IDataResult<IEnumerable<SelectionItem>>>
-                    (new SuccessDataResult<IEnumerable<SelectionItem>>(
-                        new List<SelectionItem>()
+                (new SuccessDataResult<IEnumerable<SelectionItem>>(
+                    new List<SelectionItem>
+                    {
+                        new()
                         {
-                            new SelectionItem()
-                            {
-                                Id = 1,
-                                IsDisabled = false,
-                                Label = "Test",
-                                ParentId = "dfsa"
-                            }
-                        })));
+                            Id = 1,
+                            IsDisabled = false,
+                            Label = "Test",
+                            ParentId = "dfsa"
+                        }
+                    })));
             _tokenHelper.Setup(x => x.CreateClientToken<DArchToken>(It.IsAny<ClientClaimModel>()))
                 .Returns(new DArchToken());
 
@@ -127,7 +127,7 @@ namespace Tests.Business.Handlers
 
             _mediator.Setup(x => x.Send(It.IsAny<GetUserProjectInternalQuery>(),
                     It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new SuccessDataResult<UserProject>(new UserProject()
+                .ReturnsAsync(new SuccessDataResult<UserProject>(new UserProject
                 {
                     ProjectKey = "sadasd",
                     Id = 1,
@@ -136,7 +136,7 @@ namespace Tests.Business.Handlers
 
             _clientRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<Client, bool>>>()))
-                .Returns(Task.FromResult(new Client()
+                .Returns(Task.FromResult(new Client
                 {
                     ClientId = "ljhjhdfhft",
                     Id = 2,
@@ -146,17 +146,17 @@ namespace Tests.Business.Handlers
             _mediator.Setup(x => x.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult<IDataResult<IEnumerable<SelectionItem>>>
-                    (new SuccessDataResult<IEnumerable<SelectionItem>>(
-                        new List<SelectionItem>()
+                (new SuccessDataResult<IEnumerable<SelectionItem>>(
+                    new List<SelectionItem>
+                    {
+                        new()
                         {
-                            new SelectionItem()
-                            {
-                                Id = 1,
-                                IsDisabled = false,
-                                Label = "Test",
-                                ParentId = "dfsa"
-                            }
-                        })));
+                            Id = 1,
+                            IsDisabled = false,
+                            Label = "Test",
+                            ParentId = "dfsa"
+                        }
+                    })));
             _tokenHelper.Setup(x => x.CreateClientToken<DArchToken>(It.IsAny<ClientClaimModel>()))
                 .Returns(new DArchToken());
 
@@ -164,7 +164,5 @@ namespace Tests.Business.Handlers
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.SuccessfulLogin);
         }
-
-
     }
 }

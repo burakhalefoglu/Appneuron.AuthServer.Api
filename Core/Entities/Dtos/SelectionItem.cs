@@ -1,7 +1,7 @@
 ﻿namespace Core.Entities.Dtos
 {
     /// <summary>
-    /// Simple selectable lists have been created to return with a single schema through the API.
+    ///     Simple selectable lists have been created to return with a single schema through the API.
     /// </summary>
     public class SelectionItem : IDto
     {

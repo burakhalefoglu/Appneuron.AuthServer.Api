@@ -6,12 +6,10 @@ namespace Core.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddDependencyResolvers(this IServiceCollection services, IConfiguration configuration, ICoreModule[] modules)
+        public static void AddDependencyResolvers(this IServiceCollection services, IConfiguration configuration,
+            ICoreModule[] modules)
         {
-            foreach (var module in modules)
-            {
-                module.Load(services, configuration);
-            }
+            foreach (var module in modules) module.Load(services, configuration);
         }
     }
 }

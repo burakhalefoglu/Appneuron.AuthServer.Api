@@ -3,7 +3,7 @@
 namespace Core.Utilities.Toolkit
 {
     /// <summary>
-    /// One time password generator for mobile login etc.
+    ///     One time password generator for mobile login etc.
     /// </summary>
     public static class RandomPassword
     {
@@ -13,10 +13,7 @@ namespace Core.Utilities.Toolkit
             var random = new Random();
 
             var chars = new char[length];
-            for (var i = 0; i < length; i++)
-            {
-                chars[i] = validChars[random.Next(0, validChars.Length)];
-            }
+            for (var i = 0; i < length; i++) chars[i] = validChars[random.Next(0, validChars.Length)];
             return new string(chars);
         }
 

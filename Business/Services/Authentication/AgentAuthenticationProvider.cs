@@ -1,7 +1,7 @@
-﻿using Business.Services.Authentication.Model;
-using Core.Utilities.Results;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Business.Services.Authentication.Model;
+using Core.Utilities.Results;
 
 namespace Business.Services.Authentication
 {

@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -6,8 +8,6 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.GroupClaims.Commands
 {
@@ -31,10 +31,7 @@ namespace Business.Handlers.GroupClaims.Commands
             {
                 var groupClaimToDelete = await _groupClaimRepository.GetAsync(x => x.GroupId == request.Id);
 
-                if (groupClaimToDelete == null)
-                {
-                    return new ErrorResult(Messages.GroupClaimNotFound);
-                }
+                if (groupClaimToDelete == null) return new ErrorResult(Messages.GroupClaimNotFound);
 
                 _groupClaimRepository.Delete(groupClaimToDelete);
                 await _groupClaimRepository.SaveChangesAsync();

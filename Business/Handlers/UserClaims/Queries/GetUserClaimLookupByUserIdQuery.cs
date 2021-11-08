@@ -1,13 +1,13 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.UserClaims.Queries
 {
@@ -15,10 +15,11 @@ namespace Business.Handlers.UserClaims.Queries
     {
         public int Id { get; set; }
 
-        public class GetUserClaimLookupByUserIdQueryHandler : IRequestHandler<GetUserClaimLookupByUserIdQuery, IDataResult<IEnumerable<SelectionItem>>>
+        public class GetUserClaimLookupByUserIdQueryHandler : IRequestHandler<GetUserClaimLookupByUserIdQuery,
+            IDataResult<IEnumerable<SelectionItem>>>
         {
-            private readonly IUserClaimRepository _userClaimRepository;
             private readonly IMediator _mediator;
+            private readonly IUserClaimRepository _userClaimRepository;
 
             public GetUserClaimLookupByUserIdQueryHandler(IUserClaimRepository userClaimRepository, IMediator mediator)
             {
@@ -28,7 +29,8 @@ namespace Business.Handlers.UserClaims.Queries
 
             [SecuredOperation(Priority = 1)]
             [LogAspect(typeof(FileLogger))]
-            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetUserClaimLookupByUserIdQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetUserClaimLookupByUserIdQuery request,
+                CancellationToken cancellationToken)
             {
                 var data = await
                     _userClaimRepository.GetUserClaimSelectedList(request.Id);

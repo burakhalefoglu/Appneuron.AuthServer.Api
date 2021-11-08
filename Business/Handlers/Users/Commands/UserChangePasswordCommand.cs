@@ -1,19 +1,17 @@
 ﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
 using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Users.Commands
 {
@@ -24,9 +22,9 @@ namespace Business.Handlers.Users.Commands
 
         public class UserChangePasswordCommandHandler : IRequestHandler<UserChangePasswordCommand, IResult>
         {
-            private readonly IUserRepository _userRepository;
-            private readonly IMapper _mapper;
             private readonly IHttpContextAccessor _httpContextAccessor;
+            private readonly IMapper _mapper;
+            private readonly IUserRepository _userRepository;
 
             public UserChangePasswordCommandHandler(IUserRepository userRepository,
                 IMediator mediator,
@@ -42,7 +40,8 @@ namespace Business.Handlers.Users.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(UserChangePasswordCommand request, CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
                 var user = await _userRepository.GetAsync(u => u.UserId == userId);
                 if (user == null)

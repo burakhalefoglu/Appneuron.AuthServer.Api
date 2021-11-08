@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using System;
 
 namespace DataAccess.Migrations.Pg
 {
@@ -9,274 +9,274 @@ namespace DataAccess.Migrations.Pg
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Groups",
-                columns: table => new
+                "Groups",
+                table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    GroupName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
+                    Id = table.Column<int>("integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    GroupName = table.Column<string>("character varying(50)", maxLength: 50, nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Groups", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Groups", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Languages",
-                columns: table => new
+                "Languages",
+                table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    Code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false)
+                    Id = table.Column<int>("integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>("character varying(10)", maxLength: 10, nullable: false),
+                    Code = table.Column<string>("character varying(10)", maxLength: 10, nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Languages", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Languages", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Logs",
-                columns: table => new
+                "Logs",
+                table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    MessageTemplate = table.Column<string>(type: "text", nullable: true),
-                    Level = table.Column<string>(type: "text", nullable: true),
-                    TimeStamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    Exception = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>("integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MessageTemplate = table.Column<string>("text", nullable: true),
+                    Level = table.Column<string>("text", nullable: true),
+                    TimeStamp = table.Column<DateTimeOffset>("timestamp with time zone", nullable: false),
+                    Exception = table.Column<string>("text", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Logs", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Logs", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "OperationClaims",
-                columns: table => new
+                "OperationClaims",
+                table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Alias = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    Description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true)
+                    Id = table.Column<int>("integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>("character varying(50)", maxLength: 50, nullable: false),
+                    Alias = table.Column<string>("character varying(50)", maxLength: 50, nullable: true),
+                    Description = table.Column<string>("character varying(100)", maxLength: 100, nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OperationClaims", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_OperationClaims", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
+                "Users",
+                table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    DashboardKey = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    Status = table.Column<bool>(type: "boolean", nullable: false),
-                    MobilePhones = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
-                    RecordDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Notes = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    UpdateContactDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    PasswordSalt = table.Column<byte[]>(type: "bytea", nullable: true),
-                    PasswordHash = table.Column<byte[]>(type: "bytea", nullable: true),
-                    ResetPasswordToken = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    ResetPasswordExpires = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    UserId = table.Column<int>("integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>("character varying(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>("character varying(50)", maxLength: 50, nullable: false),
+                    DashboardKey = table.Column<string>("character varying(500)", maxLength: 500, nullable: false),
+                    Status = table.Column<bool>("boolean", nullable: false),
+                    MobilePhones = table.Column<string>("character varying(30)", maxLength: 30, nullable: true),
+                    RecordDate = table.Column<DateTime>("timestamp without time zone", nullable: false),
+                    Notes = table.Column<string>("character varying(500)", maxLength: 500, nullable: true),
+                    UpdateContactDate = table.Column<DateTime>("timestamp without time zone", nullable: false),
+                    PasswordSalt = table.Column<byte[]>("bytea", nullable: true),
+                    PasswordHash = table.Column<byte[]>("bytea", nullable: true),
+                    ResetPasswordToken = table.Column<string>("character varying(500)", maxLength: 500, nullable: true),
+                    ResetPasswordExpires = table.Column<DateTime>("timestamp without time zone", nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
-                });
+                constraints: table => { table.PrimaryKey("PK_Users", x => x.UserId); });
 
             migrationBuilder.CreateTable(
-                name: "Translates",
-                columns: table => new
+                "Translates",
+                table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    LangId = table.Column<int>(type: "integer", nullable: false),
-                    Code = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Value = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
+                    Id = table.Column<int>("integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LangId = table.Column<int>("integer", nullable: false),
+                    Code = table.Column<string>("character varying(50)", maxLength: 50, nullable: false),
+                    Value = table.Column<string>("character varying(500)", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Translates", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Translates_Id_LangId",
-                        column: x => x.LangId,
-                        principalTable: "Languages",
-                        principalColumn: "Id",
+                        "FK_Translates_Id_LangId",
+                        x => x.LangId,
+                        "Languages",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "GroupClaims",
-                columns: table => new
+                "GroupClaims",
+                table => new
                 {
-                    GroupId = table.Column<int>(type: "integer", nullable: false),
-                    ClaimId = table.Column<int>(type: "integer", nullable: false)
+                    GroupId = table.Column<int>("integer", nullable: false),
+                    ClaimId = table.Column<int>("integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GroupClaims", x => new { x.GroupId, x.ClaimId });
                     table.ForeignKey(
-                        name: "FK_GroupClaims_Id_ClaimId",
-                        column: x => x.ClaimId,
-                        principalTable: "OperationClaims",
-                        principalColumn: "Id",
+                        "FK_GroupClaims_Id_ClaimId",
+                        x => x.ClaimId,
+                        "OperationClaims",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_GroupClaims_Id_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Groups",
-                        principalColumn: "Id",
+                        "FK_GroupClaims_Id_GroupId",
+                        x => x.GroupId,
+                        "Groups",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Clients",
-                columns: table => new
+                "Clients",
+                table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ClientId = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    ProjectId = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    CustomerId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>("bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ClientId = table.Column<string>("character varying(500)", maxLength: 500, nullable: false),
+                    ProjectId = table.Column<string>("character varying(500)", maxLength: 500, nullable: false),
+                    CustomerId = table.Column<int>("integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clients", x => x.Id);
                     table.ForeignKey(
-                        name: "fk_Clients_Users",
-                        column: x => x.CustomerId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
+                        "fk_Clients_Users",
+                        x => x.CustomerId,
+                        "Users",
+                        "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserClaims",
-                columns: table => new
+                "UserClaims",
+                table => new
                 {
-                    UsersId = table.Column<int>(type: "integer", nullable: false),
-                    ClaimId = table.Column<int>(type: "integer", nullable: false)
+                    UsersId = table.Column<int>("integer", nullable: false),
+                    ClaimId = table.Column<int>("integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserClaims", x => new { x.ClaimId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_UserClaims_Id_ClaimId",
-                        column: x => x.ClaimId,
-                        principalTable: "OperationClaims",
-                        principalColumn: "Id",
+                        "FK_UserClaims_Id_ClaimId",
+                        x => x.ClaimId,
+                        "OperationClaims",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserClaims_Id_UserId",
-                        column: x => x.UsersId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
+                        "FK_UserClaims_Id_UserId",
+                        x => x.UsersId,
+                        "Users",
+                        "UserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserGroups",
-                columns: table => new
+                "UserGroups",
+                table => new
                 {
-                    GroupId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    GroupId = table.Column<int>("integer", nullable: false),
+                    UserId = table.Column<int>("integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserGroups", x => new { x.UserId, x.GroupId });
                     table.ForeignKey(
-                        name: "FK_UserGroups_Id_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Groups",
-                        principalColumn: "Id",
+                        "FK_UserGroups_Id_GroupId",
+                        x => x.GroupId,
+                        "Groups",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserGroups_Id_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
+                        "FK_UserGroups_Id_UserId",
+                        x => x.UserId,
+                        "Users",
+                        "UserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientClaims",
-                columns: table => new
+                "ClientClaims",
+                table => new
                 {
-                    ClientId = table.Column<long>(type: "bigint", nullable: false),
-                    ClaimId = table.Column<int>(type: "integer", nullable: false)
+                    ClientId = table.Column<long>("bigint", nullable: false),
+                    ClaimId = table.Column<int>("integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientClaims", x => new { x.ClaimId, x.ClientId });
                     table.ForeignKey(
-                        name: "fk_ClientClaims_Client",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
+                        "fk_ClientClaims_Client",
+                        x => x.ClientId,
+                        "Clients",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_ClientGroups_Claim",
-                        column: x => x.ClaimId,
-                        principalTable: "OperationClaims",
-                        principalColumn: "Id",
+                        "fk_ClientGroups_Claim",
+                        x => x.ClaimId,
+                        "OperationClaims",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientGroups",
-                columns: table => new
+                "ClientGroups",
+                table => new
                 {
-                    GroupId = table.Column<int>(type: "integer", nullable: false),
-                    ClientId = table.Column<long>(type: "bigint", nullable: false)
+                    GroupId = table.Column<int>("integer", nullable: false),
+                    ClientId = table.Column<long>("bigint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientGroups", x => new { x.ClientId, x.GroupId });
                     table.ForeignKey(
-                        name: "FK_UserGroups_Id_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Groups",
-                        principalColumn: "Id",
+                        "FK_UserGroups_Id_GroupId",
+                        x => x.GroupId,
+                        "Groups",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserGroups_Id_UserId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
+                        "FK_UserGroups_Id_UserId",
+                        x => x.ClientId,
+                        "Clients",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
-                table: "Languages",
-                columns: new[] { "Id", "Code", "Name" },
-                values: new object[,]
+                "Languages",
+                new[] { "Id", "Code", "Name" },
+                new object[,]
                 {
                     { 1, "tr-TR", "Türkçe" },
                     { 2, "en-US", "English" }
                 });
 
             migrationBuilder.InsertData(
-                table: "Translates",
-                columns: new[] { "Id", "Code", "LangId", "Value" },
-                values: new object[,]
+                "Translates",
+                new[] { "Id", "Code", "LangId", "Value" },
+                new object[,]
                 {
                     { 1, "Login", 1, "Giriş" },
                     { 64, "PasswordLength", 2, "Must be at least 8 characters long! " },
                     { 62, "PasswordEmpty", 2, "Password can not be empty!" },
                     { 60, "CID", 2, "Citizenship Number" },
-                    { 58, "WrongCID", 2, "Citizenship Number Not Found In Our System. Please Create New Registration!" },
+                    {
+                        58, "WrongCID", 2, "Citizenship Number Not Found In Our System. Please Create New Registration!"
+                    },
                     { 56, "NameAlreadyExist", 2, "The Object You Are Trying To Create Already Exists." },
                     { 54, "SendMobileCode", 2, "Please Enter The Code Sent To You By SMS!" },
                     { 52, "SuccessfulLogin", 2, "Login to the system is successful." },
-                    { 50, "PasswordError", 2, "Credentials Failed to Authenticate, Username and / or password incorrect." },
+                    {
+                        50, "PasswordError", 2,
+                        "Credentials Failed to Authenticate, Username and / or password incorrect."
+                    },
                     { 48, "UserNotFound", 2, "Credentials Could Not Verify. Please use the New Registration Screen." },
-                    { 46, "AuthorizationsDenied", 2, "It has been detected that you are trying to enter an area that you do not have authorization." },
+                    {
+                        46, "AuthorizationsDenied", 2,
+                        "It has been detected that you are trying to enter an area that you do not have authorization."
+                    },
                     { 44, "VerifyCid", 2, "Verify Citizen Id" },
                     { 42, "CouldNotBeVerifyCid", 2, "Could not be verify Citizen Id" },
                     { 40, "StringLengthMustBeGreaterThanThree", 2, "Please Enter A Phrase Of At Least 3 Characters." },
@@ -348,7 +348,10 @@ namespace DataAccess.Migrations.Pg
                     { 45, "AuthorizationsDenied", 1, "Yetkiniz olmayan bir alana girmeye çalıştığınız tespit edildi." },
                     { 43, "VerifyCid", 1, "Kimlik No Doğrulandı." },
                     { 41, "CouldNotBeVerifyCid", 1, "Kimlik No Doğrulanamadı." },
-                    { 39, "StringLengthMustBeGreaterThanThree", 1, "Lütfen En Az 3 Karakterden Oluşan Bir İfade Girin." },
+                    {
+                        39, "StringLengthMustBeGreaterThanThree", 1,
+                        "Lütfen En Az 3 Karakterden Oluşan Bir İfade Girin."
+                    },
                     { 37, "OperationClaimExists", 1, "Bu operasyon izni zaten mevcut." },
                     { 35, "Deleted", 1, "Başarıyla Silindi." },
                     { 33, "Updated", 1, "Başarıyla Güncellendi." },
@@ -407,79 +410,79 @@ namespace DataAccess.Migrations.Pg
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientClaims_ClientId",
-                table: "ClientClaims",
-                column: "ClientId");
+                "IX_ClientClaims_ClientId",
+                "ClientClaims",
+                "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientGroups_GroupId",
-                table: "ClientGroups",
-                column: "GroupId");
+                "IX_ClientGroups_GroupId",
+                "ClientGroups",
+                "GroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Clients_CustomerId",
-                table: "Clients",
-                column: "CustomerId");
+                "IX_Clients_CustomerId",
+                "Clients",
+                "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupClaims_ClaimId",
-                table: "GroupClaims",
-                column: "ClaimId");
+                "IX_GroupClaims_ClaimId",
+                "GroupClaims",
+                "ClaimId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Translates_LangId",
-                table: "Translates",
-                column: "LangId");
+                "IX_Translates_LangId",
+                "Translates",
+                "LangId");
 
             migrationBuilder.CreateIndex(
-                name: "Uk_Uniqe",
-                table: "UserClaims",
-                columns: new[] { "UsersId", "ClaimId" },
+                "Uk_Uniqe",
+                "UserClaims",
+                new[] { "UsersId", "ClaimId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroups_GroupId",
-                table: "UserGroups",
-                column: "GroupId");
+                "IX_UserGroups_GroupId",
+                "UserGroups",
+                "GroupId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ClientClaims");
+                "ClientClaims");
 
             migrationBuilder.DropTable(
-                name: "ClientGroups");
+                "ClientGroups");
 
             migrationBuilder.DropTable(
-                name: "GroupClaims");
+                "GroupClaims");
 
             migrationBuilder.DropTable(
-                name: "Logs");
+                "Logs");
 
             migrationBuilder.DropTable(
-                name: "Translates");
+                "Translates");
 
             migrationBuilder.DropTable(
-                name: "UserClaims");
+                "UserClaims");
 
             migrationBuilder.DropTable(
-                name: "UserGroups");
+                "UserGroups");
 
             migrationBuilder.DropTable(
-                name: "Clients");
+                "Clients");
 
             migrationBuilder.DropTable(
-                name: "Languages");
+                "Languages");
 
             migrationBuilder.DropTable(
-                name: "OperationClaims");
+                "OperationClaims");
 
             migrationBuilder.DropTable(
-                name: "Groups");
+                "Groups");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                "Users");
         }
     }
 }

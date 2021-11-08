@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -7,9 +9,6 @@ using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Groups.Commands
 {
@@ -31,13 +30,13 @@ namespace Business.Handlers.Groups.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
             {
-                    var group = new Group
-                    {
-                        GroupName = request.GroupName
-                    };
-                    _groupRepository.Add(group);
-                    await _groupRepository.SaveChangesAsync();
-                    return new SuccessResult(Messages.Added);
+                var group = new Group
+                {
+                    GroupName = request.GroupName
+                };
+                _groupRepository.Add(group);
+                await _groupRepository.SaveChangesAsync();
+                return new SuccessResult(Messages.Added);
             }
         }
     }

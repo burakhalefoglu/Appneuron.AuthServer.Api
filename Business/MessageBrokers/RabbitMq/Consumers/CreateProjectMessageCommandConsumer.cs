@@ -1,4 +1,7 @@
-﻿using Business.Fakes.Handlers.GroupClaims;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserClaims;
 using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.UserProjects.Queries;
@@ -6,19 +9,10 @@ using Business.MessageBrokers.Models;
 using Business.Services.Authentication;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
-using Core.Entities.Dtos;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
-using Entities.Concrete;
 using MassTransit;
 using MediatR;
-using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.MessageBrokers.RabbitMq.Consumers
 {
@@ -38,13 +32,10 @@ namespace Business.MessageBrokers.RabbitMq.Consumers
             _sendEndpointProvider = sendEndpointProvider;
             _tokenHelper = tokenHelper;
             _userRepository = userRepository;
-
-
         }
 
         public async Task Consume(ConsumeContext<ProjectMessageCommand> context)
         {
-
             var result = await _mediator.Send(new CreateUserProjectInternalCommand
             {
                 UserId = context.Message.UserId,
@@ -57,38 +48,33 @@ namespace Business.MessageBrokers.RabbitMq.Consumers
                 return;
 
             //New Token Creation
-            var GrupClaims = (await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery()
+            var GrupClaims = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
             {
                 GroupId = 1
-            }));
+            });
 
-            List<SelectionItem> selectionItems = GrupClaims.Data.ToList();
-            List<OperationClaim> operationClaims = new List<OperationClaim>();
+            var selectionItems = GrupClaims.Data.ToList();
+            var operationClaims = new List<OperationClaim>();
 
             foreach (var item in selectionItems)
-            {
                 operationClaims.Add(new OperationClaim
                 {
                     Id = int.Parse(item.Id),
                     Name = item.Label
                 });
-            }
 
             await _mediator.Send(new CreateUserClaimsInternalCommand
             {
                 UserId = user.UserId,
-                OperationClaims = operationClaims,
+                OperationClaims = operationClaims
             });
 
             var ProjectIdResult = await _mediator.Send(new GetUserProjectsInternalQuery
             {
-                UserId = user.UserId,
+                UserId = user.UserId
             });
-            List<string> ProjectIdList = new List<string>();
-            ProjectIdResult.Data.ToList().ForEach(x =>
-            {
-                ProjectIdList.Add(x.ProjectKey);
-            });
+            var ProjectIdList = new List<string>();
+            ProjectIdResult.Data.ToList().ForEach(x => { ProjectIdList.Add(x.ProjectKey); });
 
             var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
             {
@@ -96,7 +82,7 @@ namespace Business.MessageBrokers.RabbitMq.Consumers
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
             }, ProjectIdList);
 
-         //TODO: will send token with socket :)
+            //TODO: will send token with socket :)
         }
     }
 }

@@ -1,21 +1,22 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
+using Business.Constants;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Business.Constants;
 
 namespace Business.Handlers.OperationClaims.Queries
 {
     public class GetOperationClaimLookupQuery : IRequest<IDataResult<IEnumerable<SelectionItem>>>
     {
-        public class GetOperationClaimLookupQueryHandler : IRequestHandler<GetOperationClaimLookupQuery, IDataResult<IEnumerable<SelectionItem>>>
+        public class GetOperationClaimLookupQueryHandler : IRequestHandler<GetOperationClaimLookupQuery,
+            IDataResult<IEnumerable<SelectionItem>>>
         {
             private readonly IOperationClaimRepository _operationClaimRepository;
 
@@ -26,21 +27,20 @@ namespace Business.Handlers.OperationClaims.Queries
 
             [SecuredOperation(Priority = 1)]
             [LogAspect(typeof(FileLogger))]
-            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetOperationClaimLookupQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetOperationClaimLookupQuery request,
+                CancellationToken cancellationToken)
             {
                 var list = await _operationClaimRepository.GetListAsync();
                 if (list == null)
-                {
                     return new ErrorDataResult
                         <IEnumerable<SelectionItem>>(Messages.OperationClaimNotFound);
-                }
-                var operationClaim = list.Select(x => new SelectionItem()
+                var operationClaim = list.Select(x => new SelectionItem
                 {
                     Id = x.Id.ToString(),
                     Label = x.Alias ?? x.Name
                 });
                 return new SuccessDataResult<IEnumerable<SelectionItem>>
-                                (operationClaim);
+                    (operationClaim);
             }
         }
     }

@@ -1,9 +1,11 @@
-﻿using Autofac;
+﻿using System.Reflection;
+using Autofac;
 using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
 using Core.Utilities.Interceptors;
 using FluentValidation;
 using MediatR;
+using Module = Autofac.Module;
 
 namespace Business.DependencyResolvers
 {
@@ -12,7 +14,7 @@ namespace Business.DependencyResolvers
         private readonly ConfigurationManager _configuration;
 
         /// <summary>
-        /// for Autofac.
+        ///     for Autofac.
         /// </summary>
         public AutofacBusinessModule()
         {
@@ -28,11 +30,10 @@ namespace Business.DependencyResolvers
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder)
         {
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var assembly = Assembly.GetExecutingAssembly();
 
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
-
-                    .AsClosedTypesOf(typeof(IRequestHandler<,>));
+                .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
                 .AsClosedTypesOf(typeof(IValidator<>));
@@ -41,37 +42,35 @@ namespace Business.DependencyResolvers
             {
                 case ApplicationMode.Development:
                     builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
-                            .Where(t => t.FullName.StartsWith("Business.Fakes"))
-                            ;
+                        .Where(t => t.FullName.StartsWith("Business.Fakes"))
+                        ;
                     break;
 
                 case ApplicationMode.Profiling:
 
                     builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
-                            .Where(t => t.FullName.StartsWith("Business.Fakes.SmsService"));
+                        .Where(t => t.FullName.StartsWith("Business.Fakes.SmsService"));
                     break;
 
                 case ApplicationMode.Staging:
 
                     builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
-                            .Where(t => t.FullName.StartsWith("Business.Fakes.SmsService"));
+                        .Where(t => t.FullName.StartsWith("Business.Fakes.SmsService"));
                     break;
 
                 case ApplicationMode.Production:
 
                     builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
-                                    .Where(t => t.FullName.StartsWith("Business.Adapters"))
-                                    ;
-                    break;
-
-                default:
+                        .Where(t => t.FullName.StartsWith("Business.Adapters"))
+                        ;
                     break;
             }
+
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
-                            .EnableInterfaceInterceptors(new ProxyGenerationOptions()
-                            {
-                                Selector = new AspectInterceptorSelector()
-                            }).SingleInstance().InstancePerDependency();
+                .EnableInterfaceInterceptors(new ProxyGenerationOptions
+                {
+                    Selector = new AspectInterceptorSelector()
+                }).SingleInstance().InstancePerDependency();
         }
     }
 }

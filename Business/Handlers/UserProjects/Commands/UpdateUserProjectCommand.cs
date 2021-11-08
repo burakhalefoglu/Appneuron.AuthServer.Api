@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.UserProjects.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -8,8 +10,6 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.UserProjects.Commands
 {
@@ -21,8 +21,8 @@ namespace Business.Handlers.UserProjects.Commands
 
         public class UpdateUserProjectCommandHandler : IRequestHandler<UpdateUserProjectCommand, IResult>
         {
-            private readonly IUserProjectRepository _userProjectRepository;
             private readonly IMediator _mediator;
+            private readonly IUserProjectRepository _userProjectRepository;
 
             public UpdateUserProjectCommandHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
             {

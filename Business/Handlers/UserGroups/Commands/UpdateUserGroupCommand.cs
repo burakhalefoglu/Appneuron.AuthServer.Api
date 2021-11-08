@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -7,10 +10,6 @@ using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using ServiceStack.Messaging;
 
 namespace Business.Handlers.UserGroups.Commands
 {
@@ -34,7 +33,7 @@ namespace Business.Handlers.UserGroups.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(UpdateUserGroupCommand request, CancellationToken cancellationToken)
             {
-                var userGroupList = request.GroupId.Select(x => new UserGroup() { GroupId = x, UserId = request.UserId });
+                var userGroupList = request.GroupId.Select(x => new UserGroup { GroupId = x, UserId = request.UserId });
 
                 await _userGroupRepository.BulkInsert(request.UserId, userGroupList);
                 await _userGroupRepository.SaveChangesAsync();

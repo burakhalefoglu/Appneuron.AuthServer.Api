@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.UserClaims.Commands;
 using Business.Handlers.UserClaims.Queries;
-using Core.CrossCuttingConcerns.Caching;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
 using DataAccess.Abstract;
@@ -23,23 +22,11 @@ using static Business.Handlers.UserClaims.Queries.GetUserClaimLookupQuery;
 using static Business.Handlers.UserClaims.Queries.GetUserClaimsQuery;
 
 
-
 namespace Tests.Business.Handlers
 {
     [TestFixture]
     public class UserClaimHandlerTests
     {
-        private Mock<IUserClaimRepository> _userClaimRepository;
-        private Mock<IMediator> _mediator;
-
-        private CreateUserClaimCommandHandler _createUserClaimCommandHandler;
-        private DeleteUserClaimCommandHandler _deleteUserClaimCommandHandler;
-        private UpdateUserClaimCommandHandler _updateUserClaimCommandHandler;
-        private GetUserClaimLookupByUserIdQueryHandler _getUserClaimLookupByUserIdQueryHandler;
-        private GetUserClaimLookupQueryHandler _getUserClaimLookupQueryHandler;
-        private GetUserClaimsQueryHandler _getUserClaimsQueryHandler;
-
-
         [SetUp]
         public void Setup()
         {
@@ -55,8 +42,17 @@ namespace Tests.Business.Handlers
                 new GetUserClaimLookupByUserIdQueryHandler(_userClaimRepository.Object, _mediator.Object);
             _getUserClaimLookupQueryHandler = new GetUserClaimLookupQueryHandler(_userClaimRepository.Object);
             _getUserClaimsQueryHandler = new GetUserClaimsQueryHandler(_userClaimRepository.Object);
-
         }
+
+        private Mock<IUserClaimRepository> _userClaimRepository;
+        private Mock<IMediator> _mediator;
+
+        private CreateUserClaimCommandHandler _createUserClaimCommandHandler;
+        private DeleteUserClaimCommandHandler _deleteUserClaimCommandHandler;
+        private UpdateUserClaimCommandHandler _updateUserClaimCommandHandler;
+        private GetUserClaimLookupByUserIdQueryHandler _getUserClaimLookupByUserIdQueryHandler;
+        private GetUserClaimLookupQueryHandler _getUserClaimLookupQueryHandler;
+        private GetUserClaimsQueryHandler _getUserClaimsQueryHandler;
 
         [Test]
         public async Task Handler_CreateUserClaim_Success()
@@ -77,31 +73,31 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_DeleteUserClaim_UserClaimNotFound()
         {
-            var query = new DeleteUserClaimCommand()
+            var query = new DeleteUserClaimCommand
             {
-               Id = 1
+                Id = 1
             };
 
             _userClaimRepository.Setup(x =>
-                x.GetAsync(It.IsAny<Expression<Func<UserClaim, bool>>>()))
+                    x.GetAsync(It.IsAny<Expression<Func<UserClaim, bool>>>()))
                 .Returns(Task.FromResult<UserClaim>(null));
 
             var result = await _deleteUserClaimCommandHandler.Handle(query, new CancellationToken());
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.UserClaimNotFound);
         }
-        
+
         [Test]
         public async Task Handler_DeleteUserClaim_Deleted()
         {
-            var query = new DeleteUserClaimCommand()
+            var query = new DeleteUserClaimCommand
             {
-               Id = 1
+                Id = 1
             };
 
             _userClaimRepository.Setup(x =>
-                x.GetAsync(It.IsAny<Expression<Func<UserClaim, bool>>>()))
-                .Returns(Task.FromResult<UserClaim>(new UserClaim()));
+                    x.GetAsync(It.IsAny<Expression<Func<UserClaim, bool>>>()))
+                .Returns(Task.FromResult(new UserClaim()));
 
             var result = await _deleteUserClaimCommandHandler.Handle(query, new CancellationToken());
             result.Success.Should().BeTrue();
@@ -112,11 +108,11 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_UpdateUserClaim_Success()
         {
-            var query = new UpdateUserClaimCommand()
+            var query = new UpdateUserClaimCommand
             {
                 ClaimId = new int[3]
                 {
-                    1,2,3
+                    1, 2, 3
                 },
                 Id = 1
             };
@@ -133,7 +129,7 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_GetUserClaimLookupByUserId_Success()
         {
-            var query = new GetUserClaimLookupByUserIdQuery()
+            var query = new GetUserClaimLookupByUserIdQuery
             {
                 Id = 1
             };
@@ -141,20 +137,19 @@ namespace Tests.Business.Handlers
             _userClaimRepository.Setup(x => x.GetUserClaimSelectedList(It.IsAny<int>()))
                 .Returns(Task.FromResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
                 {
-                    new SelectionItem(),
-                    new SelectionItem()
+                    new(),
+                    new()
                 }));
 
             var result = await _getUserClaimLookupByUserIdQueryHandler.Handle(query, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Data.Count().Should().BeGreaterThan(1);
-
         }
 
         [Test]
         public async Task Handler_GetUserClaimLookup_Success()
         {
-            var query = new GetUserClaimLookupQuery()
+            var query = new GetUserClaimLookupQuery
             {
                 UserId = 1
             };
@@ -163,16 +158,14 @@ namespace Tests.Business.Handlers
                     x.GetListAsync(It.IsAny<Expression<Func<UserClaim, bool>>>()))
                 .Returns(Task.FromResult<IEnumerable<UserClaim>>(new List<UserClaim>
                 {
-                    new UserClaim(),
-                    new UserClaim(),
-                    new UserClaim()
+                    new(),
+                    new(),
+                    new()
                 }));
 
             var result = await _getUserClaimLookupQueryHandler.Handle(query, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Data.Count().Should().BeGreaterThan(1);
-
-
         }
 
         [Test]
@@ -184,14 +177,13 @@ namespace Tests.Business.Handlers
                     x.GetListAsync(It.IsAny<Expression<Func<UserClaim, bool>>>()))
                 .Returns(Task.FromResult<IEnumerable<UserClaim>>(new List<UserClaim>
                 {
-                    new UserClaim(),
-                    new UserClaim(),
-                    new UserClaim()
+                    new(),
+                    new(),
+                    new()
                 }));
 
             var result = await _getUserClaimsQueryHandler.Handle(query, new CancellationToken());
             result.Success.Should().BeTrue();
-
         }
     }
 }

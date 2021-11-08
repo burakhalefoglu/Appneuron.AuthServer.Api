@@ -1,21 +1,19 @@
-﻿using Business.Handlers.GroupClaims.Commands;
+﻿using System.Threading.Tasks;
+using Business.Handlers.GroupClaims.Commands;
+using Core.Utilities.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Core.Utilities.Results;
 
 namespace WebAPI.Controllers
 {
     /// <summary>
-    ///
     /// </summary>
-    ///
     [Route("api/[controller]")]
     [ApiController]
     public class GroupClaimsController : BaseApiController
     {
         /// <summary>
-        /// Addded GroupClaim .
+        ///     Addded GroupClaim .
         /// </summary>
         /// <param name="createGroupClaim"></param>
         /// <returns></returns>
@@ -27,16 +25,13 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Add([FromBody] CreateGroupClaimCommand createGroupClaim)
         {
             var result = await Mediator.Send(createGroupClaim);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }
 
         /// <summary>
-        /// Update GroupClaim.
+        ///     Update GroupClaim.
         /// </summary>
         /// <param name="updateGroupClaim"></param>
         /// <returns></returns>
@@ -48,16 +43,13 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Update([FromBody] UpdateGroupClaimCommand updateGroupClaim)
         {
             var result = await Mediator.Send(updateGroupClaim);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }
 
         /// <summary>
-        /// Delete GroupClaim.
+        ///     Delete GroupClaim.
         /// </summary>
         /// <param name="deleteGroupClaim"></param>
         /// <returns></returns>
@@ -69,10 +61,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Delete([FromBody] DeleteGroupClaimCommand deleteGroupClaim)
         {
             var result = await Mediator.Send(deleteGroupClaim);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.Groups.Commands;
@@ -24,17 +25,6 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class GroupHandlerTests
     {
-        private Mock<IGroupRepository> _groupRepository;
-
-        private CreateGroupCommandHandler _createGroupCommandHandler;
-        private DeleteGroupCommandHandler _deleteGroupCommandHandler;
-        private UpdateGroupCommandHandler _updateGroupCommandHandler;
-        private GetGroupLookupQueryHandler _getGroupLookupQueryHandler;
-        private GetGroupQueryHandler _getGroupQueryHandler;
-        private GetGroupsQueryHandler _getGroupsQueryHandler;
-        private SearchGroupsByNameQueryHandler _searchGroupsByNameQueryHandler;
-
-
         [SetUp]
         public void Setup()
         {
@@ -46,8 +36,17 @@ namespace Tests.Business.Handlers
             _getGroupQueryHandler = new GetGroupQueryHandler(_groupRepository.Object);
             _getGroupsQueryHandler = new GetGroupsQueryHandler(_groupRepository.Object);
             _searchGroupsByNameQueryHandler = new SearchGroupsByNameQueryHandler(_groupRepository.Object);
-
         }
+
+        private Mock<IGroupRepository> _groupRepository;
+
+        private CreateGroupCommandHandler _createGroupCommandHandler;
+        private DeleteGroupCommandHandler _deleteGroupCommandHandler;
+        private UpdateGroupCommandHandler _updateGroupCommandHandler;
+        private GetGroupLookupQueryHandler _getGroupLookupQueryHandler;
+        private GetGroupQueryHandler _getGroupQueryHandler;
+        private GetGroupsQueryHandler _getGroupsQueryHandler;
+        private SearchGroupsByNameQueryHandler _searchGroupsByNameQueryHandler;
 
         [Test]
         public async Task Handler_CreateGroup_Added()
@@ -59,12 +58,12 @@ namespace Tests.Business.Handlers
 
             _groupRepository.Setup(x => x.Add(It.IsAny<Group>()));
 
-            var result = await _createGroupCommandHandler.Handle( groupCommand, new System.Threading.CancellationToken());
+            var result = await _createGroupCommandHandler.Handle(groupCommand, new CancellationToken());
 
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Added);
         }
-        
+
         [Test]
         public async Task Handler_DeleteGroup_Deleted()
         {
@@ -72,17 +71,17 @@ namespace Tests.Business.Handlers
             {
                 Id = 1
             };
-             
-            _groupRepository.Setup(x => 
-                x.GetAsync(It.IsAny<Expression<Func<Group, bool>>>()))
+
+            _groupRepository.Setup(x =>
+                    x.GetAsync(It.IsAny<Expression<Func<Group, bool>>>()))
                 .Returns(Task.FromResult(new Group()));
 
-            var result = await _deleteGroupCommandHandler.Handle( groupCommand, new System.Threading.CancellationToken());
+            var result = await _deleteGroupCommandHandler.Handle(groupCommand, new CancellationToken());
 
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Deleted);
-        } 
-        
+        }
+
         [Test]
         public async Task Handler_DeleteGroup_GroupNotFound()
         {
@@ -90,12 +89,12 @@ namespace Tests.Business.Handlers
             {
                 Id = 1
             };
-             
-            _groupRepository.Setup(x => 
-                x.GetAsync(It.IsAny<Expression<Func<Group, bool>>>()))
+
+            _groupRepository.Setup(x =>
+                    x.GetAsync(It.IsAny<Expression<Func<Group, bool>>>()))
                 .Returns(Task.FromResult<Group>(null));
 
-            var result = await _deleteGroupCommandHandler.Handle( groupCommand, new System.Threading.CancellationToken());
+            var result = await _deleteGroupCommandHandler.Handle(groupCommand, new CancellationToken());
 
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.GroupNotFound);
@@ -105,7 +104,7 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_UpdateGroup_Updated()
         {
-            var groupCommand = new UpdateGroupCommand()
+            var groupCommand = new UpdateGroupCommand
             {
                 Id = 1,
                 GroupName = "Test"
@@ -114,7 +113,7 @@ namespace Tests.Business.Handlers
             _groupRepository.Setup(x =>
                 x.Update(It.IsAny<Group>()));
 
-            var result = await _updateGroupCommandHandler.Handle( groupCommand, new System.Threading.CancellationToken());
+            var result = await _updateGroupCommandHandler.Handle(groupCommand, new CancellationToken());
 
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Updated);
@@ -130,32 +129,29 @@ namespace Tests.Business.Handlers
                     x.GetListAsync(It.IsAny<Expression<Func<Group, bool>>>()))
                 .ReturnsAsync(new List<Group>
                 {
-                    new Group
+                    new()
                     {
                         GroupClaims = new List<GroupClaim>(),
                         GroupName = "Test",
                         Id = 1,
                         UserGroups = new List<UserGroup>()
                     },
-                    new Group
+                    new()
                     {
                         GroupClaims = new List<GroupClaim>(),
                         GroupName = "Test1",
                         Id = 2,
                         UserGroups = new List<UserGroup>()
                     }
-
                 });
 
-            var result = await _getGroupLookupQueryHandler.Handle(groupCommand, new System.Threading.CancellationToken());
+            var result = await _getGroupLookupQueryHandler.Handle(groupCommand, new CancellationToken());
 
             result.Success.Should().BeTrue();
             result.Data.Count().Should().Be(2);
             Assert.AreEqual("1", result.Data.ToArray()[0].Id);
             Assert.AreEqual("Test", result.Data.ToArray()[0].Label);
-
         }
-
 
 
         [Test]
@@ -173,7 +169,7 @@ namespace Tests.Business.Handlers
                     UserGroups = new List<UserGroup>()
                 });
 
-            var result = await _getGroupQueryHandler.Handle(groupCommand, new System.Threading.CancellationToken());
+            var result = await _getGroupQueryHandler.Handle(groupCommand, new CancellationToken());
 
             result.Success.Should().BeTrue();
             result.Data.GroupName.Should().Be("Test");
@@ -189,30 +185,27 @@ namespace Tests.Business.Handlers
                     x.GetListAsync(It.IsAny<Expression<Func<Group, bool>>>()))
                 .ReturnsAsync(new List<Group>
                 {
-                    new Group
+                    new()
                     {
                         GroupClaims = new List<GroupClaim>(),
                         GroupName = "Test",
                         Id = 1,
                         UserGroups = new List<UserGroup>()
                     },
-                    new Group
+                    new()
                     {
                         GroupClaims = new List<GroupClaim>(),
                         GroupName = "Test1",
                         Id = 2,
                         UserGroups = new List<UserGroup>()
                     }
-
                 });
 
-            var result = await _getGroupsQueryHandler.Handle(groupCommand, new System.Threading.CancellationToken());
+            var result = await _getGroupsQueryHandler.Handle(groupCommand, new CancellationToken());
 
             result.Success.Should().BeTrue();
             result.Data.Count().Should().BeGreaterThan(1);
-
         }
-
 
 
         [Test]
@@ -225,31 +218,29 @@ namespace Tests.Business.Handlers
                     x.GetListAsync(It.IsAny<Expression<Func<Group, bool>>>()))
                 .ReturnsAsync(new List<Group>
                 {
-                    new Group
+                    new()
                     {
                         GroupClaims = new List<GroupClaim>(),
                         GroupName = "Test",
                         Id = 1,
                         UserGroups = new List<UserGroup>()
                     },
-                    new Group
+                    new()
                     {
                         GroupClaims = new List<GroupClaim>(),
                         GroupName = "Test",
                         Id = 2,
                         UserGroups = new List<UserGroup>()
                     }
-
                 });
 
-            var result = await _searchGroupsByNameQueryHandler.Handle(groupCommand, new System.Threading.CancellationToken());
+            var result = await _searchGroupsByNameQueryHandler.Handle(groupCommand, new CancellationToken());
 
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.StringLengthMustBeGreaterThanThree);
-
         }
 
-  [Test]
+        [Test]
         public async Task Handler_SearchGroupsByName_Success()
         {
             var groupCommand = new SearchGroupsByNameQuery();
@@ -259,30 +250,26 @@ namespace Tests.Business.Handlers
                     x.GetListAsync(It.IsAny<Expression<Func<Group, bool>>>()))
                 .ReturnsAsync(new List<Group>
                 {
-                    new Group
+                    new()
                     {
                         GroupClaims = new List<GroupClaim>(),
                         GroupName = "Test",
                         Id = 1,
                         UserGroups = new List<UserGroup>()
                     },
-                    new Group
+                    new()
                     {
                         GroupClaims = new List<GroupClaim>(),
                         GroupName = "Test",
                         Id = 2,
                         UserGroups = new List<UserGroup>()
                     }
-
                 });
 
-            var result = await _searchGroupsByNameQueryHandler.Handle(groupCommand, new System.Threading.CancellationToken());
+            var result = await _searchGroupsByNameQueryHandler.Handle(groupCommand, new CancellationToken());
 
             result.Success.Should().BeTrue();
             result.Data.Count().Should().BeGreaterThan(1);
-
         }
-
-
     }
 }

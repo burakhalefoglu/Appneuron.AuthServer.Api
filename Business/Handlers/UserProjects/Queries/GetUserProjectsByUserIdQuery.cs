@@ -1,32 +1,29 @@
-﻿
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Business.BusinessAspects;
-using Core.Utilities.Results;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using Core.Aspects.Autofac.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using Core.Aspects.Autofac.Caching;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Microsoft.AspNetCore.Http;
-using Core.Utilities.IoC;
 
 namespace Business.Handlers.UserProjects.Queries
 {
-
     public class GetUserProjectsByUserIdQuery : IRequest<IDataResult<IEnumerable<UserProject>>>
     {
-        public class GetUserProjectsByUserIdQueryHandler : IRequestHandler<GetUserProjectsByUserIdQuery, IDataResult<IEnumerable<UserProject>>>
+        public class GetUserProjectsByUserIdQueryHandler : IRequestHandler<GetUserProjectsByUserIdQuery,
+            IDataResult<IEnumerable<UserProject>>>
         {
-            private readonly IUserProjectRepository _userProjectRepository;
-            private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
+            private readonly IMediator _mediator;
+            private readonly IUserProjectRepository _userProjectRepository;
 
             public GetUserProjectsByUserIdQueryHandler(IUserProjectRepository userProjectRepository,
                 IMediator mediator, IHttpContextAccessor httpContextAccessor)
@@ -34,14 +31,14 @@ namespace Business.Handlers.UserProjects.Queries
                 _userProjectRepository = userProjectRepository;
                 _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
-
             }
 
             [PerformanceAspect(5)]
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<UserProject>>> Handle(GetUserProjectsByUserIdQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<UserProject>>> Handle(GetUserProjectsByUserIdQuery request,
+                CancellationToken cancellationToken)
             {
                 var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);

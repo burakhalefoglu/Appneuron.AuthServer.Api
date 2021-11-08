@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -6,13 +8,10 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.UserProjects.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class DeleteUserProjectCommand : IRequest<IResult>
     {
@@ -20,8 +19,8 @@ namespace Business.Handlers.UserProjects.Commands
 
         public class DeleteUserProjectCommandHandler : IRequestHandler<DeleteUserProjectCommand, IResult>
         {
-            private readonly IUserProjectRepository _userProjectRepository;
             private readonly IMediator _mediator;
+            private readonly IUserProjectRepository _userProjectRepository;
 
             public DeleteUserProjectCommandHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
             {

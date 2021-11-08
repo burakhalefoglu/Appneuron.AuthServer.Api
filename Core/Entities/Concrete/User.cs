@@ -5,6 +5,13 @@ namespace Core.Entities.Concrete
 {
     public class User : IEntity
     {
+        public User()
+        {
+            UpdateContactDate = RecordDate = DateTime.Now;
+            ResetPasswordExpires = DateTime.MinValue;
+            Status = true;
+        }
+
         public int UserId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -19,12 +26,5 @@ namespace Core.Entities.Concrete
 
         public virtual ICollection<UserGroup> UserGroups { get; set; }
         public virtual ICollection<UserClaim> UserClaims { get; set; }
-
-        public User()
-        {
-            UpdateContactDate = RecordDate = DateTime.Now;
-            ResetPasswordExpires = DateTime.MinValue;
-            Status = true;
-        }
     }
 }

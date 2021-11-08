@@ -1,9 +1,9 @@
-﻿using Core.Utilities.Results;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Fakes.Handlers.UserProjects
 {
@@ -13,8 +13,8 @@ namespace Business.Fakes.Handlers.UserProjects
 
         public class GetUserProjectQueryHandler : IRequestHandler<GetUserProjectInternalQuery, IDataResult<UserProject>>
         {
-            private readonly IUserProjectRepository _userProjectRepository;
             private readonly IMediator _mediator;
+            private readonly IUserProjectRepository _userProjectRepository;
 
             public GetUserProjectQueryHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
             {
@@ -22,7 +22,8 @@ namespace Business.Fakes.Handlers.UserProjects
                 _mediator = mediator;
             }
 
-            public async Task<IDataResult<UserProject>> Handle(GetUserProjectInternalQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<UserProject>> Handle(GetUserProjectInternalQuery request,
+                CancellationToken cancellationToken)
             {
                 var userProject = await _userProjectRepository.GetAsync(p => p.ProjectKey == request.ProjectKey);
                 return new SuccessDataResult<UserProject>(userProject);

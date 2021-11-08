@@ -10,8 +10,8 @@ namespace DataAccess.Concrete.Configurations
         {
             builder.HasKey(x => x.Id);
             builder.Property(e => e.GroupName)
-                               .IsRequired()
-                               .HasMaxLength(50);
+                .IsRequired()
+                .HasMaxLength(50);
         }
     }
 }

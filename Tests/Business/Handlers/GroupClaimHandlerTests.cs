@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.GroupClaims.Commands;
 using Business.Handlers.GroupClaims.Queries;
-using Business.Handlers.Groups.Queries;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
 using DataAccess.Abstract;
@@ -27,16 +26,6 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class GroupClaimHandlerTests
     {
-        private Mock<IGroupClaimRepository> _groupClaimRepository;
-        private Mock<IOperationClaimRepository> _operationClaimRepository;
-
-        private CreateGroupClaimCommandHandler _createGroupClaimCommandHandler;
-        private DeleteGroupClaimCommandHandler _deleteGroupClaimCommandHandler;
-        private UpdateGroupClaimCommandHandler _updateGroupClaimCommandHandler;
-
-        private GetGroupClaimQueryHandler _getGroupClaimQueryHandler;
-        private GetGroupClaimsLookupByGroupIdQueryHandler _getGroupClaimsLookupByGroupIdQueryHandler;
-        private GetGroupClaimsQueryHandler _getGroupClaimsQueryHandler;
         [SetUp]
         public void Setup()
         {
@@ -51,13 +40,22 @@ namespace Tests.Business.Handlers
             _getGroupClaimsLookupByGroupIdQueryHandler =
                 new GetGroupClaimsLookupByGroupIdQueryHandler(_groupClaimRepository.Object);
             _getGroupClaimsQueryHandler = new GetGroupClaimsQueryHandler(_groupClaimRepository.Object);
-
         }
+
+        private Mock<IGroupClaimRepository> _groupClaimRepository;
+        private Mock<IOperationClaimRepository> _operationClaimRepository;
+
+        private CreateGroupClaimCommandHandler _createGroupClaimCommandHandler;
+        private DeleteGroupClaimCommandHandler _deleteGroupClaimCommandHandler;
+        private UpdateGroupClaimCommandHandler _updateGroupClaimCommandHandler;
+
+        private GetGroupClaimQueryHandler _getGroupClaimQueryHandler;
+        private GetGroupClaimsLookupByGroupIdQueryHandler _getGroupClaimsLookupByGroupIdQueryHandler;
+        private GetGroupClaimsQueryHandler _getGroupClaimsQueryHandler;
 
         [Test]
         public async Task Handler_CreateGroupClaim_OperationClaimExists()
         {
-
             var command = new CreateGroupClaimCommand
             {
                 ClaimName = "test"
@@ -65,7 +63,7 @@ namespace Tests.Business.Handlers
 
             _operationClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<OperationClaim, bool>>>()))
-                .Returns(Task.FromResult<OperationClaim>(new OperationClaim()));
+                .Returns(Task.FromResult(new OperationClaim()));
 
             _operationClaimRepository.Setup(x => x.Add(It.IsAny<OperationClaim>()));
 
@@ -77,7 +75,6 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_CreateGroupClaim_Added()
         {
-
             var command = new CreateGroupClaimCommand
             {
                 ClaimName = "test"
@@ -98,12 +95,11 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_UpdateGroupClaim_Updated()
         {
-
-            var command = new UpdateGroupClaimCommand()
+            var command = new UpdateGroupClaimCommand
             {
                 GroupId = 1,
                 Id = 2,
-                ClaimIds = new int[]
+                ClaimIds = new[]
                 {
                     1, 2, 3, 23, 45, 55
                 }
@@ -121,11 +117,9 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_DeleteGroupClaim_GroupClaimNotFound()
         {
-
-            var command = new DeleteGroupClaimCommand()
+            var command = new DeleteGroupClaimCommand
             {
-                Id = 1,
-
+                Id = 1
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
@@ -140,15 +134,14 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_DeleteGroupClaim_Deleted()
         {
-            var command = new DeleteGroupClaimCommand()
+            var command = new DeleteGroupClaimCommand
             {
-                Id = 1,
-
+                Id = 1
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
-                .Returns(Task.FromResult(new GroupClaim()
+                .Returns(Task.FromResult(new GroupClaim
                 {
                     OperationClaim = new OperationClaim(),
                     ClaimId = 1,
@@ -167,15 +160,14 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_GetGroupClaim_Success()
         {
-            var command = new GetGroupClaimQuery()
+            var command = new GetGroupClaimQuery
             {
-                Id = 1,
-
+                Id = 1
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
-                .Returns(Task.FromResult(new GroupClaim()
+                .Returns(Task.FromResult(new GroupClaim
                 {
                     OperationClaim = new OperationClaim(),
                     ClaimId = 1,
@@ -191,39 +183,36 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_GetGroupClaimsLookupByGroupIdClaim_Success()
         {
-            var command = new GetGroupClaimsLookupByGroupIdQuery()
+            var command = new GetGroupClaimsLookupByGroupIdQuery
             {
-                GroupId = 1,
-
+                GroupId = 1
             };
 
             _groupClaimRepository.Setup(x => x.GetGroupClaimsSelectedList(
                     It.IsAny<int>()))
                 .Returns(Task.FromResult<IEnumerable<SelectionItem>>(
-                    new List<SelectionItem>()
+                    new List<SelectionItem>
                     {
-                        new SelectionItem()
+                        new()
                         {
                             Id = 1,
                             IsDisabled = false,
                             Label = "Test",
                             ParentId = "asdasd"
                         },
-                        new SelectionItem()
+                        new()
                         {
                             Id = 1,
                             IsDisabled = false,
                             Label = "Test2",
                             ParentId = "gdfgdfg"
                         }
-
                     }));
 
             var result = await _getGroupClaimsLookupByGroupIdQueryHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Data.ToList().Count.Should().BeGreaterThan(1);
         }
-
 
 
         [Test]
@@ -234,23 +223,22 @@ namespace Tests.Business.Handlers
             _groupClaimRepository.Setup(x => x.GetListAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
                 .Returns(Task.FromResult<IEnumerable<GroupClaim>>(
-                    new List<GroupClaim>()
+                    new List<GroupClaim>
                     {
-                        new GroupClaim()
+                        new()
                         {
-                          OperationClaim = new OperationClaim(),
-                          ClaimId = 1,
-                          Group = new Group(),
-                          GroupId = 1
+                            OperationClaim = new OperationClaim(),
+                            ClaimId = 1,
+                            Group = new Group(),
+                            GroupId = 1
                         },
-                        new GroupClaim()
+                        new()
                         {
                             OperationClaim = new OperationClaim(),
                             ClaimId = 2,
                             Group = new Group(),
                             GroupId = 1
                         }
-
                     }));
 
             var result = await _getGroupClaimsQueryHandler.Handle(command, new CancellationToken());

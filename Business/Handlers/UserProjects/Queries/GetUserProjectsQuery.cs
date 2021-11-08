@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -7,18 +10,16 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.UserProjects.Queries
 {
     public class GetUserProjectsQuery : IRequest<IDataResult<IEnumerable<UserProject>>>
     {
-        public class GetUserProjectsQueryHandler : IRequestHandler<GetUserProjectsQuery, IDataResult<IEnumerable<UserProject>>>
+        public class
+            GetUserProjectsQueryHandler : IRequestHandler<GetUserProjectsQuery, IDataResult<IEnumerable<UserProject>>>
         {
-            private readonly IUserProjectRepository _userProjectRepository;
             private readonly IMediator _mediator;
+            private readonly IUserProjectRepository _userProjectRepository;
 
             public GetUserProjectsQueryHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
             {
@@ -30,7 +31,8 @@ namespace Business.Handlers.UserProjects.Queries
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<UserProject>>> Handle(GetUserProjectsQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<UserProject>>> Handle(GetUserProjectsQuery request,
+                CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<UserProject>>(await _userProjectRepository.GetListAsync());
             }

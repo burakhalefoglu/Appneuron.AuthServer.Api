@@ -1,17 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Scaffolding.Internal;
-using System;
 
 namespace WebAPI.EntityBaseOverride
 {
     /// <summary>
-    ///
     /// </summary>
     public class OverrideBase : CSharpEntityTypeGenerator
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="annotationCodeGenerator"></param>
         /// <param name="cSharpHelper"></param>
@@ -21,7 +19,6 @@ namespace WebAPI.EntityBaseOverride
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="entityType"></param>
         /// <param name="namespace"></param>
@@ -29,7 +26,8 @@ namespace WebAPI.EntityBaseOverride
         /// <returns></returns>
         public override string WriteCode(IEntityType entityType, string @namespace, bool useDataAnnotations)
         {
-            var str = base.WriteCode(entityType, @namespace, useDataAnnotations).Replace("public partial class " + entityType.Name, "public class " + entityType.Name + " : IEntity");
+            var str = base.WriteCode(entityType, @namespace, useDataAnnotations).Replace(
+                "public partial class " + entityType.Name, "public class " + entityType.Name + " : IEntity");
             var oldValue = "using System;";
             var newValue = oldValue + Environment.NewLine + "using Core.Entities;";
             return str.Replace(oldValue, newValue);

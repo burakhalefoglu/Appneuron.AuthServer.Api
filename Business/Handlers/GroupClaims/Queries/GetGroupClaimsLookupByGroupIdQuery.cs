@@ -1,13 +1,13 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.GroupClaims.Queries
 {
@@ -15,7 +15,8 @@ namespace Business.Handlers.GroupClaims.Queries
     {
         public int GroupId { get; set; }
 
-        public class GetGroupClaimsLookupByGroupIdQueryHandler : IRequestHandler<GetGroupClaimsLookupByGroupIdQuery, IDataResult<IEnumerable<SelectionItem>>>
+        public class GetGroupClaimsLookupByGroupIdQueryHandler : IRequestHandler<GetGroupClaimsLookupByGroupIdQuery,
+            IDataResult<IEnumerable<SelectionItem>>>
         {
             private readonly IGroupClaimRepository _groupClaimRepository;
 
@@ -26,7 +27,8 @@ namespace Business.Handlers.GroupClaims.Queries
 
             [SecuredOperation(Priority = 1)]
             [LogAspect(typeof(FileLogger))]
-            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetGroupClaimsLookupByGroupIdQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(
+                GetGroupClaimsLookupByGroupIdQuery request, CancellationToken cancellationToken)
             {
                 var data = await _groupClaimRepository.GetGroupClaimsSelectedList(request.GroupId);
                 return new SuccessDataResult<IEnumerable<SelectionItem>>(data);

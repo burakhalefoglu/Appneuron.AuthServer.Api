@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -8,9 +11,6 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Logs.Queries
 {
@@ -31,7 +31,8 @@ namespace Business.Handlers.Logs.Queries
             [PerformanceAspect(5)]
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
-            public async Task<IDataResult<IEnumerable<LogDto>>> Handle(GetLogDtoQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<LogDto>>> Handle(GetLogDtoQuery request,
+                CancellationToken cancellationToken)
             {
                 var result = await _logRepository.GetListAsync();
                 var data = new List<LogDto>();
@@ -54,6 +55,7 @@ namespace Business.Handlers.Logs.Queries
 
                     data.Add(list);
                 }
+
                 return new SuccessDataResult<IEnumerable<LogDto>>(data);
             }
         }

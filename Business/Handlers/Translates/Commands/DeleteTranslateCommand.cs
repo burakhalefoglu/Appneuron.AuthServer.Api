@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -6,8 +8,6 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Translates.Commands
 {
@@ -17,8 +17,8 @@ namespace Business.Handlers.Translates.Commands
 
         public class DeleteTranslateCommandHandler : IRequestHandler<DeleteTranslateCommand, IResult>
         {
-            private readonly ITranslateRepository _translateRepository;
             private readonly IMediator _mediator;
+            private readonly ITranslateRepository _translateRepository;
 
             public DeleteTranslateCommandHandler(ITranslateRepository translateRepository, IMediator mediator)
             {

@@ -1,3 +1,8 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+using System.Security.Claims;
+using System.Security.Principal;
 using Autofac;
 using Business.Constants;
 using Business.DependencyResolvers;
@@ -20,15 +25,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Reflection;
-using System.Security.Claims;
-using System.Security.Principal;
-using Business.Handlers.Clients.Commands;
 
 namespace Business
 {
-    public partial class BusinessStartup
+    public class BusinessStartup
     {
         protected readonly IHostEnvironment HostEnvironment;
 
@@ -41,25 +41,25 @@ namespace Business
         public IConfiguration Configuration { get; }
 
         /// <summary>
-        /// This method gets called by the runtime. Use this method to add services to the container.
+        ///     This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
         /// <remarks>
-        /// It is common to all configurations and must be called. Aspnet core does not call this method because there are other methods.
+        ///     It is common to all configurations and must be called. Aspnet core does not call this method because there are
+        ///     other methods.
         /// </remarks>
         /// <param name="services"></param>
-
         public virtual void ConfigureServices(IServiceCollection services)
         {
-            Func<IServiceProvider, ClaimsPrincipal> getPrincipal = (sp) =>
-
-                            sp.GetService<IHttpContextAccessor>().HttpContext?.User ?? new ClaimsPrincipal(new ClaimsIdentity(Messages.Unknown));
+            Func<IServiceProvider, ClaimsPrincipal> getPrincipal = sp =>
+                sp.GetService<IHttpContextAccessor>().HttpContext?.User ??
+                new ClaimsPrincipal(new ClaimsIdentity(Messages.Unknown));
 
             services.AddScoped<IPrincipal>(getPrincipal);
             services.AddMemoryCache();
 
             services.AddDependencyResolvers(Configuration, new ICoreModule[]
             {
-                    new CoreModule()
+                new CoreModule()
             });
 
             services.AddSingleton<ConfigurationManager>();
@@ -76,12 +76,12 @@ namespace Business
 
             ValidatorOptions.Global.DisplayNameResolver = (type, memberInfo, expression) =>
             {
-                return memberInfo.GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>()?.GetName();
+                return memberInfo.GetCustomAttribute<DisplayAttribute>()?.GetName();
             };
         }
 
         /// <summary>
-        /// This method gets called by the Development
+        ///     This method gets called by the Development
         /// </summary>
         /// <param name="services"></param>
         public void ConfigureDevelopmentServices(IServiceCollection services)
@@ -106,7 +106,7 @@ namespace Business
         }
 
         /// <summary>
-        /// This method gets called by the Staging
+        ///     This method gets called by the Staging
         /// </summary>
         /// <param name="services"></param>
         public void ConfigureStagingServices(IServiceCollection services)
@@ -131,7 +131,7 @@ namespace Business
         }
 
         /// <summary>
-        /// This method gets called by the Production
+        ///     This method gets called by the Production
         /// </summary>
         /// <param name="services"></param>
         public void ConfigureProductionServices(IServiceCollection services)
@@ -156,7 +156,6 @@ namespace Business
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="builder"></param>
         public void ConfigureContainer(ContainerBuilder builder)

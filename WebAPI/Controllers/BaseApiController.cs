@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace WebAPI.Controllers
 {
     /// <summary>
-    /// Base controller
+    ///     Base controller
     /// </summary>
     [Authorize]
     [Route("[controller]")]
@@ -17,12 +17,11 @@ namespace WebAPI.Controllers
         private IMediator _mediator;
 
         /// <summary>
-        /// It is for getting the Mediator instance creation process from the base controller.
+        ///     It is for getting the Mediator instance creation process from the base controller.
         /// </summary>
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="message"></param>
@@ -42,7 +41,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -54,7 +52,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="message"></param>
@@ -74,7 +71,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -86,7 +82,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="message"></param>
@@ -106,7 +101,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -118,7 +112,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="message"></param>
@@ -138,7 +131,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -150,7 +142,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="message"></param>
@@ -170,7 +161,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -182,7 +172,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="message"></param>
@@ -202,7 +191,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -214,7 +202,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="message"></param>
@@ -234,7 +221,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -246,7 +232,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="message"></param>
@@ -266,7 +251,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>

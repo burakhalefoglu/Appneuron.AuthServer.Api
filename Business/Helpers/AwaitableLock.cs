@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Business.Helpers
 {
     /// <summary>
-    /// Since we cannot lock the async await binary with the classic C # lock () clause, we are referring to this solution.
+    ///     Since we cannot lock the async await binary with the classic C # lock () clause, we are referring to this solution.
     /// </summary>
     public class AwaitableLock
     {
@@ -18,10 +18,7 @@ namespace Business.Helpers
 
         public async Task<LockReleaser> Lock(TimeSpan timeout)
         {
-            if (await _toLock.WaitAsync(timeout))
-            {
-                return new LockReleaser(_toLock);
-            }
+            if (await _toLock.WaitAsync(timeout)) return new LockReleaser(_toLock);
             throw new TimeoutException();
         }
 

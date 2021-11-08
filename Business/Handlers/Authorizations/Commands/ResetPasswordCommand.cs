@@ -1,18 +1,16 @@
-﻿using Business.Constants;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Concrete;
-using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Authorizations.Commands
 {
@@ -22,9 +20,9 @@ namespace Business.Handlers.Authorizations.Commands
 
         public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, IResult>
         {
-            private readonly IUserRepository _userRepository;
-            private readonly IMediator _mediator;
             public readonly IHttpContextAccessor _httpContextAccessor;
+            private readonly IMediator _mediator;
+            private readonly IUserRepository _userRepository;
 
             public ResetPasswordCommandHandler(IUserRepository userRepository,
                 IMediator mediator,
@@ -42,16 +40,10 @@ namespace Business.Handlers.Authorizations.Commands
                 var queryString = _httpContextAccessor.HttpContext.Request.Query;
                 var token = queryString["token"];
                 var resultUser = await _userRepository.GetAsync(p => p.ResetPasswordToken == token.ToString());
-                if (resultUser == null)
-                {
-                    return new ErrorDataResult<User>(Messages.InvalidCode);
-                }
+                if (resultUser == null) return new ErrorDataResult<User>(Messages.InvalidCode);
 
-                int resultDate = DateTime.Compare(DateTime.Now, resultUser.ResetPasswordExpires);
-                if (resultDate > 0)
-                {
-                    return new ErrorDataResult<User>(Messages.InvalidCode);
-                }
+                var resultDate = DateTime.Compare(DateTime.Now, resultUser.ResetPasswordExpires);
+                if (resultDate > 0) return new ErrorDataResult<User>(Messages.InvalidCode);
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
 

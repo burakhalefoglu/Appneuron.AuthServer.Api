@@ -8,7 +8,6 @@ using AutoMapper;
 using Business.Constants;
 using Business.Handlers.Users.Commands;
 using Business.Handlers.Users.Queries;
-using Confluent.Kafka;
 using Core.Entities.Concrete;
 using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
@@ -17,9 +16,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
-using Org.BouncyCastle.Bcpg;
 using Tests.Helpers;
-using Tests.Helpers.Token;
 using static Business.Handlers.Users.Commands.CreateUserCommand;
 using static Business.Handlers.Users.Commands.DeleteUserCommand;
 using static Business.Handlers.Users.Commands.UpdateUserCommand;
@@ -34,19 +31,6 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class UsersHandlerTests
     {
-        private Mock<IUserRepository> _userRepository;
-        private Mock<IMediator> _mediator;
-        private Mock<IMapper> _mapper;
-        private Mock<IHttpContextAccessor> _httpContextAccessor;
-
-        private CreateUserCommandHandler _createUserCommandHandler;
-        private DeleteUserCommandHandler _deleteUserCommandHandler;
-        private UpdateUserCommandHandler _updateUserCommandHandler;
-        private UserChangePasswordCommandHandler _updateChangePasswordCommandHandler;
-        private GetUserLookupQueryHandler _getUserLookupQueryHandler;
-        private GetUserQueryHandler _getUserQueryHandler;
-        private GetUsersQueryHandler _getUsersQueryHandler;
-
         [SetUp]
         public void Setup()
         {
@@ -67,8 +51,20 @@ namespace Tests.Business.Handlers
             _getUserQueryHandler = new GetUserQueryHandler(_userRepository.Object, _mapper.Object,
                 _httpContextAccessor.Object);
             _getUsersQueryHandler = new GetUsersQueryHandler(_userRepository.Object, _mapper.Object);
-
         }
+
+        private Mock<IUserRepository> _userRepository;
+        private Mock<IMediator> _mediator;
+        private Mock<IMapper> _mapper;
+        private Mock<IHttpContextAccessor> _httpContextAccessor;
+
+        private CreateUserCommandHandler _createUserCommandHandler;
+        private DeleteUserCommandHandler _deleteUserCommandHandler;
+        private UpdateUserCommandHandler _updateUserCommandHandler;
+        private UserChangePasswordCommandHandler _updateChangePasswordCommandHandler;
+        private GetUserLookupQueryHandler _getUserLookupQueryHandler;
+        private GetUserQueryHandler _getUserQueryHandler;
+        private GetUsersQueryHandler _getUsersQueryHandler;
 
         [Test]
         public async Task Handler_CreateUser_Success()
@@ -101,14 +97,13 @@ namespace Tests.Business.Handlers
             };
 
             _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(Task.FromResult<User>(new User()));
+                .Returns(Task.FromResult(new User()));
 
             _userRepository.Setup(x => x.Add(It.IsAny<User>()));
 
             var result = await _createUserCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.NameAlreadyExist);
-
         }
 
 
@@ -192,7 +187,7 @@ namespace Tests.Business.Handlers
 
             _userRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(Task.FromResult<User>(new User()));
+                .Returns(Task.FromResult(new User()));
 
             _userRepository.Setup(x => x.Update(It.IsAny<User>()));
 
@@ -205,8 +200,7 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_UserChangePassword_UserNotFound()
         {
-
-            var command = new UserChangePasswordCommand()
+            var command = new UserChangePasswordCommand
             {
                 Password = "123456",
                 validPassword = "123456"
@@ -238,7 +232,7 @@ namespace Tests.Business.Handlers
             user.PasswordHash = passwordHash;
 
 
-            var command = new UserChangePasswordCommand()
+            var command = new UserChangePasswordCommand
             {
                 Password = "1234567",
                 validPassword = "1234567"
@@ -249,7 +243,7 @@ namespace Tests.Business.Handlers
 
             _userRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(Task.FromResult<User>(user));
+                .Returns(Task.FromResult(user));
 
             _userRepository.Setup(x => x.Update(It.IsAny<User>()));
 
@@ -271,7 +265,7 @@ namespace Tests.Business.Handlers
             user.PasswordHash = passwordHash;
 
 
-            var command = new UserChangePasswordCommand()
+            var command = new UserChangePasswordCommand
             {
                 Password = "123456",
                 validPassword = "123456"
@@ -282,7 +276,7 @@ namespace Tests.Business.Handlers
 
             _userRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(Task.FromResult<User>(user));
+                .Returns(Task.FromResult(user));
 
             _userRepository.Setup(x => x.Update(It.IsAny<User>()));
 
@@ -300,8 +294,8 @@ namespace Tests.Business.Handlers
             _userRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>()))
                 .ReturnsAsync(new List<User>
                 {
-                    new User(),
-                    new User()
+                    new(),
+                    new()
                 });
 
             var result = await _getUserLookupQueryHandler.Handle(query, new CancellationToken());
@@ -335,8 +329,8 @@ namespace Tests.Business.Handlers
             _userRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>()))
                 .ReturnsAsync(new List<User>
                 {
-                    new User(),
-                    new User()
+                    new(),
+                    new()
                 });
 
             var result = await _getUsersQueryHandler.Handle(query, new CancellationToken());

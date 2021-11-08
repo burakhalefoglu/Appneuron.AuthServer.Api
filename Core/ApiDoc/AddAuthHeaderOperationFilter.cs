@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Core.ApiDoc
 {
     /// <summary>
-    /// Filter that adds Authorization bearer to required API methods.
+    ///     Filter that adds Authorization bearer to required API methods.
     /// </summary>
     internal class AddAuthHeaderOperationFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            var isAuthorized = (context.MethodInfo.DeclaringType.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any()
+            var isAuthorized = (context.MethodInfo.DeclaringType.GetCustomAttributes(true).OfType<AuthorizeAttribute>()
+                                    .Any()
                                 || context.MethodInfo.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any())
-                                && !context.MethodInfo.GetCustomAttributes(true).OfType<AllowAnonymousAttribute>().Any(); // this excludes methods with AllowAnonymous attribute
+                               && !context.MethodInfo.GetCustomAttributes(true).OfType<AllowAnonymousAttribute>()
+                                   .Any(); // this excludes methods with AllowAnonymous attribute
 
             if (!isAuthorized) return;
 
@@ -29,7 +31,7 @@ namespace Core.ApiDoc
 
             operation.Security = new List<OpenApiSecurityRequirement>
             {
-                new OpenApiSecurityRequirement { [jwtbearerScheme] = new string []{} }
+                new OpenApiSecurityRequirement { [jwtbearerScheme] = new string[] { } }
             };
         }
     }

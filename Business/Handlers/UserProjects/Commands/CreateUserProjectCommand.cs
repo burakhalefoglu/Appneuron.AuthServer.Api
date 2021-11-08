@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.UserProjects.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -9,14 +11,10 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.UserProjects.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateUserProjectCommand : IRequest<IResult>
     {
@@ -25,8 +23,8 @@ namespace Business.Handlers.UserProjects.Commands
 
         public class CreateUserProjectCommandHandler : IRequestHandler<CreateUserProjectCommand, IResult>
         {
-            private readonly IUserProjectRepository _userProjectRepository;
             private readonly IMediator _mediator;
+            private readonly IUserProjectRepository _userProjectRepository;
 
             public CreateUserProjectCommandHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
             {
@@ -41,7 +39,7 @@ namespace Business.Handlers.UserProjects.Commands
             public async Task<IResult> Handle(CreateUserProjectCommand request, CancellationToken cancellationToken)
             {
                 var isThereUserProjectRecord = await _userProjectRepository
-                    .GetAsync(u => u.UserId == request.UserId) ;
+                    .GetAsync(u => u.UserId == request.UserId);
 
                 if (isThereUserProjectRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -49,7 +47,7 @@ namespace Business.Handlers.UserProjects.Commands
                 var addedUserProject = new UserProject
                 {
                     UserId = request.UserId,
-                    ProjectKey = request.ProjectKey,
+                    ProjectKey = request.ProjectKey
                 };
 
                 _userProjectRepository.Add(addedUserProject);
