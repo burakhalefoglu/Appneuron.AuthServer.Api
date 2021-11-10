@@ -7,6 +7,7 @@ using Business.Constants;
 using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.Clients.Commands;
+using Business.MessageBrokers;
 using Business.Services.Authentication;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
@@ -26,22 +27,27 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class ClientHandlerTests
     {
+        private Mock<ITokenHelper> _tokenHelper;
+        private Mock<IClientRepository> _clientRepository;
+        private Mock<IMediator> _mediator;
+        private Mock<IMessageBroker> _messageBroker;
+
+
+        private CreateTokenCommandHandler _createTokenCommandHandler;
+
         [SetUp]
         public void Setup()
         {
             _clientRepository = new Mock<IClientRepository>();
             _tokenHelper = new Mock<ITokenHelper>();
             _mediator = new Mock<IMediator>();
+            _messageBroker = new Mock<IMessageBroker>();
 
             _createTokenCommandHandler = new CreateTokenCommandHandler(_clientRepository.Object,
-                _tokenHelper.Object, _mediator.Object);
+                _tokenHelper.Object, _mediator.Object, _messageBroker.Object);
         }
 
-        private Mock<ITokenHelper> _tokenHelper;
-        private Mock<IClientRepository> _clientRepository;
-        private Mock<IMediator> _mediator;
-
-        private CreateTokenCommandHandler _createTokenCommandHandler;
+       
 
 
         [Test]

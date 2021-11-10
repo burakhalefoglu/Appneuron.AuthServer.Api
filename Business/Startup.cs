@@ -7,7 +7,9 @@ using Autofac;
 using Business.Constants;
 using Business.DependencyResolvers;
 using Business.Fakes.DArch;
+using Business.MessageBrokers;
 using Business.MessageBrokers.Kafka;
+using Business.MessageBrokers.Manager;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.DependencyResolvers;
@@ -67,8 +69,9 @@ namespace Business
 
             services.AddTransient<IElasticSearch, ElasticSearchManager>();
             services.AddSingleton<ICacheManager, MemoryCacheManager>();
-            services.AddSingleton<IKafkaMessageBroker, KafkaMessageBroker>();
+            services.AddSingleton<IMessageBroker, KafkaMessageBroker>();
 
+            services.AddSingleton<IGetCreateProjectMessageService, GetCreateProjectMessageManager>();
 
             services.AddAutoMapper(typeof(ConfigurationManager));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

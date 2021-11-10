@@ -1,7 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
+using Business.MessageBrokers;
 using Business.MessageBrokers.Kafka;
+using Business.MessageBrokers.Manager;
+using Business.MessageBrokers.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,15 +26,6 @@ namespace WebAPI
             await ConsumerAdapter();
         }
 
-        private static async Task ConsumerAdapter()
-        {
-            IServiceCollection services = new ServiceCollection();
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
-
-            var kafka = serviceProvider.GetService<IKafkaMessageBroker>();
-            await kafka.GetProjectCreationMessage();
-        }
-
         /// <summary>
         /// </summary>
         /// <param name="args"></param>
@@ -50,6 +44,18 @@ namespace WebAPI
                     logging.ClearProviders();
                     logging.SetMinimumLevel(LogLevel.Trace);
                 });
+        }
+
+        private static async Task ConsumerAdapter()
+        {
+            IServiceCollection services = new ServiceCollection();
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            var kafka = serviceProvider.GetService<IMessageBroker>();
+            var getCreateProjectMessageService = serviceProvider.GetService<IGetCreateProjectMessageService>();
+            
+            await kafka.GetMessageAsync<ProjectMessageCommand>("ProjectMessageCommand", 
+                getCreateProjectMessageService.GetProjectCreationMessageQuery);
         }
     }
 }

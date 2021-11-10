@@ -1,72 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Business.Fakes.Handlers.GroupClaims;
-using Business.Fakes.Handlers.UserClaims;
-using Business.Fakes.Handlers.UserProjects;
-using Business.Handlers.UserProjects.Queries;
 using Business.MessageBrokers.Kafka.Model;
-using Business.MessageBrokers.Models;
-using Business.Services.Authentication;
 using Confluent.Kafka;
-using Core.Entities.ClaimModels;
-using Core.Entities.Concrete;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
-using Core.Utilities.Security.Jwt;
-using DataAccess.Abstract;
-using MassTransit;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace Business.MessageBrokers.Kafka
 {
-    public class KafkaMessageBroker : IKafkaMessageBroker
+    public class KafkaMessageBroker : IMessageBroker
     {
-        private readonly IMediator _mediator;
-        private readonly ISendEndpointProvider _sendEndpointProvider;
-        private readonly ITokenHelper _tokenHelper;
-        private readonly IUserRepository _userRepository;
-        private readonly IConfiguration Configuration;
-        private readonly KafkaOptions kafkaOptions;
+        private readonly KafkaOptions _kafkaOptions;
 
-        public KafkaMessageBroker(IMediator mediator,
-            ISendEndpointProvider sendEndpointProvider,
-            ITokenHelper tokenHelper,
-            IUserRepository userRepository)
+        public KafkaMessageBroker()
         {
-            _mediator = mediator;
-            _sendEndpointProvider = sendEndpointProvider;
-            _tokenHelper = tokenHelper;
-            _userRepository = userRepository;
-            Configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-            kafkaOptions = Configuration.GetSection("ApacheKafka").Get<KafkaOptions>();
+            var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
+            if (configuration != null) _kafkaOptions = configuration.GetSection("ApacheKafka").Get<KafkaOptions>();
         }
 
-        public async Task GetProjectCreationMessage()
+        public async Task GetMessageAsync<T>(string topic, Func<T, Task<IResult>> callback)
         {
-            var config = new ConsumerConfig
+            await Task.Run(async () =>
             {
-                BootstrapServers = $"{kafkaOptions.HostName}:{kafkaOptions.Port}",
-                GroupId = "ProjectCreationConsumerGroup",
-                EnableAutoCommit = false,
-                StatisticsIntervalMs = 5000,
-                SessionTimeoutMs = 6000,
-                AutoOffsetReset = AutoOffsetReset.Earliest,
-                EnablePartitionEof = true,
-                PartitionAssignmentStrategy = PartitionAssignmentStrategy.CooperativeSticky
-            };
+                var config = new ConsumerConfig
+                {
+                    BootstrapServers = $"{_kafkaOptions.HostName}:{_kafkaOptions.Port}",
+                    GroupId = "ClientCreationConsumerGroup",
+                    EnableAutoCommit = false,
+                    StatisticsIntervalMs = 5000,
+                    SessionTimeoutMs = 6000,
+                    AutoOffsetReset = AutoOffsetReset.Earliest,
+                    EnablePartitionEof = true,
+                    PartitionAssignmentStrategy = PartitionAssignmentStrategy.CooperativeSticky
+                };
 
 
-            using (var consumer = new ConsumerBuilder<Ignore, string>(config)
-                .SetErrorHandler((_, e) => Console.WriteLine($"Error: {e.Reason}"))
-                .SetStatisticsHandler((_, json) => Console.WriteLine($"Statistics: {json}"))
-                .Build())
-            {
-                consumer.Subscribe("ProjectMessageCommand");
+                using var consumer = new ConsumerBuilder<Ignore, string>(config)
+                    .SetErrorHandler((_, e) => Console.WriteLine($"Error: {e.Reason}"))
+                    .SetStatisticsHandler((_, json) => Console.WriteLine($"Statistics: {json}"))
+                    .Build();
+                consumer.Subscribe(topic);
 
                 try
                 {
@@ -87,74 +62,24 @@ namespace Business.MessageBrokers.Kafka
                                 $"Received message at {consumeResult.TopicPartitionOffset}: {consumeResult.Message.Value}");
 
 
-                            var projectMessageCommand = JsonConvert.DeserializeObject<ProjectMessageCommand>(
+                            var message = JsonConvert.DeserializeObject<T>(
                                 consumeResult.Message.Value,
                                 new JsonSerializerSettings
                                 {
                                     PreserveReferencesHandling = PreserveReferencesHandling.Objects
                                 });
 
-                            var result = await _mediator.Send(new CreateUserProjectInternalCommand
+                            var result = await callback(message);
+
+                            if (!result.Success) continue;
+                            try
                             {
-                                UserId = projectMessageCommand.UserId,
-                                ProjectKey = projectMessageCommand.ProjectKey
-                            });
-
-                            var user = await _userRepository.GetAsync(u => u.UserId == projectMessageCommand.UserId);
-
-                            if (user == null)
-                                return;
-
-                            //New Token Creation
-                            var GrupClaims = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
+                                consumer.Commit(consumeResult);
+                            }
+                            catch (KafkaException e)
                             {
-                                GroupId = 1
-                            });
-
-                            var selectionItems = GrupClaims.Data.ToList();
-                            var operationClaims = new List<OperationClaim>();
-
-                            foreach (var item in selectionItems)
-                                operationClaims.Add(new OperationClaim
-                                {
-                                    Id = int.Parse(item.Id),
-                                    Name = item.Label
-                                });
-
-                            await _mediator.Send(new CreateUserClaimsInternalCommand
-                            {
-                                UserId = user.UserId,
-                                OperationClaims = operationClaims
-                            });
-
-                            var ProjectIdResult = await _mediator.Send(new GetUserProjectsInternalQuery
-                            {
-                                UserId = user.UserId
-                            });
-                            var ProjectIdList = new List<string>();
-                            ProjectIdResult.Data.ToList().ForEach(x => { ProjectIdList.Add(x.ProjectKey); });
-
-                            var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
-                            {
-                                UserId = user.UserId,
-                                OperationClaims = operationClaims.Select(x => x.Name).ToArray()
-                            }, ProjectIdList);
-
-                            var kafkaResult = await SendMessageAsync(new ProjectCreationResult
-                            {
-                                Accesstoken = accessToken.Token,
-                                UserId = user.UserId
-                            });
-
-                            if (kafkaResult.Success)
-                                try
-                                {
-                                    consumer.Commit(consumeResult);
-                                }
-                                catch (KafkaException e)
-                                {
-                                    Console.WriteLine($"Commit error: {e.Error.Reason}");
-                                }
+                                Console.WriteLine($"Commit error: {e.Error.Reason}");
+                            }
                         }
                         catch (ConsumeException e)
                         {
@@ -166,40 +91,36 @@ namespace Business.MessageBrokers.Kafka
                     Console.WriteLine("Closing consumer.");
                     consumer.Close();
                 }
-            }
-        }
+            });
 
+
+        }
 
         public async Task<IResult> SendMessageAsync<T>(T messageModel) where T :
             class, new()
         {
             var producerConfig = new ProducerConfig
             {
-                BootstrapServers = $"{kafkaOptions.HostName}:{kafkaOptions.Port}",
+                BootstrapServers = $"{_kafkaOptions.HostName}:{_kafkaOptions.Port}",
                 Acks = Acks.All
             };
 
             var message = JsonConvert.SerializeObject(messageModel);
             var topicName = typeof(T).Name;
-            using (var p = new ProducerBuilder<Null, string>(producerConfig).Build())
+            using var p = new ProducerBuilder<Null, string>(producerConfig).Build();
+            try
             {
-                try
-                {
-                    var partitionCount = KafkaAdminHelper.SetPartitionCountAsync(topicName);
+                await p.ProduceAsync(topicName
+                    , new Message<Null, string>
+                    {
+                        Value = message
+                    });
+                return new SuccessResult();
+            }
 
-                    await p.ProduceAsync(new TopicPartition(topicName,
-                            new Partition(new Random().Next(0, partitionCount)))
-                        , new Message<Null, string>
-                        {
-                            Value = message
-                        });
-                    return new SuccessResult();
-                }
-
-                catch (ProduceException<Null, string> e)
-                {
-                    return new ErrorResult();
-                }
+            catch (ProduceException<Null, string> e)
+            {
+                return new ErrorResult(e.Message);
             }
         }
     }

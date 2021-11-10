@@ -6,6 +6,8 @@ using Business.Constants;
 using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.Clients.ValidationRules;
+using Business.MessageBrokers;
+using Business.MessageBrokers.Models;
 using Business.Services.Authentication;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
@@ -30,16 +32,16 @@ namespace Business.Handlers.Clients.Commands
             private readonly IMediator _mediator;
 
             private readonly ITokenHelper _tokenHelper;
-            //private readonly IKafkaMessageBroker _kafkaMessageBroker;
+            private readonly IMessageBroker _messageBroker;
 
             public CreateTokenCommandHandler(IClientRepository clientRepository,
                 ITokenHelper tokenHelper,
-                IMediator mediator
-            )
+                IMediator mediator, IMessageBroker messageBroker)
 
             {
                 _clientRepository = clientRepository;
                 _mediator = mediator;
+                _messageBroker = messageBroker;
                 _tokenHelper = tokenHelper;
             }
 
@@ -60,19 +62,19 @@ namespace Business.Handlers.Clients.Commands
 
                 if (result == null)
                 {
-                    var client = _clientRepository.Add(new Client
+                    _clientRepository.Add(new Client
                     {
                         ClientId = request.ClientId,
                         ProjectId = request.ProjectId
                     });
 
-                    //await _kafkaMessageBroker.SendMessageAsync(new CreateClientMessageComamnd
-                    //{
-                    //    ClientId = request.ClientId,
-                    //    ProjectKey = request.ProjectId,
-                    //    CreatedAt = DateTime.Now,
-                    //    IsPaidClient = false
-                    //});
+                    await _messageBroker.SendMessageAsync(new CreateClientMessageComamnd
+                    {
+                        ClientId = request.ClientId,
+                        ProjectKey = request.ProjectId,
+                        CreatedAt = DateTime.Now,
+                        IsPaidClient = false
+                    });
                 }
 
                 var resultGroupClaim = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
