@@ -31,6 +31,13 @@ namespace Business.Handlers.Groups.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
             {
+                var isGroupExist = await _groupRepository.GetAsync(g => g.GroupName == request.GroupName);
+
+                if (isGroupExist == null)
+                {
+                    return new ErrorResult(Messages.GroupNotFound);
+                }
+
                 var groupToUpdate = new Group
                 {
                     Id = request.Id,

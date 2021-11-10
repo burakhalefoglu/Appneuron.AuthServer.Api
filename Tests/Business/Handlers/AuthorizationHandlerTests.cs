@@ -76,7 +76,7 @@ namespace Tests.Business.Handlers
         private ResetPasswordCommandHandler _resetPasswordCommandHandler;
 
         [Test]
-        public async Task Handler_Login_UserNotFount()
+        public async Task Authorization_Login_UserNotFount()
         {
             var user = DataHelper.GetUser("test");
             HashingHelper.CreatePasswordHash("123456",
@@ -103,7 +103,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_Login_PasswordError()
+        public async Task Authorization_Login_PasswordError()
         {
             var user = DataHelper.GetUser("test");
             HashingHelper.CreatePasswordHash("123456",
@@ -131,7 +131,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_Login_Success()
+        public async Task Authorization_Login_Success()
         {
             var user = DataHelper.GetUser("test");
             HashingHelper.CreatePasswordHash("123456",
@@ -194,7 +194,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_Register_EmailAlreadyExist()
+        public async Task Authorization_Register_EmailAlreadyExist()
         {
             var registerUser = new User { Email = "test@test.com", Name = "test test" };
             _command = new RegisterUserCommand
@@ -215,7 +215,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_Register_SuccessfulLogin()
+        public async Task Authorization_Register_SuccessfulLogin()
         {
             var registerUser = new User { UserId = 1, Email = "test@test.com", Name = "test test" };
             _command = new RegisterUserCommand
@@ -274,7 +274,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_ForgotPassword_WrongEmail()
+        public async Task Authorization_ForgotPassword_WrongEmail()
         {
             var user = DataHelper.GetUser("test");
             _userRepository.Setup(x =>
@@ -291,7 +291,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_ForgotPassword_Success()
+        public async Task Authorization_ForgotPassword_Success()
         {
             var user = DataHelper.GetUser("test");
             _userRepository.Setup(x =>
@@ -314,7 +314,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler__ResetPassword_InvalidCode()
+        public async Task Authorization_ResetPassword_InvalidCode()
         {
             var resetPasswordCommand = new ResetPasswordCommand
             {
@@ -334,7 +334,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler__ResetPassword_InvalidCodeWhenResPasExpiresLowerThanDatetimeNow()
+        public async Task Authorization_ResetPassword_InvalidCodeWhenResPasExpiresLowerThanDatetimeNow()
         {
             var resetPasswordCommand = new ResetPasswordCommand
             {
@@ -360,7 +360,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler__ResetPassword_ResetPasswordSuccess()
+        public async Task Authorization_ResetPassword_ResetPasswordSuccess()
         {
             var resetPasswordCommand = new ResetPasswordCommand
             {

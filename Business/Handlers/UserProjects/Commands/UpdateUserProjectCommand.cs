@@ -38,6 +38,11 @@ namespace Business.Handlers.UserProjects.Commands
             {
                 var isThereUserProjectRecord = await _userProjectRepository.GetAsync(u => u.Id == request.Id);
 
+                if (isThereUserProjectRecord == null)
+                {
+                    return new ErrorResult(Messages.UserProjectNotFound);
+                }
+
                 isThereUserProjectRecord.UserId = request.UserId;
                 isThereUserProjectRecord.ProjectKey = request.ProjectKey;
 

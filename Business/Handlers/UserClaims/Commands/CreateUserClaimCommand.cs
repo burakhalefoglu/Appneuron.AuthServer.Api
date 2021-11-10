@@ -31,6 +31,13 @@ namespace Business.Handlers.UserClaims.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(CreateUserClaimCommand request, CancellationToken cancellationToken)
             {
+                var userClaimExist = await _userClaimRepository.GetAsync(x => x.ClaimId == request.ClaimId);
+
+                if (userClaimExist != null)
+                {
+                    return new ErrorResult(Messages.UserClaimExit);
+                }
+
                 var userClaim = new UserClaim
                 {
                     ClaimId = request.ClaimId,

@@ -30,6 +30,11 @@ namespace Business.Handlers.Groups.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
             {
+                var groupExist = await _groupRepository.GetAsync(g => g.GroupName == request.GroupName);
+                if (groupExist != null)
+                {
+                    return new ErrorResult(Messages.NameAlreadyExist);
+                }
                 var group = new Group
                 {
                     GroupName = request.GroupName

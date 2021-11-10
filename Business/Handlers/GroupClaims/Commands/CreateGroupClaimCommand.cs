@@ -14,14 +14,18 @@ namespace Business.Handlers.GroupClaims.Commands
 {
     public class CreateGroupClaimCommand : IRequest<IResult>
     {
+        public int GroupId { get; set; }
+        public int ClaimId { get; set; }
         public string ClaimName { get; set; }
-
         public class CreateGroupClaimCommandHandler : IRequestHandler<CreateGroupClaimCommand, IResult>
         {
+            private readonly IGroupClaimRepository _groupClaimRepository;
             private readonly IOperationClaimRepository _operationClaimRepository;
 
-            public CreateGroupClaimCommandHandler(IOperationClaimRepository operationClaimRepository)
+            public CreateGroupClaimCommandHandler(IGroupClaimRepository groupClaimRepository,
+                IOperationClaimRepository operationClaimRepository)
             {
+                _groupClaimRepository = groupClaimRepository;
                 _operationClaimRepository = operationClaimRepository;
             }
 
@@ -30,22 +34,34 @@ namespace Business.Handlers.GroupClaims.Commands
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(CreateGroupClaimCommand request, CancellationToken cancellationToken)
             {
-                if (IsClaimExists(request.ClaimName).Result)
-                    return new ErrorResult(Messages.OperationClaimExists);
+                if (IsClaimNotExists(request.ClaimName).Result)
+                    return new ErrorResult(Messages.OperationClaimNotFound);
 
-                var operationClaim = new OperationClaim
+
+                if(IsGroupClaimExist(request.ClaimId, request.GroupId).Result)
+                    return new ErrorResult(Messages.GroupClaimExit);
+
+                var groupClaim = new GroupClaim()
                 {
-                    Name = request.ClaimName
+                    GroupId = request.GroupId,
+                    ClaimId = request.ClaimId
                 };
-                _operationClaimRepository.Add(operationClaim);
-                await _operationClaimRepository.SaveChangesAsync();
+                _groupClaimRepository.Add(groupClaim);
+                await _groupClaimRepository.SaveChangesAsync();
 
                 return new SuccessResult(Messages.Added);
             }
 
-            private async Task<bool> IsClaimExists(string claimName)
+            private async Task<bool> IsClaimNotExists(string claimName)
             {
-                return !(await _operationClaimRepository.GetAsync(x => x.Name == claimName) is null);
+                return (await _operationClaimRepository.GetAsync(x =>
+                    x.Name == claimName) is null);
+            }
+            
+            private async Task<bool> IsGroupClaimExist(int claimId, int groupId)
+            {
+                return !(await _groupClaimRepository.GetAsync(g => g.ClaimId == claimId
+                                                                  && g.GroupId == groupId) is null);
             }
         }
     }

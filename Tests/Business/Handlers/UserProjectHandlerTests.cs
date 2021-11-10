@@ -174,6 +174,8 @@ namespace Tests.Business.Handlers
 
             var x = await _createUserProjectCommandHandler.Handle(command, new CancellationToken());
 
+            _userProjectRepository.Verify(c=> c.SaveChangesAsync());
+
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
         }
@@ -227,6 +229,29 @@ namespace Tests.Business.Handlers
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Updated);
         }
+ 
+        [Test]
+        public async Task UserProject_UpdateCommand_UserProjectNotFound()
+        {
+            //Arrange
+            var command = new UpdateUserProjectCommand
+            {
+                Id = 1,
+                ProjectKey = "fdsfsdf",
+                UserId = 1
+            };
+
+
+            _userProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
+                .ReturnsAsync((UserProject)null);
+
+            _userProjectRepository.Setup(x => x.Update(It.IsAny<UserProject>())).Returns(new UserProject());
+
+            var x = await _updateUserProjectCommandHandler.Handle(command, new CancellationToken());
+
+            x.Success.Should().BeFalse();
+            x.Message.Should().Be(Messages.UserProjectNotFound);
+        }
 
         [Test]
         public async Task UserProject_DeleteCommand_Success()
@@ -249,9 +274,31 @@ namespace Tests.Business.Handlers
 
             var x = await _deleteUserProjectCommandHandler.Handle(command, new CancellationToken());
 
-            _userProjectRepository.Verify(x => x.SaveChangesAsync());
+            _userProjectRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
         }
+
+        [Test]
+        public async Task UserProject_DeleteCommand_UserProjectNotFound()
+        {
+            //Arrange
+            var command = new DeleteUserProjectCommand
+            {
+                Id = 1
+            };
+
+            _userProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
+                .ReturnsAsync((UserProject)null);
+
+            _userProjectRepository.Setup(x => x.Delete(It.IsAny<UserProject>()));
+
+            var x = await _deleteUserProjectCommandHandler.Handle(command, new CancellationToken());
+            
+            x.Success.Should().BeFalse();
+            x.Message.Should().Be(Messages.UserProjectNotFound);
+        }
+
+
     }
 }

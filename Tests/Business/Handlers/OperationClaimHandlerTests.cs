@@ -52,7 +52,7 @@ namespace Tests.Business.Handlers
         private GetOperationClaimsQueryHandler _getOperationClaimsQueryHandler;
 
         [Test]
-        public async Task Handler_CreateOperationClaim_ClaimExists()
+        public async Task OperationClaim_Create_ClaimExists()
         {
             var command = new CreateOperationClaimCommand
             {
@@ -70,7 +70,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_CreateOperationClaim_Success()
+        public async Task OperationClaim_Create_Success()
         {
             var command = new CreateOperationClaimCommand
             {
@@ -83,15 +83,17 @@ namespace Tests.Business.Handlers
 
             _operationClaimRepository.Setup(x => x.Add(It.IsAny<OperationClaim>()));
 
-
             var result = await _createOperationClaimCommandHandler.Handle(command, new CancellationToken());
+           
+            _operationClaimRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Added);
         }
 
 
         [Test]
-        public async Task Handler_UpdateOperationClaim_OperationClaimNotFound()
+        public async Task OperationClaim_Update_OperationClaimNotFound()
         {
             var command = new UpdateOperationClaimCommand
             {
@@ -114,7 +116,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_UpdateOperationClaim_Success()
+        public async Task OperationClaim_Update_Success()
         {
             var command = new UpdateOperationClaimCommand
             {
@@ -132,13 +134,16 @@ namespace Tests.Business.Handlers
 
 
             var result = await _updateOperationClaimCommandHandler.Handle(command, new CancellationToken());
+
+            _operationClaimRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Updated);
         }
 
 
         [Test]
-        public async Task Handler_DeleteOperationClaim_Success()
+        public async Task OperationClaim_Delete_Success()
         {
             var command = new DeleteOperationClaimCommand
             {
@@ -154,13 +159,16 @@ namespace Tests.Business.Handlers
 
 
             var result = await _deleteOperationClaimCommandHandler.Handle(command, new CancellationToken());
+           
+            _operationClaimRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Deleted);
         }
 
 
         [Test]
-        public async Task Handler_DeleteOperationClaim_OperationClaimNotFound()
+        public async Task OperationClaim_Delete_OperationClaimNotFound()
         {
             var command = new DeleteOperationClaimCommand
             {
@@ -182,7 +190,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_GetOperationClaimLookup_OperationClaimNotFound()
+        public async Task OperationClaim_GetOperationClaimLookup_OperationClaimNotFound()
         {
             var command = new GetOperationClaimLookupQuery();
 
@@ -198,7 +206,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_GetOperationClaimLookup_Success()
+        public async Task OperationClaim_GetOperationClaimLookup_Success()
         {
             var command = new GetOperationClaimLookupQuery();
 
@@ -234,7 +242,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_GetOperationClaim_Success()
+        public async Task OperationClaim_GetOperationClaim_Success()
         {
             var command = new GetOperationClaimQuery();
 
@@ -257,7 +265,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_GetOperationClaimsQuery_Success()
+        public async Task OperationClaim_GetOperationClaimsQuery_Success()
         {
             var command = new GetOperationClaimsQuery();
 

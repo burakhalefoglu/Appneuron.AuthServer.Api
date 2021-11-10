@@ -67,7 +67,7 @@ namespace Tests.Business.Handlers
         private GetUsersQueryHandler _getUsersQueryHandler;
 
         [Test]
-        public async Task Handler_CreateUser_Success()
+        public async Task User_CreateUser_Success()
         {
             var command = new CreateUserCommand
             {
@@ -83,12 +83,15 @@ namespace Tests.Business.Handlers
 
 
             var result = await _createUserCommandHandler.Handle(command, new CancellationToken());
+            
+            _userRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Added);
         }
 
         [Test]
-        public async Task Handler_CreateUser_NameAlreadyExist()
+        public async Task User_CreateUser_NameAlreadyExist()
         {
             var command = new CreateUserCommand
             {
@@ -108,7 +111,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_DeleteUser_Deleted()
+        public async Task User_DeleteUser_Deleted()
         {
             var command = new DeleteUserCommand();
 
@@ -124,12 +127,14 @@ namespace Tests.Business.Handlers
 
             var result = await _deleteUserCommandHandler.Handle(command, new CancellationToken());
 
+            _userRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Deleted);
         }
 
         [Test]
-        public async Task Handler_DeleteUser_UserNotFound()
+        public async Task User_DeleteUser_UserNotFound()
         {
             var command = new DeleteUserCommand();
 
@@ -150,7 +155,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_UpdateUser_UserNotFound()
+        public async Task User_UpdateUser_UserNotFound()
         {
             var command = new UpdateUserCommand
             {
@@ -174,7 +179,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_UpdateUser_Updated()
+        public async Task User_UpdateUser_Updated()
         {
             var command = new UpdateUserCommand
             {
@@ -193,12 +198,14 @@ namespace Tests.Business.Handlers
 
             var result = await _updateUserCommandHandler.Handle(command, new CancellationToken());
 
+            _userRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Updated);
         }
 
         [Test]
-        public async Task Handler_UserChangePassword_UserNotFound()
+        public async Task User_UserChangePassword_UserNotFound()
         {
             var command = new UserChangePasswordCommand
             {
@@ -222,7 +229,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_UserChangePassword_PasswordError()
+        public async Task User_UserChangePassword_PasswordError()
         {
             var user = DataHelper.GetUser("test");
             HashingHelper.CreatePasswordHash("123456",
@@ -255,7 +262,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_UserChangePassword_Updated()
+        public async Task User_UserChangePassword_Updated()
         {
             var user = DataHelper.GetUser("test");
             HashingHelper.CreatePasswordHash("123456",
@@ -287,7 +294,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_GetUserLookup_Success()
+        public async Task User_GetUserLookup_Success()
         {
             var query = new GetUserLookupQuery();
 
@@ -304,7 +311,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_GetUser_Success()
+        public async Task User_GetUser_Success()
         {
             var query = new GetUserQuery();
 
@@ -319,7 +326,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_GetUsers_Success()
+        public async Task User_GetUsers_Success()
         {
             var query = new GetUsersQuery();
 

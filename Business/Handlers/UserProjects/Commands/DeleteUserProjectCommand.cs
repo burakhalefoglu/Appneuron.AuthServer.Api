@@ -33,7 +33,12 @@ namespace Business.Handlers.UserProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteUserProjectCommand request, CancellationToken cancellationToken)
             {
-                var userProjectToDelete = _userProjectRepository.Get(p => p.Id == request.Id);
+                var userProjectToDelete = await _userProjectRepository.GetAsync(p => p.Id == request.Id);
+
+                if (userProjectToDelete == null)
+                {
+                    return new ErrorResult(Messages.UserProjectNotFound);
+                }
 
                 _userProjectRepository.Delete(userProjectToDelete);
                 await _userProjectRepository.SaveChangesAsync();

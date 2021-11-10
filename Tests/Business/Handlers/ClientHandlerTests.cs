@@ -45,7 +45,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_CreateTokenCommand_ProjectNotFound()
+        public async Task Client_CreateTokenCommand_ProjectNotFound()
         {
             var command = new CreateTokenCommand
             {
@@ -58,13 +58,14 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new SuccessDataResult<UserProject>());
 
             var result = await _createTokenCommandHandler.Handle(command, new CancellationToken());
+
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.ProjectNotFound);
         }
 
 
         [Test]
-        public async Task Handler_CreateTokenCommand_SuccessfulLoginWhenNewClientRequest()
+        public async Task Client_CreateTokenCommand_SuccessfulLoginWhenNewClientRequest()
         {
             var command = new CreateTokenCommand
             {
@@ -117,7 +118,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_CreateTokenCommand_SuccessfulLoginWhenOldClientRequest()
+        public async Task Client_CreateTokenCommand_SuccessfulLoginWhenOldClientRequest()
         {
             var command = new CreateTokenCommand
             {

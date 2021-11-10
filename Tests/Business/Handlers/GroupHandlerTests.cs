@@ -49,7 +49,7 @@ namespace Tests.Business.Handlers
         private SearchGroupsByNameQueryHandler _searchGroupsByNameQueryHandler;
 
         [Test]
-        public async Task Handler_CreateGroup_Added()
+        public async Task Group_CreateGroup_Added()
         {
             var groupCommand = new CreateGroupCommand
             {
@@ -60,12 +60,33 @@ namespace Tests.Business.Handlers
 
             var result = await _createGroupCommandHandler.Handle(groupCommand, new CancellationToken());
 
+            _groupRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Added);
         }
+  
+        [Test]
+        public async Task Group_CreateGroup_NameAlreadyExist()
+        {
+            var groupCommand = new CreateGroupCommand
+            {
+                GroupName = "ti"
+            };
+
+            _groupRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Group, bool>>>()))
+                .ReturnsAsync(new Group());
+
+            _groupRepository.Setup(x => x.Add(It.IsAny<Group>()));
+
+            var result = await _createGroupCommandHandler.Handle(groupCommand, new CancellationToken());
+
+            result.Success.Should().BeFalse();
+            result.Message.Should().Be(Messages.NameAlreadyExist);
+        }
 
         [Test]
-        public async Task Handler_DeleteGroup_Deleted()
+        public async Task Group_DeleteGroup_Deleted()
         {
             var groupCommand = new DeleteGroupCommand
             {
@@ -78,12 +99,14 @@ namespace Tests.Business.Handlers
 
             var result = await _deleteGroupCommandHandler.Handle(groupCommand, new CancellationToken());
 
+            _groupRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Deleted);
         }
 
         [Test]
-        public async Task Handler_DeleteGroup_GroupNotFound()
+        public async Task Group_DeleteGroup_GroupNotFound()
         {
             var groupCommand = new DeleteGroupCommand
             {
@@ -102,7 +125,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_UpdateGroup_Updated()
+        public async Task Group_UpdateGroup_Updated()
         {
             var groupCommand = new UpdateGroupCommand
             {
@@ -110,18 +133,44 @@ namespace Tests.Business.Handlers
                 GroupName = "Test"
             };
 
+            _groupRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Group, bool>>>()))
+                .ReturnsAsync(new Group());
+
             _groupRepository.Setup(x =>
                 x.Update(It.IsAny<Group>()));
 
             var result = await _updateGroupCommandHandler.Handle(groupCommand, new CancellationToken());
 
+            _groupRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Updated);
         }
 
+        [Test]
+        public async Task Group_UpdateGroup_GroupNotFound()
+        {
+            var groupCommand = new UpdateGroupCommand
+            {
+                Id = 1,
+                GroupName = "Test"
+            };
+
+            _groupRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Group, bool>>>()))
+                .ReturnsAsync((Group)null);
+
+            _groupRepository.Setup(x =>
+                x.Update(It.IsAny<Group>()));
+
+            var result = await _updateGroupCommandHandler.Handle(groupCommand, new CancellationToken());
+
+            result.Success.Should().BeFalse();
+            result.Message.Should().Be(Messages.GroupNotFound);
+        }
+
 
         [Test]
-        public async Task Handler_GetGroupLookUpGroup_Success()
+        public async Task Group_GetGroupLookUpGroup_Success()
         {
             var groupCommand = new GetGroupLookupQuery();
 
@@ -155,7 +204,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_GetGroup_Success()
+        public async Task Group_GetGroup_Success()
         {
             var groupCommand = new GetGroupQuery();
 
@@ -177,7 +226,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_GetGroups_Success()
+        public async Task Group_GetGroups_Success()
         {
             var groupCommand = new GetGroupsQuery();
 
@@ -209,7 +258,7 @@ namespace Tests.Business.Handlers
 
 
         [Test]
-        public async Task Handler_SearchGroupsByName_StringLengthMustBeGreaterThanThree()
+        public async Task Group_SearchGroupsByName_StringLengthMustBeGreaterThanThree()
         {
             var groupCommand = new SearchGroupsByNameQuery();
             groupCommand.GroupName = "Te";
@@ -241,7 +290,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_SearchGroupsByName_Success()
+        public async Task Group_SearchGroupsByName_Success()
         {
             var groupCommand = new SearchGroupsByNameQuery();
             groupCommand.GroupName = "Test";

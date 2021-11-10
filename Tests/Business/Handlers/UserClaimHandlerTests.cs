@@ -55,7 +55,7 @@ namespace Tests.Business.Handlers
         private GetUserClaimsQueryHandler _getUserClaimsQueryHandler;
 
         [Test]
-        public async Task Handler_CreateUserClaim_Success()
+        public async Task UserClaim_CreateUserClaim_Success()
         {
             var query = new CreateUserClaimCommand
             {
@@ -63,15 +63,41 @@ namespace Tests.Business.Handlers
                 UserId = 2
             };
 
+            _userClaimRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserClaim, bool>>>()))
+                .ReturnsAsync((UserClaim)null);
+
             _userClaimRepository.Setup(x => x.Add(It.IsAny<UserClaim>()));
 
             var result = await _createUserClaimCommandHandler.Handle(query, new CancellationToken());
+            
+            _userClaimRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Added);
         }
 
         [Test]
-        public async Task Handler_DeleteUserClaim_UserClaimNotFound()
+        public async Task UserClaim_CreateUserClaim_UserClaimExit()
+        {
+            var query = new CreateUserClaimCommand
+            {
+                ClaimId = 1,
+                UserId = 2
+            };
+
+            _userClaimRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserClaim, bool>>>()))
+                .ReturnsAsync(new UserClaim());
+
+            _userClaimRepository.Setup(x => x.Add(It.IsAny<UserClaim>()));
+
+            var result = await _createUserClaimCommandHandler.Handle(query, new CancellationToken());
+            result.Success.Should().BeFalse();
+            result.Message.Should().Be(Messages.UserClaimExit);
+        }
+
+
+        [Test]
+        public async Task UserClaim_DeleteUserClaim_UserClaimNotFound()
         {
             var query = new DeleteUserClaimCommand
             {
@@ -88,7 +114,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_DeleteUserClaim_Deleted()
+        public async Task UserClaim_DeleteUserClaim_Deleted()
         {
             var query = new DeleteUserClaimCommand
             {
@@ -100,13 +126,16 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult(new UserClaim()));
 
             var result = await _deleteUserClaimCommandHandler.Handle(query, new CancellationToken());
+
+            _userClaimRepository.Verify(c=> c.SaveChangesAsync());
+            
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Deleted);
         }
 
 
         [Test]
-        public async Task Handler_UpdateUserClaim_Success()
+        public async Task UserClaim_UpdateUserClaim_Success()
         {
             var query = new UpdateUserClaimCommand
             {
@@ -122,12 +151,15 @@ namespace Tests.Business.Handlers
                     It.IsAny<IEnumerable<UserClaim>>()));
 
             var result = await _updateUserClaimCommandHandler.Handle(query, new CancellationToken());
+            
+            _userClaimRepository.Verify(c=> c.SaveChangesAsync());
+
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Updated);
         }
 
         [Test]
-        public async Task Handler_GetUserClaimLookupByUserId_Success()
+        public async Task UserClaim_GetUserClaimLookupByUserId_Success()
         {
             var query = new GetUserClaimLookupByUserIdQuery
             {
@@ -147,7 +179,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_GetUserClaimLookup_Success()
+        public async Task UserClaim_GetUserClaimLookup_Success()
         {
             var query = new GetUserClaimLookupQuery
             {
@@ -169,7 +201,7 @@ namespace Tests.Business.Handlers
         }
 
         [Test]
-        public async Task Handler_GetUserClaims_Success()
+        public async Task UserClaim_GetUserClaims_Success()
         {
             var query = new GetUserClaimsQuery();
 

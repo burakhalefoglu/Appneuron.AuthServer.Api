@@ -10,12 +10,14 @@
 
         public static string GroupNotFound => "GroupNotFound";
         public static string UserClaimNotFound => "UserClaimNotFound";
+        public static string UserClaimExit => "UserClaimExit";
         public static string OperationClaimNotFound => "OperationClaimNotFound";
         public static string GroupClaimNotFound => "GroupClaimNotFound";
         public static string StringLengthMustBeGreaterThanThree => "StringLengthMustBeGreaterThanThree";
         public static string CouldNotBeVerifyCid => "CouldNotBeVerifyCid";
         public static string VerifyCid => "VerifyCid";
         public static string OperationClaimExists => "OperationClaimExists";
+        public static string OperationNotClaimExists => "OperationNotClaimExists";
         public static string AuthorizationsDenied => "AuthorizationsDenied";
         public static string Added => "Added";
         public static string Deleted => "Deleted";
@@ -42,8 +44,10 @@
         public static string TokenProviderException => "TokenProviderException";
         public static string Unknown => "Unknown";
         public static string NewPassword => "NewPassword";
-        public static string ResetPasswordSuccess => "Password changed succesfuly!";
+        public static string ResetPasswordSuccess => "Password changed successfully!";
 
         public static string ProjectNotFound => "Project not found!";
+        public static string GroupClaimExit => "Group claim not found!";
+        public static string UserProjectNotFound  => "User project not found!";
     }
 }
