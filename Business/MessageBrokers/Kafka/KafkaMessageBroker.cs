@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Business.MessageBrokers.Kafka.Model;
+using Business.MessageBrokers.Models;
 using Confluent.Kafka;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
@@ -12,22 +13,24 @@ namespace Business.MessageBrokers.Kafka
 {
     public class KafkaMessageBroker : IMessageBroker
     {
-        private readonly KafkaOptions _kafkaOptions;
+        private readonly MessageBrokerOption _kafkaOptions;
 
         public KafkaMessageBroker()
         {
             var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-            if (configuration != null) _kafkaOptions = configuration.GetSection("ApacheKafka").Get<KafkaOptions>();
+            if (configuration != null) _kafkaOptions = configuration
+                .GetSection("MessageBrokerOptions").Get<MessageBrokerOption>();
         }
 
-        public async Task GetMessageAsync<T>(string topic, Func<T, Task<IResult>> callback)
+        public async Task GetMessageAsync<T>(string topic, string consumerGroup,
+            Func<T, Task<IResult>> callback)
         {
             await Task.Run(async () =>
             {
                 var config = new ConsumerConfig
                 {
                     BootstrapServers = $"{_kafkaOptions.HostName}:{_kafkaOptions.Port}",
-                    GroupId = "ClientCreationConsumerGroup",
+                    GroupId = consumerGroup,
                     EnableAutoCommit = false,
                     StatisticsIntervalMs = 5000,
                     SessionTimeoutMs = 6000,
@@ -70,6 +73,8 @@ namespace Business.MessageBrokers.Kafka
                                 });
 
                             var result = await callback(message);
+
+                            Console.WriteLine(result);
 
                             if (!result.Success) continue;
                             try

@@ -116,19 +116,22 @@ namespace WebAPI
             switch (configurationManager.Mode)
             {
                 case ApplicationMode.Development:
+                    app.UseSwagger();
+                    app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture"); });
+                    app.UseDbFakeDataCreator();
+                    app.UseDeveloperExceptionPage();
+                    break;
                 case ApplicationMode.Profiling:
+                    app.UseSwagger();
+                    app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture"); });
+                    break;
                 case ApplicationMode.Staging:
-
+                    app.UseSwagger();
+                    app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture"); });
                     break;
 
                 case ApplicationMode.Production:
                     break;
-            }
-
-            if (configurationManager.Mode == ApplicationMode.Development)
-            {
-                app.UseDbFakeDataCreator();
-                app.UseDeveloperExceptionPage();
             }
 
             //güvenlik için gerekli...
@@ -138,9 +141,6 @@ namespace WebAPI
 
             app.ConfigureCustomExceptionMiddleware();
 
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture"); });
             app.UseHttpsRedirection();
 
             app.UseCors("CorsPolicy");
@@ -157,8 +157,13 @@ namespace WebAPI
                 DefaultRequestCulture = new RequestCulture("tr-TR")
             });
 
-            var cultureInfo = new CultureInfo("tr-TR");
-            cultureInfo.DateTimeFormat.ShortTimePattern = "HH:mm";
+            var cultureInfo = new CultureInfo("tr-TR")
+            {
+                DateTimeFormat =
+                {
+                    ShortTimePattern = "HH:mm"
+                }
+            };
 
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;

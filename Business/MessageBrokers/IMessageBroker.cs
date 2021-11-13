@@ -8,6 +8,6 @@ namespace Business.MessageBrokers
     {
         Task<IResult> SendMessageAsync<T>(T messageModel) where T:
             class, new();
-        Task GetMessageAsync<T>(string topic, Func<T, Task<IResult>> callback);
+        Task GetMessageAsync<T>(string topic, string consumerGroup, Func<T, Task<IResult>> callback);
     }
 }
