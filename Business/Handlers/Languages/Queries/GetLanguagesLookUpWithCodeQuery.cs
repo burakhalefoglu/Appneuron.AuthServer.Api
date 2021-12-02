@@ -24,7 +24,7 @@ namespace Business.Handlers.Languages.Queries
                 _mediator = mediator;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetLanguagesLookUpWithCodeQuery request,
                 CancellationToken cancellationToken)
             {

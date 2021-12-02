@@ -9,45 +9,7 @@ namespace Business.Services.Authentication.Model
     /// </summary>
     public class LoginUserCommand : IRequest<IDataResult<LoginUserResult>>
     {
-        /// <summary>
-        ///     It is the user number that changes according to the provider.
-        ///     Person: CitizenId
-        ///     Staff: Personnel registration number
-        ///     Agent: External staff registration number
-        /// </summary>
         public string Email { get; set; }
-
-        /// <summary>
-        ///     After the number is selected, this field is filled and SMS verification phase is started.
-        /// </summary>
-        public string MobilePhone { get; set; }
-
-        /// <summary>
-        ///     It is used for personnel and external personal logins.
-        /// </summary>
         public string Password { get; set; }
-
-        public bool IsPhoneValid
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(MobilePhone))
-                {
-                    return false;
-                }
-
-                PostProcess();
-                MobilePhone = Regex.Replace(MobilePhone, "[^0-9]", "");
-                return MobilePhone.StartsWith("05") && MobilePhone.Length == 11;
-            }
-        }
-
-        /// <summary>
-        ///     Normalizes areas such as mobile phones.
-        /// </summary>
-        public void PostProcess()
-        {
-            MobilePhone = Regex.Replace(MobilePhone, "[^0-9]", "");
-        }
     }
 }

@@ -23,7 +23,7 @@ namespace Business.Handlers.Translates.Queries
                 _mediator = mediator;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             public async Task<IDataResult<string>> Handle(GetTranslatesByLangQuery request,
                 CancellationToken cancellationToken)
             {

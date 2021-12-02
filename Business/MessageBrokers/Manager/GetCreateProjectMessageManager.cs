@@ -7,7 +7,6 @@ using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.UserProjects.Queries;
 using Business.MessageBrokers.Kafka.Model;
 using Business.MessageBrokers.Models;
-using Business.Services.Authentication;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
@@ -68,7 +67,7 @@ namespace Business.MessageBrokers.Manager
             var projectIdList = new List<string>();
             projectIdResult.Data.ToList().ForEach(x => { projectIdList.Add(x.ProjectKey); });
 
-            var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
+            var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 UserId = user.UserId,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()

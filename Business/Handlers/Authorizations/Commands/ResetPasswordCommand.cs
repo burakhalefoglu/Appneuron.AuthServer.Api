@@ -34,7 +34,7 @@ namespace Business.Handlers.Authorizations.Commands
             }
 
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
             {
                 var queryString = _httpContextAccessor.HttpContext.Request.Query;

@@ -8,13 +8,11 @@ using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserClaims;
 using Business.Handlers.Authorizations.ValidationRules;
 using Business.Helpers;
-using Business.Services.Authentication;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
-using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
@@ -39,8 +37,7 @@ namespace Business.Handlers.Authorizations.Commands
 
             public RegisterUserCommandHandler(IUserRepository userRepository,
                 IMediator mediator,
-                ITokenHelper tokenHelper,
-                ICacheManager cacheManager)
+                ITokenHelper tokenHelper)
             {
                 _userRepository = userRepository;
                 _mediator = mediator;
@@ -50,14 +47,14 @@ namespace Business.Handlers.Authorizations.Commands
             [PerformanceAspect(5)]
             [ValidationAspect(typeof(RegisterUserValidator), Priority = 2)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             [TransactionScopeAspectAsync]
             public async Task<IResult> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
             {
                 var userExits = await _userRepository.GetAsync(u => u.Email == request.Email);
 
                 if (userExits != null)
-                    return new ErrorResult(Messages.EmailAlreadyExist);
+                    return new ErrorResult(Messages.DefaultError);
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
                 var user = new User
@@ -94,7 +91,7 @@ namespace Business.Handlers.Authorizations.Commands
                     OperationClaims = operationClaims
                 }, cancellationToken);
 
-                var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
+                var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
                 {
                     UserId = user.UserId,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()

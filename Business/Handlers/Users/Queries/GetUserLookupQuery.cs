@@ -27,7 +27,7 @@ namespace Business.Handlers.Users.Queries
 
             [SecuredOperation(Priority = 1)]
             [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetUserLookupQuery request,
                 CancellationToken cancellationToken)
             {

@@ -7,9 +7,7 @@ using Business.Constants;
 using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserClaims;
 using Business.Handlers.UserProjects.Queries;
-using Business.Services.Authentication;
 using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
@@ -28,38 +26,36 @@ namespace Business.Handlers.Authorizations.Queries
 
         public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, IDataResult<AccessToken>>
         {
-            private readonly ICacheManager _cacheManager;
             private readonly IMediator _mediator;
             private readonly ITokenHelper _tokenHelper;
             private readonly IUserRepository _userRepository;
 
             public LoginUserQueryHandler(IUserRepository userRepository,
                 ITokenHelper tokenHelper,
-                IMediator mediator,
-                ICacheManager cacheManager)
+                IMediator mediator)
             {
                 _userRepository = userRepository;
                 _tokenHelper = tokenHelper;
                 _mediator = mediator;
-                _cacheManager = cacheManager;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             public async Task<IDataResult<AccessToken>> Handle(LoginUserQuery request,
                 CancellationToken cancellationToken)
             {
                 var user = await _userRepository.GetAsync(u => u.Email == request.Email);
-
+                // Please return just default error to not give database information !!!
                 if (user == null)
-                    return new ErrorDataResult<AccessToken>(Messages.UserNotFound);
+                    return new ErrorDataResult<AccessToken>(Messages.DefaultError);
 
+                // Please return just default error to not give database information !!!
                 if (!HashingHelper.VerifyPasswordHash(request.Password, user.PasswordSalt, user.PasswordHash))
-                    return new ErrorDataResult<AccessToken>(Messages.PasswordError);
+                    return new ErrorDataResult<AccessToken>(Messages.DefaultError);
 
                 var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
                 {
                     GroupId = 1
-                });
+                }, cancellationToken);
 
                 var operationClaims = new List<OperationClaim>();
 
@@ -67,12 +63,7 @@ namespace Business.Handlers.Authorizations.Queries
                 {
                     var selectionItems = result.Data.ToList();
 
-                    foreach (var item in selectionItems)
-                        operationClaims.Add(new OperationClaim
-                        {
-                            Id = Convert.ToInt32(item.Id),
-                            Name = item.Label
-                        });
+                    operationClaims.AddRange(selectionItems.Select(item => new OperationClaim { Id = Convert.ToInt32(item.Id), Name = item.Label }));
                 }
 
 
@@ -80,20 +71,20 @@ namespace Business.Handlers.Authorizations.Queries
                 {
                     UserId = user.UserId,
                     OperationClaims = operationClaims
-                });
+                }, cancellationToken);
 
-                var ProjectIdResult = await _mediator.Send(new GetUserProjectsInternalQuery
+                var projectIdResult = await _mediator.Send(new GetUserProjectsInternalQuery
                 {
                     UserId = user.UserId
-                });
-                var ProjectIdList = new List<string>();
-                ProjectIdResult.Data.ToList().ForEach(x => { ProjectIdList.Add(x.ProjectKey); });
+                }, cancellationToken);
+                var projectIdList = new List<string>();
+                projectIdResult.Data.ToList().ForEach(x => { projectIdList.Add(x.ProjectKey); });
 
-                var accessToken = _tokenHelper.CreateCustomerToken<DArchToken>(new UserClaimModel
+                var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
                 {
                     UserId = user.UserId,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()
-                }, ProjectIdList);
+                }, projectIdList);
 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }

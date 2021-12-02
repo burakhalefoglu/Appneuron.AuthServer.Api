@@ -31,7 +31,7 @@ namespace Business.Handlers.GroupClaims.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(CreateGroupClaimCommand request, CancellationToken cancellationToken)
             {
                 if (IsClaimNotExists(request.ClaimName).Result)

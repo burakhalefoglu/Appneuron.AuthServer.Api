@@ -5,8 +5,8 @@
     /// </summary>
     public static class Messages
     {
-        internal static string DefaultSuccess => "Success";
-        internal static string DefaultError => "Error";
+        public static string DefaultSuccess => "Success";
+        public static string DefaultError => "Unknown Error";
 
         public static string GroupNotFound => "GroupNotFound";
         public static string UserClaimNotFound => "UserClaimNotFound";

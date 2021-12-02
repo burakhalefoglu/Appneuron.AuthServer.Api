@@ -25,7 +25,7 @@ namespace Business.Handlers.UserProjects.Queries
                 _mediator = mediator;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<UserProject>> Handle(GetUserProjectQuery request,
                 CancellationToken cancellationToken)

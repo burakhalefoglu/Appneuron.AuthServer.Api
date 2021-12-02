@@ -38,7 +38,7 @@ namespace Business.Handlers.Users.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             [TransactionScopeAspectAsync]
             public async Task<IResult> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
             {

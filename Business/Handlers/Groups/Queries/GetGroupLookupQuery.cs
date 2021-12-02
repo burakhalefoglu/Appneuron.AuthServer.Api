@@ -26,7 +26,7 @@ namespace Business.Handlers.Groups.Queries
             }
 
             [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetGroupLookupQuery request,
                 CancellationToken cancellationToken)

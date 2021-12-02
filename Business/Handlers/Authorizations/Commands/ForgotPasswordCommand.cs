@@ -39,14 +39,15 @@ namespace Business.Handlers.Authorizations.Commands
             /// <returns></returns>
             [PerformanceAspect(5)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             [TransactionScopeAspectAsync]
             public async Task<IResult> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
             {
                 var user = await _userRepository.GetAsync(u => u.Email == request.Email);
 
                 if (user == null)
-                    return new ErrorResult(Messages.WrongEmail);
+                    // if is not email do noting. But return success result to not give database information !!!
+                    return new SuccessResult(Messages.SendPassword);
 
                 var token = SecurityKeyHelper.GetRandomHexNumber(64);
                 var mailText = MailContentHepler.GetResetMailContent(user, token.ToLower());

@@ -8,7 +8,6 @@ using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.Clients.ValidationRules;
 using Business.MessageBrokers;
 using Business.MessageBrokers.Models;
-using Business.Services.Authentication;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
@@ -45,7 +44,7 @@ namespace Business.Handlers.Clients.Commands
                 _tokenHelper = tokenHelper;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             [ValidationAspect(typeof(CreateTokenValidator), Priority = 1)]
             public async Task<IResult> Handle(CreateTokenCommand request, CancellationToken cancellationToken)
             {
@@ -89,7 +88,7 @@ namespace Business.Handlers.Clients.Commands
                             new OperationClaim { Id = Convert.ToInt32(item.Id), Name = item.Label })
                         .ToList();
 
-                var accessToken = _tokenHelper.CreateClientToken<DArchToken>(new ClientClaimModel
+                var accessToken = _tokenHelper.CreateClientToken<AccessToken>(new ClientClaimModel
                 {
                     ClientId = request.ClientId,
                     ProjectId = request.ProjectId,

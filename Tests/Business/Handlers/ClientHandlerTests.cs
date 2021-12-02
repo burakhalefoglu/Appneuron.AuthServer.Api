@@ -114,8 +114,8 @@ namespace Tests.Business.Handlers
                             ParentId = "dfsa"
                         }
                     })));
-            _tokenHelper.Setup(x => x.CreateClientToken<DArchToken>(It.IsAny<ClientClaimModel>()))
-                .Returns(new DArchToken());
+            _tokenHelper.Setup(x => x.CreateClientToken<AccessToken>(It.IsAny<ClientClaimModel>()))
+                .Returns(new AccessToken());
 
             var result = await _createTokenCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
@@ -164,8 +164,8 @@ namespace Tests.Business.Handlers
                             ParentId = "dfsa"
                         }
                     })));
-            _tokenHelper.Setup(x => x.CreateClientToken<DArchToken>(It.IsAny<ClientClaimModel>()))
-                .Returns(new DArchToken());
+            _tokenHelper.Setup(x => x.CreateClientToken<AccessToken>(It.IsAny<ClientClaimModel>()))
+                .Returns(new AccessToken());
 
             var result = await _createTokenCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();

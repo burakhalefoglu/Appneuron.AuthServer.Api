@@ -28,7 +28,7 @@ namespace Business.Handlers.UserGroups.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(CreateUserGroupCommand request, CancellationToken cancellationToken)
             {
                 var userGroup = new UserGroup

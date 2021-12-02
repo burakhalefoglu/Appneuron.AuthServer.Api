@@ -30,7 +30,7 @@ namespace Business.Handlers.UserClaims.Queries
 
             [SecuredOperation(Priority = 1)]
             [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             public async Task<IDataResult<IEnumerable<UserClaim>>> Handle(GetUserClaimLookupQuery request,
                 CancellationToken cancellationToken)
             {

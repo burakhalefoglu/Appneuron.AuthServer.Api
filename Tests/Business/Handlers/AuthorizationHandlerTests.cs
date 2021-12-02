@@ -8,7 +8,6 @@ using Business.Fakes.Handlers.GroupClaims;
 using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
 using Business.Handlers.UserProjects.Queries;
-using Business.Services.Authentication;
 using Core.CrossCuttingConcerns.Caching;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
@@ -47,11 +46,10 @@ namespace Tests.Business.Handlers
 
             _loginUserQueryHandler = new LoginUserQueryHandler(_userRepository.Object,
                 _tokenHelper.Object,
-                _mediator.Object,
-                _cacheManager.Object);
+                _mediator.Object);
 
             _registerUserCommandHandler = new RegisterUserCommandHandler(_userRepository.Object,
-                _mediator.Object, _tokenHelper.Object, _cacheManager.Object);
+                _mediator.Object, _tokenHelper.Object);
 
             _forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(_userRepository.Object,
                 _mailService.Object);
@@ -98,7 +96,7 @@ namespace Tests.Business.Handlers
             var result = await _loginUserQueryHandler.Handle(_loginUserQuery, new CancellationToken());
 
             result.Success.Should().BeFalse();
-            result.Message.Should().Be(Messages.UserNotFound);
+            result.Message.Should().Be(Messages.DefaultError);
         }
 
 
@@ -126,7 +124,7 @@ namespace Tests.Business.Handlers
             var result = await _loginUserQueryHandler.Handle(_loginUserQuery, new CancellationToken());
 
             result.Success.Should().BeFalse();
-            result.Message.Should().Be(Messages.PasswordError);
+            result.Message.Should().Be(Messages.DefaultError);
         }
 
 
@@ -174,11 +172,11 @@ namespace Tests.Business.Handlers
                     }));
 
 
-            _tokenHelper.Setup(x => x.CreateCustomerToken<DArchToken>(new UserClaimModel
+            _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 UserId = user.UserId,
                 OperationClaims = null
-            }, new List<string>())).Returns(new DArchToken());
+            }, new List<string>())).Returns(new AccessToken());
 
 
             _loginUserQuery = new LoginUserQuery
@@ -210,7 +208,7 @@ namespace Tests.Business.Handlers
 
             var result = await _registerUserCommandHandler.Handle(_command, new CancellationToken());
 
-            result.Message.Should().Be(Messages.EmailAlreadyExist);
+            result.Message.Should().Be(Messages.DefaultError);
         }
 
 
@@ -260,11 +258,11 @@ namespace Tests.Business.Handlers
                         }
                     }));
 
-            _tokenHelper.Setup(x => x.CreateCustomerToken<DArchToken>(new UserClaimModel
+            _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 UserId = registerUser.UserId,
                 OperationClaims = null
-            }, new List<string>())).Returns(new DArchToken());
+            }, new List<string>())).Returns(new AccessToken());
 
 
             var result = await _registerUserCommandHandler.Handle(_command, new CancellationToken());
@@ -286,8 +284,8 @@ namespace Tests.Business.Handlers
                 Email = user.Email
             };
             var result = await _forgotPasswordCommandHandler.Handle(_forgotPasswordCommand, new CancellationToken());
-            result.Success.Should().BeFalse();
-            result.Message.Should().Be(Messages.WrongEmail);
+            result.Success.Should().BeTrue();
+            result.Message.Should().Be(Messages.SendPassword);
         }
 
         [Test]

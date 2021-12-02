@@ -26,7 +26,7 @@ namespace Business.Handlers.Translates.Queries
             }
 
             [SecuredOperation(Priority = 1)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(LogstashLogger))]
             public async Task<IDataResult<Translate>> Handle(GetTranslateQuery request,
                 CancellationToken cancellationToken)
             {
