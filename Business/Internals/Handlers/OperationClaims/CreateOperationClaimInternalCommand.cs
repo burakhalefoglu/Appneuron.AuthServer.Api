@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Business.Constants;
 using Core.Entities.Concrete;
@@ -7,7 +6,7 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 
-namespace Business.Fakes.Handlers.OperationClaims
+namespace Business.Internals.Handlers.OperationClaims
 {
     public class CreateOperationClaimInternalCommand : IRequest<IResult>
     {
@@ -26,22 +25,20 @@ namespace Business.Fakes.Handlers.OperationClaims
             public async Task<IResult> Handle(CreateOperationClaimInternalCommand request,
                 CancellationToken cancellationToken)
             {
-                if (IsClaimExists(request.ClaimName))
+                if (await IsClaimExists(request.ClaimName))
                     return new ErrorResult(Messages.OperationClaimExists);
 
                 var operationClaim = new OperationClaim
                 {
                     Name = request.ClaimName
                 };
-                _operationClaimRepository.Add(operationClaim);
-                await _operationClaimRepository.SaveChangesAsync();
-
+                await _operationClaimRepository.AddAsync(operationClaim);
                 return new SuccessResult(Messages.Added);
             }
 
-            private bool IsClaimExists(string claimName)
+            private async  Task<bool> IsClaimExists(string claimName)
             {
-                return _operationClaimRepository.Query().Any(x => x.Name == claimName);
+                return await _operationClaimRepository.AnyAsync(x => x.Name == claimName) ;
             }
         }
     }

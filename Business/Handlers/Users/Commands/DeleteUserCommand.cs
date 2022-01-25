@@ -21,18 +21,12 @@ namespace Business.Handlers.Users.Commands
         public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, IResult>
         {
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMapper _mapper;
-            private readonly IMediator _mediator;
             private readonly IUserRepository _userRepository;
 
             public DeleteUserCommandHandler(IUserRepository userRepository,
-                IMapper mapper,
-                IMediator mediator,
                 IHttpContextAccessor httpContextAccessor)
             {
                 _userRepository = userRepository;
-                _mapper = mapper;
-                _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
             }
 
@@ -42,21 +36,14 @@ namespace Business.Handlers.Users.Commands
             [TransactionScopeAspectAsync]
             public async Task<IResult> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
             {
-                var UserId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
-                var userToDelete = _userRepository.Get(p => p.UserId == UserId);
+                var userToDelete = await _userRepository.GetAsync(p => p.UserId == userId);
                 if (userToDelete == null) return new ErrorResult(Messages.UserNotFound);
                 userToDelete.Status = false;
 
-
-                //var result = await _mediator.Send(new GetUserClaimLookupInternalQuery()
-                //{
-                //    UserId = UserId
-                //});
-                //userToDelete.UserClaims = result.Data.ToList();
-                _userRepository.Delete(userToDelete);
-                await _userRepository.SaveChangesAsync();
+                await _userRepository.UpdateAsync(userToDelete, x=> x.UserId == userToDelete.UserId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

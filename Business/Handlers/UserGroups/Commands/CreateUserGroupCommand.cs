@@ -37,9 +37,7 @@ namespace Business.Handlers.UserGroups.Commands
                     UserId = request.UserId
                 };
 
-                _userGroupRepository.Add(userGroup);
-                await _userGroupRepository.SaveChangesAsync();
-
+                await _userGroupRepository.AddAsync(userGroup);
                 return new SuccessResult(Messages.Added);
             }
         }

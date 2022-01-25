@@ -30,13 +30,11 @@ namespace Business.Handlers.Groups.Commands
             public async Task<IResult> Handle(DeleteGroupCommand request, CancellationToken cancellationToken)
             {
                 var groupToDelete = await _groupRepository
-                    .GetAsync(x => x.Id == request.Id);
+                    .GetAsync(x => x.GroupId == request.Id);
 
                 if (groupToDelete == null) return new ErrorResult(Messages.GroupNotFound);
-
-                _groupRepository.Delete(groupToDelete);
-                await _groupRepository.SaveChangesAsync();
-
+                groupToDelete.Status = false;
+                await _groupRepository.UpdateAsync(groupToDelete, x=> x.GroupId == groupToDelete.GroupId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

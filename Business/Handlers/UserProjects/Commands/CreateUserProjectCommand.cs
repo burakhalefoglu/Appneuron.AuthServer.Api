@@ -23,13 +23,11 @@ namespace Business.Handlers.UserProjects.Commands
 
         public class CreateUserProjectCommandHandler : IRequestHandler<CreateUserProjectCommand, IResult>
         {
-            private readonly IMediator _mediator;
             private readonly IUserProjectRepository _userProjectRepository;
 
-            public CreateUserProjectCommandHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
+            public CreateUserProjectCommandHandler(IUserProjectRepository userProjectRepository)
             {
                 _userProjectRepository = userProjectRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(CreateUserProjectValidator), Priority = 1)]
@@ -50,8 +48,7 @@ namespace Business.Handlers.UserProjects.Commands
                     ProjectKey = request.ProjectKey
                 };
 
-                _userProjectRepository.Add(addedUserProject);
-                await _userProjectRepository.SaveChangesAsync();
+                await _userProjectRepository.AddAsync(addedUserProject);
                 return new SuccessResult(Messages.Added);
             }
         }

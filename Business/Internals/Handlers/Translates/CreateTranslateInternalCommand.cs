@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.Translates.ValidationRules;
@@ -10,7 +9,7 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 
-namespace Business.Fakes.Handlers.Translates
+namespace Business.Internals.Handlers.Translates
 {
     /// <summary>
     /// </summary>
@@ -22,13 +21,11 @@ namespace Business.Fakes.Handlers.Translates
 
         public class CreateTranslateInternalCommandHandler : IRequestHandler<CreateTranslateInternalCommand, IResult>
         {
-            private readonly IMediator _mediator;
             private readonly ITranslateRepository _translateRepository;
 
-            public CreateTranslateInternalCommandHandler(ITranslateRepository translateRepository, IMediator mediator)
+            public CreateTranslateInternalCommandHandler(ITranslateRepository translateRepository)
             {
                 _translateRepository = translateRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(CreateTranslateValidator), Priority = 2)]
@@ -36,8 +33,8 @@ namespace Business.Fakes.Handlers.Translates
             public async Task<IResult> Handle(CreateTranslateInternalCommand request,
                 CancellationToken cancellationToken)
             {
-                var isThereTranslateRecord = _translateRepository.Query()
-                    .Any(u => u.LangId == request.LangId && u.Code == request.Code);
+                var isThereTranslateRecord = await _translateRepository
+                    .AnyAsync(u => u.LangId == request.LangId && u.Code == request.Code);
 
                 if (isThereTranslateRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -49,8 +46,7 @@ namespace Business.Fakes.Handlers.Translates
                     Code = request.Code
                 };
 
-                _translateRepository.Add(addedTranslate);
-                await _translateRepository.SaveChangesAsync();
+                await _translateRepository.AddAsync(addedTranslate);
                 return new SuccessResult(Messages.Added);
             }
         }

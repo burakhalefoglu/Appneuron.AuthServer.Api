@@ -4,10 +4,10 @@
 
 namespace Entities.Concrete
 {
-    public class UserProject : IEntity
+    public class UserProject : DocumentDbEntity
     {
-        public long Id { get; set; }
         public int UserId { get; set; }
         public string ProjectKey { get; set; }
+        public bool Status { get; set; }
     }
 }

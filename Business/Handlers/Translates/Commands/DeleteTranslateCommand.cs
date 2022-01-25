@@ -31,10 +31,9 @@ namespace Business.Handlers.Translates.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(DeleteTranslateCommand request, CancellationToken cancellationToken)
             {
-                var translateToDelete = _translateRepository.Get(p => p.Id == request.Id);
-
-                _translateRepository.Delete(translateToDelete);
-                await _translateRepository.SaveChangesAsync();
+                var translateToDelete = await _translateRepository.GetAsync(p => p.LangId == request.Id);
+                translateToDelete.Status = false;
+                await _translateRepository.UpdateAsync(translateToDelete, x=> x.LangId == translateToDelete.LangId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

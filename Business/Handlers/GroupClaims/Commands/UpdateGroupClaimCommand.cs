@@ -45,9 +45,7 @@ namespace Business.Handlers.GroupClaims.Commands
 
                 var groupClaim = new GroupClaim { ClaimId = request.ClaimId, GroupId = request.GroupId };
 
-                _groupClaimRepository.Add(groupClaim);
-                await _groupClaimRepository.SaveChangesAsync();
-
+                await _groupClaimRepository.AddAsync(groupClaim);
                 return new SuccessResult(Messages.Updated);
             }
             private async Task<bool> IsClaimNotExists(string claimName)
@@ -55,7 +53,6 @@ namespace Business.Handlers.GroupClaims.Commands
                 return (await _operationClaimRepository.GetAsync(x =>
                     x.Name == claimName) is null);
             }
-
             private async Task<bool> IsGroupClaimNotExist(int claimId, int groupId)
             {
                 return (await _groupClaimRepository.GetAsync(g => g.ClaimId == claimId

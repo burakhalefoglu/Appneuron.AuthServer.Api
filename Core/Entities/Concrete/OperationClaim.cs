@@ -2,13 +2,13 @@
 
 namespace Core.Entities.Concrete
 {
-    public class OperationClaim : IEntity
+    public class OperationClaim : DocumentDbEntity
     {
-        public int Id { get; set; }
+        public int ClaimId { get; set; }
         public string Name { get; set; }
         public string Alias { get; set; }
         public string Description { get; set; }
-        public virtual ICollection<GroupClaim> GroupClaims { get; set; }
-        public virtual ICollection<UserClaim> UserClaims { get; set; }
+
+        public bool Status = true;
     }
 }

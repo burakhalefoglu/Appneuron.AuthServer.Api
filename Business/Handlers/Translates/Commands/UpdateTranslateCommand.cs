@@ -22,13 +22,11 @@ namespace Business.Handlers.Translates.Commands
 
         public class UpdateTranslateCommandHandler : IRequestHandler<UpdateTranslateCommand, IResult>
         {
-            private readonly IMediator _mediator;
             private readonly ITranslateRepository _translateRepository;
 
-            public UpdateTranslateCommandHandler(ITranslateRepository translateRepository, IMediator mediator)
+            public UpdateTranslateCommandHandler(ITranslateRepository translateRepository)
             {
                 _translateRepository = translateRepository;
-                _mediator = mediator;
             }
 
             [SecuredOperation(Priority = 1)]
@@ -37,15 +35,14 @@ namespace Business.Handlers.Translates.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(UpdateTranslateCommand request, CancellationToken cancellationToken)
             {
-                var isThereTranslateRecord = await _translateRepository.GetAsync(u => u.Id == request.Id);
+                var isThereTranslateRecord = await _translateRepository.GetAsync(u => u.LangId == request.Id);
 
-                isThereTranslateRecord.Id = request.Id;
+                isThereTranslateRecord.LangId = request.Id;
                 isThereTranslateRecord.LangId = request.LangId;
                 isThereTranslateRecord.Value = request.Value;
                 isThereTranslateRecord.Code = request.Code;
 
-                _translateRepository.Update(isThereTranslateRecord);
-                await _translateRepository.SaveChangesAsync();
+                await _translateRepository.UpdateAsync(isThereTranslateRecord, x=> x.LangId == isThereTranslateRecord.LangId);
                 return new SuccessResult(Messages.Updated);
             }
         }

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Logging;
@@ -18,21 +17,17 @@ namespace Business.Handlers.Users.Commands
     public class UserChangePasswordCommand : IRequest<IResult>
     {
         public string Password { get; set; }
-        public string validPassword { get; set; }
+        public string ValidPassword { get; set; }
 
         public class UserChangePasswordCommandHandler : IRequestHandler<UserChangePasswordCommand, IResult>
         {
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMapper _mapper;
             private readonly IUserRepository _userRepository;
 
             public UserChangePasswordCommandHandler(IUserRepository userRepository,
-                IMediator mediator,
-                IMapper mapper,
                 IHttpContextAccessor httpContextAccessor)
             {
                 _userRepository = userRepository;
-                _mapper = mapper;
                 _httpContextAccessor = httpContextAccessor;
             }
 
@@ -47,7 +42,7 @@ namespace Business.Handlers.Users.Commands
                 if (user == null)
                     return new ErrorResult(Messages.UserNotFound);
 
-                if (!HashingHelper.VerifyPasswordHash(request.validPassword, user.PasswordSalt, user.PasswordHash))
+                if (!HashingHelper.VerifyPasswordHash(request.ValidPassword, user.PasswordSalt, user.PasswordHash))
                     return new ErrorResult(Messages.PasswordError);
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
@@ -55,8 +50,7 @@ namespace Business.Handlers.Users.Commands
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
 
-                _userRepository.Update(user);
-                await _userRepository.SaveChangesAsync();
+                await _userRepository.UpdateAsync(user,x=> x.UserId == user.UserId);
                 return new SuccessResult(Messages.Updated);
             }
         }

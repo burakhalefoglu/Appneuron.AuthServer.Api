@@ -16,13 +16,11 @@ namespace Business.Handlers.UserProjects.Queries
 
         public class GetUserProjectQueryHandler : IRequestHandler<GetUserProjectQuery, IDataResult<UserProject>>
         {
-            private readonly IMediator _mediator;
             private readonly IUserProjectRepository _userProjectRepository;
 
-            public GetUserProjectQueryHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
+            public GetUserProjectQueryHandler(IUserProjectRepository userProjectRepository)
             {
                 _userProjectRepository = userProjectRepository;
-                _mediator = mediator;
             }
 
             [LogAspect(typeof(LogstashLogger))]
@@ -30,7 +28,7 @@ namespace Business.Handlers.UserProjects.Queries
             public async Task<IDataResult<UserProject>> Handle(GetUserProjectQuery request,
                 CancellationToken cancellationToken)
             {
-                var userProject = await _userProjectRepository.GetAsync(p => p.Id == request.Id);
+                var userProject = await _userProjectRepository.GetAsync(p => p.UserId == request.Id);
                 return new SuccessDataResult<UserProject>(userProject);
             }
         }

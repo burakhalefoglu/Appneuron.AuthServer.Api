@@ -6,7 +6,7 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 
-namespace Business.Fakes.Handlers.OperationClaims
+namespace Business.Internals.Handlers.OperationClaims
 {
     public class GetOperationClaimsInternalQuery : IRequest<IDataResult<IEnumerable<OperationClaim>>>
     {

@@ -30,12 +30,9 @@ namespace Business.Handlers.GroupClaims.Commands
             public async Task<IResult> Handle(DeleteGroupClaimCommand request, CancellationToken cancellationToken)
             {
                 var groupClaimToDelete = await _groupClaimRepository.GetAsync(x => x.GroupId == request.Id);
-
                 if (groupClaimToDelete == null) return new ErrorResult(Messages.GroupClaimNotFound);
-
-                _groupClaimRepository.Delete(groupClaimToDelete);
-                await _groupClaimRepository.SaveChangesAsync();
-
+                groupClaimToDelete.Status = false;
+                await _groupClaimRepository.UpdateAsync(groupClaimToDelete, x=> x.GroupId == groupClaimToDelete.GroupId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

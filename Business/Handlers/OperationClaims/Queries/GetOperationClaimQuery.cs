@@ -30,7 +30,7 @@ namespace Business.Handlers.OperationClaims.Queries
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<OperationClaim>(await _operationClaimRepository
-                    .GetAsync(x => x.Id == request.Id));
+                    .GetAsync(x => x.ClaimId == request.Id));
             }
         }
     }

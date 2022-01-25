@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
 using Business.Constants;
@@ -35,8 +34,7 @@ namespace Business.Handlers.Languages.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(CreateLanguageCommand request, CancellationToken cancellationToken)
             {
-                var isThereLanguageRecord = _languageRepository.Query()
-                    .Any(u => u.Name == request.Name);
+                var isThereLanguageRecord = await _languageRepository.AnyAsync(u => u.Name == request.Name);
 
                 if (isThereLanguageRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -46,9 +44,7 @@ namespace Business.Handlers.Languages.Commands
                     Name = request.Name,
                     Code = request.Code
                 };
-
-                _languageRepository.Add(addedLanguage);
-                await _languageRepository.SaveChangesAsync();
+                await _languageRepository.AddAsync(addedLanguage);
                 return new SuccessResult(Messages.Added);
             }
         }

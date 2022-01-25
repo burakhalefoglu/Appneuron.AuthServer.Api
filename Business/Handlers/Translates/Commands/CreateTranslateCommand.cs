@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
 using Business.Constants;
@@ -25,13 +24,11 @@ namespace Business.Handlers.Translates.Commands
 
         public class CreateTranslateCommandHandler : IRequestHandler<CreateTranslateCommand, IResult>
         {
-            private readonly IMediator _mediator;
             private readonly ITranslateRepository _translateRepository;
 
-            public CreateTranslateCommandHandler(ITranslateRepository translateRepository, IMediator mediator)
+            public CreateTranslateCommandHandler(ITranslateRepository translateRepository)
             {
                 _translateRepository = translateRepository;
-                _mediator = mediator;
             }
 
             [SecuredOperation(Priority = 1)]
@@ -40,8 +37,8 @@ namespace Business.Handlers.Translates.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(CreateTranslateCommand request, CancellationToken cancellationToken)
             {
-                var isThereTranslateRecord = _translateRepository.Query()
-                    .Any(u => u.LangId == request.LangId && u.Code == request.Code);
+                var isThereTranslateRecord = await _translateRepository
+                    .AnyAsync(u => u.LangId == request.LangId && u.Code == request.Code);
 
                 if (isThereTranslateRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -53,8 +50,7 @@ namespace Business.Handlers.Translates.Commands
                     Code = request.Code
                 };
 
-                _translateRepository.Add(addedTranslate);
-                await _translateRepository.SaveChangesAsync();
+                await _translateRepository.AddAsync(addedTranslate);
                 return new SuccessResult(Messages.Added);
             }
         }

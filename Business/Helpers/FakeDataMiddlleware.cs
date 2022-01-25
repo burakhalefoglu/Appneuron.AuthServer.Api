@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Business.Fakes.Handlers.Languages;
-using Business.Fakes.Handlers.Translates;
+using Business.Internals.Handlers.Languages;
+using Business.Internals.Handlers.Translates;
 using Core.Utilities.IoC;
 using MediatR;
 using Microsoft.AspNetCore.Builder;

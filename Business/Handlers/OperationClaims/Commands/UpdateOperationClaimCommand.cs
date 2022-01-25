@@ -31,14 +31,12 @@ namespace Business.Handlers.OperationClaims.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(UpdateOperationClaimCommand request, CancellationToken cancellationToken)
             {
-                var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.Id == request.Id);
+                var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.ClaimId == request.Id);
                 if (isOperationClaimsExits == null) return new ErrorResult(Messages.OperationClaimNotFound);
 
                 isOperationClaimsExits.Alias = request.Alias;
                 isOperationClaimsExits.Description = request.Description;
-
-                _operationClaimRepository.Update(isOperationClaimsExits);
-                await _operationClaimRepository.SaveChangesAsync();
+                await _operationClaimRepository.UpdateAsync(isOperationClaimsExits, x=> x.ClaimId == isOperationClaimsExits.ClaimId);
 
                 return new SuccessResult(Messages.Updated);
             }

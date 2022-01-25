@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Core.Entities.Concrete
 {
-    public class User : IEntity
+    public class User : DocumentDbEntity
     {
         public User()
         {
@@ -11,7 +11,6 @@ namespace Core.Entities.Concrete
             ResetPasswordExpires = DateTime.MinValue;
             Status = true;
         }
-
         public int UserId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -23,8 +22,5 @@ namespace Core.Entities.Concrete
         public byte[] PasswordHash { get; set; }
         public string ResetPasswordToken { get; set; }
         public DateTime ResetPasswordExpires { get; set; }
-
-        public virtual ICollection<UserGroup> UserGroups { get; set; }
-        public virtual ICollection<UserClaim> UserClaims { get; set; }
     }
 }

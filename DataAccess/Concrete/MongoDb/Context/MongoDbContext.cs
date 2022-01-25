@@ -6,6 +6,6 @@ namespace DataAccess.Concrete.MongoDb.Context
     {
         public MongoDbContext(IConfiguration configuration) : base(configuration)
         {
-        }
+        }  
     }
 }

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.Constants;
-using Business.Fakes.Handlers.GroupClaims;
-using Business.Fakes.Handlers.UserClaims;
 using Business.Handlers.Authorizations.ValidationRules;
 using Business.Helpers;
+using Business.Internals.Handlers.GroupClaims;
+using Business.Internals.Handlers.UserClaims;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -66,28 +66,18 @@ namespace Business.Handlers.Authorizations.Commands
                     Status = true
                 };
 
-                var newUser = _userRepository.Add(user);
-                await _userRepository.SaveChangesAsync();
-
-
+                await _userRepository.AddAsync(user);
                 var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
                 {
                     GroupId = 1
                 }, cancellationToken);
 
                 var selectionItems = result.Data.ToList();
-                var operationClaims = new List<OperationClaim>();
-
-                foreach (var item in selectionItems)
-                    operationClaims.Add(new OperationClaim
-                    {
-                        Id = Convert.ToInt32(item.Id),
-                        Name = item.Label
-                    });
-
+                var operationClaims = selectionItems.Select(item => 
+                    new OperationClaim {Id = Convert.ToInt32(item.Id), Name = item.Label}).ToList();
                 await _mediator.Send(new CreateUserClaimsInternalCommand
                 {
-                    UserId = newUser.UserId,
+                    UserId = user.UserId,
                     OperationClaims = operationClaims
                 }, cancellationToken);
 

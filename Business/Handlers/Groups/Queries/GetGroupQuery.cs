@@ -28,8 +28,7 @@ namespace Business.Handlers.Groups.Queries
             public async Task<IDataResult<Group>> Handle(GetGroupQuery request, CancellationToken cancellationToken)
             {
                 var group = await _groupRepository
-                    .GetAsync(x => x.Id == request.GroupId);
-
+                    .GetAsync(x => x.GroupId == request.GroupId);
                 return new SuccessDataResult<Group>(group);
             }
         }

@@ -2,12 +2,12 @@
 
 namespace Core.Entities.Concrete
 {
-    public class Language : IEntity
+    public class Language : DocumentDbEntity
     {
-        public int Id { get; set; }
+        public int LanguageId { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
 
-        public virtual ICollection<Translate> Translates { get; set; }
+        public bool Status = true;
     }
 }

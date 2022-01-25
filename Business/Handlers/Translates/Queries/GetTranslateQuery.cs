@@ -30,7 +30,7 @@ namespace Business.Handlers.Translates.Queries
             public async Task<IDataResult<Translate>> Handle(GetTranslateQuery request,
                 CancellationToken cancellationToken)
             {
-                var translate = await _translateRepository.GetAsync(p => p.Id == request.Id);
+                var translate = await _translateRepository.GetAsync(p => p.LangId == request.Id);
                 return new SuccessDataResult<Translate>(translate);
             }
         }

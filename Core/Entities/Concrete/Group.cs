@@ -2,12 +2,10 @@
 
 namespace Core.Entities.Concrete
 {
-    public class Group : IEntity
+    public class Group : DocumentDbEntity
     {
-        public int Id { get; set; }
+        public int GroupId { get; set; }
         public string GroupName { get; set; }
-
-        public virtual ICollection<GroupClaim> GroupClaims { get; set; }
-        public virtual ICollection<UserGroup> UserGroups { get; set; }
+        public bool Status = true;
     }
 }

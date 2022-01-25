@@ -6,10 +6,7 @@ using Core.Entities.Dtos;
 
 namespace DataAccess.Abstract
 {
-    public interface ILanguageRepository : IEntityRepository<Language>
+    public interface ILanguageRepository : IDocumentDbRepository<Language>
     {
-        Task<List<SelectionItem>> GetLanguagesLookUp();
-
-        Task<List<SelectionItem>> GetLanguagesLookUpWithCode();
     }
 }

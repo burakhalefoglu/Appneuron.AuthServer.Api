@@ -17,23 +17,6 @@ namespace WebAPI.Controllers
     [ApiController]
     public class TranslatesController : BaseApiController
     {
-        /// <summary>
-        ///     Get translates by lang
-        /// </summary>
-        /// <param name="lang"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("gettranslatesbylang")]
-        public async Task<IActionResult> GetTranslatesByLang(string lang)
-        {
-            var result = await Mediator.Send(new GetTranslatesByLangQuery { Lang = lang });
-            if (result.Success) return Ok(result);
-
-            return BadRequest(result);
-        }
 
         /// <summary>
         ///     List Translate
@@ -48,24 +31,6 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetList()
         {
             var result = await Mediator.Send(new GetTranslatesQuery());
-            if (result.Success) return Ok(result);
-
-            return BadRequest(result);
-        }
-
-        /// <summary>
-        ///     List Dto Translate
-        /// </summary>
-        /// <remarks>bla bla bla Translates</remarks>
-        /// <return>Translates List</return>
-        /// <response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<Translate>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("gettranslatelistdto")]
-        public async Task<IActionResult> GetTranslateListDto()
-        {
-            var result = await Mediator.Send(new GetTranslateListDtoQuery());
             if (result.Success) return Ok(result);
 
             return BadRequest(result);

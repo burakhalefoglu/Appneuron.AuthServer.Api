@@ -18,12 +18,9 @@ namespace Business.Handlers.Languages.Commands
         public class DeleteLanguageCommandHandler : IRequestHandler<DeleteLanguageCommand, IResult>
         {
             private readonly ILanguageRepository _languageRepository;
-            private readonly IMediator _mediator;
-
-            public DeleteLanguageCommandHandler(ILanguageRepository languageRepository, IMediator mediator)
+            public DeleteLanguageCommandHandler(ILanguageRepository languageRepository)
             {
                 _languageRepository = languageRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -31,10 +28,9 @@ namespace Business.Handlers.Languages.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteLanguageCommand request, CancellationToken cancellationToken)
             {
-                var languageToDelete = _languageRepository.Get(p => p.Id == request.Id);
-
-                _languageRepository.Delete(languageToDelete);
-                await _languageRepository.SaveChangesAsync();
+                var languageToDelete =await _languageRepository.GetAsync(p => p.LanguageId == request.Id);
+                languageToDelete.Status = false;
+                await _languageRepository.UpdateAsync(languageToDelete, x=> x.LanguageId == languageToDelete.LanguageId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

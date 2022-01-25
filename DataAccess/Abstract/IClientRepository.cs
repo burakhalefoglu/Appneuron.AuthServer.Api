@@ -3,7 +3,7 @@ using Core.Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface IClientRepository : IEntityRepository<Client>
+    public interface IClientRepository : IDocumentDbRepository<Client>
     {
     }
 }

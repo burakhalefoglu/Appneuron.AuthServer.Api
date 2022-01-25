@@ -10,7 +10,7 @@ using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using MediatR;
 
-namespace Business.Fakes.Handlers.Authorizations
+namespace Business.Internals.Handlers.Authorizations
 {
     public class RegisterUserInternalCommand : IRequest<IResult>
     {
@@ -46,8 +46,7 @@ namespace Business.Fakes.Handlers.Authorizations
                     Status = true
                 };
 
-                _userRepository.Add(user);
-                await _userRepository.SaveChangesAsync();
+                await _userRepository.AddAsync(user);
                 return new SuccessResult(Messages.Added);
             }
         }

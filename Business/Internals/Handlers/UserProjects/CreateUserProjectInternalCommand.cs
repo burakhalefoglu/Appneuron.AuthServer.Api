@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.UserProjects.ValidationRules;
@@ -12,7 +11,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 
-namespace Business.Fakes.Handlers.UserProjects
+namespace Business.Internals.Handlers.UserProjects
 {
     public class CreateUserProjectInternalCommand : IRequest<IResult>
     {
@@ -22,14 +21,11 @@ namespace Business.Fakes.Handlers.UserProjects
         public class
             CreateUserProjectInternalCommandHandler : IRequestHandler<CreateUserProjectInternalCommand, IResult>
         {
-            private readonly IMediator _mediator;
             private readonly IUserProjectRepository _userProjectRepository;
 
-            public CreateUserProjectInternalCommandHandler(IUserProjectRepository userProjectRepository,
-                IMediator mediator)
+            public CreateUserProjectInternalCommandHandler(IUserProjectRepository userProjectRepository)
             {
                 _userProjectRepository = userProjectRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(CreateUserProjectValidator), Priority = 1)]
@@ -39,7 +35,7 @@ namespace Business.Fakes.Handlers.UserProjects
                 CancellationToken cancellationToken)
             {
                 var isThereUserProjectRecord =
-                    _userProjectRepository.Query().Any(u => u.ProjectKey == request.ProjectKey);
+                    await _userProjectRepository.AnyAsync(u => u.ProjectKey == request.ProjectKey);
 
                 if (isThereUserProjectRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -50,8 +46,7 @@ namespace Business.Fakes.Handlers.UserProjects
                     ProjectKey = request.ProjectKey
                 };
 
-                _userProjectRepository.Add(addedUserProject);
-                await _userProjectRepository.SaveChangesAsync();
+                await _userProjectRepository.AddAsync(addedUserProject);
                 return new SuccessResult(Messages.Added);
             }
         }

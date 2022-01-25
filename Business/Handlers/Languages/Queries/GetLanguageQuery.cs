@@ -17,12 +17,10 @@ namespace Business.Handlers.Languages.Queries
         public class GetLanguageQueryHandler : IRequestHandler<GetLanguageQuery, IDataResult<Language>>
         {
             private readonly ILanguageRepository _languageRepository;
-            private readonly IMediator _mediator;
 
-            public GetLanguageQueryHandler(ILanguageRepository languageRepository, IMediator mediator)
+            public GetLanguageQueryHandler(ILanguageRepository languageRepository)
             {
                 _languageRepository = languageRepository;
-                _mediator = mediator;
             }
 
             [SecuredOperation(Priority = 1)]
@@ -30,7 +28,7 @@ namespace Business.Handlers.Languages.Queries
             public async Task<IDataResult<Language>> Handle(GetLanguageQuery request,
                 CancellationToken cancellationToken)
             {
-                var language = await _languageRepository.GetAsync(p => p.Id == request.Id);
+                var language = await _languageRepository.GetAsync(p => p.LanguageId == request.Id);
                 return new SuccessDataResult<Language>(language);
             }
         }

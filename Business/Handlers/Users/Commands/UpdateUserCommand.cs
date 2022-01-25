@@ -23,14 +23,12 @@ namespace Business.Handlers.Users.Commands
         public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, IResult>
         {
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMapper _mapper;
             private readonly IUserRepository _userRepository;
 
             public UpdateUserCommandHandler(IUserRepository userRepository,
-                IMapper mapper, IHttpContextAccessor httpContextAccessor)
+                IHttpContextAccessor httpContextAccessor)
             {
                 _userRepository = userRepository;
-                _mapper = mapper;
                 _httpContextAccessor = httpContextAccessor;
             }
 
@@ -47,8 +45,7 @@ namespace Business.Handlers.Users.Commands
                 isUserExits.Name = request.FullName;
                 isUserExits.Email = request.Email;
 
-                _userRepository.Update(isUserExits);
-                await _userRepository.SaveChangesAsync();
+                await _userRepository.UpdateAsync(isUserExits, x=> x.UserId == isUserExits.UserId);
                 return new SuccessResult(Messages.Updated);
             }
         }

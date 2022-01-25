@@ -35,11 +35,6 @@ namespace Core.DataAccess.EntityFramework
             return entity;
         }
 
-        public void Delete(TEntity entity)
-        {
-            Context.Remove(entity);
-        }
-
         public TEntity Get(Expression<Func<TEntity, bool>> expression)
         {
             return Context.Set<TEntity>().FirstOrDefault(expression);

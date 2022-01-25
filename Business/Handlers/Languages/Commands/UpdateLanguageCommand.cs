@@ -22,12 +22,10 @@ namespace Business.Handlers.Languages.Commands
         public class UpdateLanguageCommandHandler : IRequestHandler<UpdateLanguageCommand, IResult>
         {
             private readonly ILanguageRepository _languageRepository;
-            private readonly IMediator _mediator;
 
-            public UpdateLanguageCommandHandler(ILanguageRepository languageRepository, IMediator mediator)
+            public UpdateLanguageCommandHandler(ILanguageRepository languageRepository)
             {
                 _languageRepository = languageRepository;
-                _mediator = mediator;
             }
 
             [SecuredOperation(Priority = 1)]
@@ -36,14 +34,12 @@ namespace Business.Handlers.Languages.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)
             {
-                var isThereLanguageRecord = await _languageRepository.GetAsync(u => u.Id == request.Id);
+                var isThereLanguageRecord = await _languageRepository.GetAsync(u => u.LanguageId == request.Id);
 
-                isThereLanguageRecord.Id = request.Id;
+                isThereLanguageRecord.LanguageId = request.Id;
                 isThereLanguageRecord.Name = request.Name;
                 isThereLanguageRecord.Code = request.Code;
-
-                _languageRepository.Update(isThereLanguageRecord);
-                await _languageRepository.SaveChangesAsync();
+                await _languageRepository.UpdateAsync(isThereLanguageRecord, x=> x.LanguageId == isThereLanguageRecord.LanguageId);
                 return new SuccessResult(Messages.Updated);
             }
         }

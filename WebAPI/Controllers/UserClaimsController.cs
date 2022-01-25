@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Business.Handlers.UserClaims.Commands;
 using Business.Handlers.UserClaims.Queries;
 using Core.Entities.Concrete;
-using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,42 +29,6 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetList()
         {
             var result = await Mediator.Send(new GetUserClaimsQuery());
-            if (result.Success) return Ok(result);
-
-            return BadRequest(result);
-        }
-
-        /// <summary>
-        ///     Id sine göre detaylarını getirir.
-        /// </summary>
-        /// <remarks>bla bla bla </remarks>
-        /// <return>UserClaims List</return>
-        /// <response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<UserClaim>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getbyuserid")]
-        public async Task<IActionResult> GetByUserId(int userid)
-        {
-            var result = await Mediator.Send(new GetUserClaimLookupQuery { UserId = userid });
-            if (result.Success) return Ok(result);
-
-            return BadRequest(result);
-        }
-
-        /// <summary>
-        ///     It brings the details according to its id.
-        /// </summary>
-        /// <remarks>bla bla bla </remarks>
-        /// <return>UserClaims List</return>
-        /// <response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<SelectionItem>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getoperationclaimbyuserid")]
-        public async Task<IActionResult> GetOperationClaimByUserId(int id)
-        {
-            var result = await Mediator.Send(new GetUserClaimLookupByUserIdQuery { Id = id });
             if (result.Success) return Ok(result);
 
             return BadRequest(result);

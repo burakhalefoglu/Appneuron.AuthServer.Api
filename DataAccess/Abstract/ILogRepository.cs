@@ -3,7 +3,7 @@ using Core.Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface ILogRepository : IEntityRepository<Log>
+    public interface ILogRepository : IDocumentDbRepository<Log>
     {
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserClaims;
 using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.UserProjects.Queries;
+using Business.Internals.Handlers.GroupClaims;
+using Business.Internals.Handlers.UserClaims;
+using Business.Internals.Handlers.UserProjects;
 using Business.MessageBrokers.Kafka.Model;
 using Business.MessageBrokers.Models;
 using Core.Entities.ClaimModels;

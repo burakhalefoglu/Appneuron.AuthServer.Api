@@ -8,7 +8,8 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using MediatR;
+using MediatR;              
+
 
 namespace Business.Handlers.GroupClaims.Commands
 {
@@ -46,9 +47,7 @@ namespace Business.Handlers.GroupClaims.Commands
                     GroupId = request.GroupId,
                     ClaimId = request.ClaimId
                 };
-                _groupClaimRepository.Add(groupClaim);
-                await _groupClaimRepository.SaveChangesAsync();
-
+                await _groupClaimRepository.AddAsync(groupClaim);
                 return new SuccessResult(Messages.Added);
             }
 

@@ -43,8 +43,7 @@ namespace Business.Handlers.UserClaims.Commands
                     ClaimId = request.ClaimId,
                     UsersId = request.UserId
                 };
-                _userClaimRepository.Add(userClaim);
-                await _userClaimRepository.SaveChangesAsync();
+                await _userClaimRepository.AddAsync(userClaim);
                 return new SuccessResult(Messages.Added);
             }
         }

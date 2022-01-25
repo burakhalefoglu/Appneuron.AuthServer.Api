@@ -34,9 +34,7 @@ namespace Business.Handlers.UserClaims.Commands
             public async Task<IResult> Handle(UpdateUserClaimCommand request, CancellationToken cancellationToken)
             {
                 var userList = request.ClaimId.Select(x => new UserClaim { ClaimId = x, UsersId = request.UserId });
-
-                await _userClaimRepository.BulkInsert(request.UserId, userList);
-                await _userClaimRepository.SaveChangesAsync();
+                await _userClaimRepository.AddManyAsync(userList);
                 return new SuccessResult(Messages.Updated);
             }
         }

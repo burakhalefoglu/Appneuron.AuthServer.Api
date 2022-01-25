@@ -29,13 +29,10 @@ namespace Business.Handlers.OperationClaims.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(DeleteOperationClaimCommand request, CancellationToken cancellationToken)
             {
-                var claimToDelete = await _operationClaimRepository.GetAsync(x => x.Id == request.Id);
-
+                var claimToDelete = await _operationClaimRepository.GetAsync(x => x.ClaimId == request.Id);
                 if (claimToDelete == null) return new ErrorResult(Messages.OperationClaimNotFound);
-
-                _operationClaimRepository.Delete(claimToDelete);
-                await _operationClaimRepository.SaveChangesAsync();
-
+                claimToDelete.Status = false;
+                await _operationClaimRepository.UpdateAsync(claimToDelete, x=> x.ClaimId == claimToDelete.ClaimId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

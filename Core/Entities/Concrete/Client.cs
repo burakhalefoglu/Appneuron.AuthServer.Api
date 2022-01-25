@@ -1,9 +1,10 @@
 ﻿namespace Core.Entities.Concrete
 {
-    public class Client : IEntity
+    public class Client : DocumentDbEntity
     {
-        public long Id { get; set; }
         public string ClientId { get; set; }
         public string ProjectId { get; set; }
+
+        public bool Status = true;
     }
 }

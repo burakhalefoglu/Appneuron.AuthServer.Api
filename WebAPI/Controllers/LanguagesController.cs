@@ -18,42 +18,6 @@ namespace WebAPI.Controllers
     [ApiController]
     public class LanguagesController : BaseApiController
     {
-        /// <summary>
-        ///     LanguageLookUp with Code
-        /// </summary>
-        /// <remarks>bla bla bla Languages</remarks>
-        /// <return>Languages List</return>
-        /// <response code="200"></response>
-        [AllowAnonymous]
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<SelectionItem>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getlookupwithcode")]
-        public async Task<IActionResult> GetLookupListWithCode()
-        {
-            var result = await Mediator.Send(new GetLanguagesLookUpWithCodeQuery());
-            if (result.Success) return Ok(result);
-
-            return BadRequest(result);
-        }
-
-        /// <summary>
-        ///     LanguageLookUp
-        /// </summary>
-        /// <remarks>bla bla bla Languages</remarks>
-        /// <return>Languages List</return>
-        /// <response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<SelectionItem>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getlookup")]
-        public async Task<IActionResult> GetLookupList()
-        {
-            var result = await Mediator.Send(new GetLanguagesLookUpQuery());
-            if (result.Success) return Ok(result);
-
-            return BadRequest(result);
-        }
 
         /// <summary>
         ///     List languages

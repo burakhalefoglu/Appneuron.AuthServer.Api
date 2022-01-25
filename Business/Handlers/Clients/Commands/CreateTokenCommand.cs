@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.Constants;
-using Business.Fakes.Handlers.GroupClaims;
 using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.Clients.ValidationRules;
+using Business.Internals.Handlers.GroupClaims;
 using Business.MessageBrokers;
 using Business.MessageBrokers.Models;
 using Core.Aspects.Autofac.Logging;
@@ -61,7 +61,7 @@ namespace Business.Handlers.Clients.Commands
 
                 if (result == null)
                 {
-                    _clientRepository.Add(new Client
+                    await _clientRepository.AddAsync(new Client
                     {
                         ClientId = request.ClientId,
                         ProjectId = request.ProjectId
@@ -94,7 +94,6 @@ namespace Business.Handlers.Clients.Commands
                     ProjectId = request.ProjectId,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()
                 });
-                await _clientRepository.SaveChangesAsync();
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }
         }

@@ -40,12 +40,10 @@ namespace Business.Handlers.Groups.Commands
 
                 var groupToUpdate = new Group
                 {
-                    Id = request.Id,
+                    GroupId = request.Id,
                     GroupName = request.GroupName
                 };
-
-                _groupRepository.Update(groupToUpdate);
-                await _groupRepository.SaveChangesAsync();
+                await _groupRepository.UpdateAsync(groupToUpdate,x=> x.GroupId == groupToUpdate.GroupId);
                 return new SuccessResult(Messages.Updated);
             }
         }

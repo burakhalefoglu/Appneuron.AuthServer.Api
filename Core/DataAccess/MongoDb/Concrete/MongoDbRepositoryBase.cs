@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Core.DataAccess.MongoDb.Concrete.Configurations;
 using Core.Entities;
-using Core.Utilities.Messages;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -24,27 +23,6 @@ namespace Core.DataAccess.MongoDb.Concrete
             var database = client.GetDatabase(mongoConnectionSetting.DatabaseName);
             _collection = database.GetCollection<T>(collectionName);
         }
-
-        public virtual void Delete(ObjectId id)
-        {
-            _collection.FindOneAndDelete(x => x.Id == id);
-        }
-
-        public virtual void Delete(T record)
-        {
-            _collection.FindOneAndDelete(x => x.Id == record.Id);
-        }
-
-        public virtual async Task DeleteAsync(ObjectId id)
-        {
-            await _collection.FindOneAndDeleteAsync(x => x.Id == id);
-        }
-
-        public virtual async Task DeleteAsync(T record)
-        {
-            await _collection.FindOneAndDeleteAsync(x => x.Id == record.Id);
-        }
-
         public virtual T GetById(ObjectId id)
         {
             return _collection.Find(x => x.Id == id).FirstOrDefault();
@@ -53,6 +31,11 @@ namespace Core.DataAccess.MongoDb.Concrete
         public virtual async Task<T> GetByIdAsync(ObjectId id)
         {
             return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
+        }
+        
+        public virtual async Task<T> GetAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _collection.Find(predicate).FirstOrDefaultAsync();
         }
 
         public virtual void Add(T entity)
@@ -122,9 +105,19 @@ namespace Core.DataAccess.MongoDb.Concrete
                 ? _collection.AsQueryable()
                 : _collection.AsQueryable().Where(predicate);
 
-            if (data.FirstOrDefault() == null)
-                return false;
-            return true;
+            return data.FirstOrDefault() != null;
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            return await Task.Run(() =>
+            {
+                var data = predicate == null
+                    ? _collection.AsQueryable()
+                    : _collection.AsQueryable().Where(predicate);
+
+                return data.FirstOrDefault() != null;
+            });
         }
     }
 }

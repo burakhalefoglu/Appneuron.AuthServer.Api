@@ -210,7 +210,7 @@ namespace Tests.Business.Handlers
             var command = new UserChangePasswordCommand
             {
                 Password = "123456",
-                validPassword = "123456"
+                ValidPassword = "123456"
             };
 
             _httpContextAccessor.SetupGet(x =>
@@ -242,7 +242,7 @@ namespace Tests.Business.Handlers
             var command = new UserChangePasswordCommand
             {
                 Password = "1234567",
-                validPassword = "1234567"
+                ValidPassword = "1234567"
             };
 
             _httpContextAccessor.SetupGet(x =>
@@ -275,7 +275,7 @@ namespace Tests.Business.Handlers
             var command = new UserChangePasswordCommand
             {
                 Password = "123456",
-                validPassword = "123456"
+                ValidPassword = "123456"
             };
 
             _httpContextAccessor.SetupGet(x =>

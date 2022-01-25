@@ -30,10 +30,8 @@ namespace Business.Handlers.UserGroups.Commands
             public async Task<IResult> Handle(DeleteUserGroupCommand request, CancellationToken cancellationToken)
             {
                 var entityToDelete = await _userGroupRepository.GetAsync(x => x.UserId == request.Id);
-
-                _userGroupRepository.Delete(entityToDelete);
-                await _userGroupRepository.SaveChangesAsync();
-
+                entityToDelete.Status = false;
+    ;            await _userGroupRepository.UpdateAsync(entityToDelete, x=> x.UserId == entityToDelete.UserId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

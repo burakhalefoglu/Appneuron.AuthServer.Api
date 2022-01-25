@@ -46,15 +46,12 @@ namespace Business.Handlers.Authorizations.Commands
                 if (resultDate > 0) return new ErrorDataResult<User>(Messages.InvalidCode);
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
-
+                
                 resultUser.PasswordHash = passwordHash;
                 resultUser.PasswordSalt = passwordSalt;
                 resultUser.ResetPasswordExpires = DateTime.MinValue;
                 resultUser.ResetPasswordToken = null;
-
-                _userRepository.Update(resultUser);
-                await _userRepository.SaveChangesAsync();
-
+                await _userRepository.UpdateAsync(resultUser, x=> x.Email == resultUser.Email);
                 return new SuccessDataResult<User>(Messages.ResetPasswordSuccess);
             }
         }

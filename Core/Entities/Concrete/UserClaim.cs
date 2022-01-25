@@ -1,11 +1,9 @@
 ﻿namespace Core.Entities.Concrete
 {
-    public class UserClaim : IEntity
+    public class UserClaim : DocumentDbEntity
     {
         public int UsersId { get; set; }
         public int ClaimId { get; set; }
-
-        public virtual OperationClaim Claim { get; set; }
-        public virtual User Users { get; set; }
+        public bool Status = true;
     }
 }

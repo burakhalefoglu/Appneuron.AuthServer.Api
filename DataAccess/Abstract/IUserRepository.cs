@@ -4,8 +4,7 @@ using Core.Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface IUserRepository : IEntityRepository<User>
+    public interface IUserRepository : IDocumentDbRepository<User>
     {
-        List<OperationClaim> GetClaims(int userId);
     }
 }

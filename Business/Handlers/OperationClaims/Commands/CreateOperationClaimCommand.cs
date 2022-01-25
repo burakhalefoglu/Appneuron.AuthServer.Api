@@ -37,9 +37,7 @@ namespace Business.Handlers.OperationClaims.Commands
                 {
                     Name = request.ClaimName
                 };
-                _operationClaimRepository.Add(operationClaim);
-                await _operationClaimRepository.SaveChangesAsync();
-
+                await _operationClaimRepository.AddAsync(operationClaim);
                 return new SuccessResult(Messages.Added);
             }
 

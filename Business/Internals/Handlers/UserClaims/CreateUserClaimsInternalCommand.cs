@@ -7,7 +7,7 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 
-namespace Business.Fakes.Handlers.UserClaims
+namespace Business.Internals.Handlers.UserClaims
 {
     /// <summary>
     ///     For Internal Use Only,
@@ -30,22 +30,21 @@ namespace Business.Fakes.Handlers.UserClaims
             public async Task<IResult> Handle(CreateUserClaimsInternalCommand request,
                 CancellationToken cancellationToken)
             {
-                var OperationClaimList = request.OperationClaims;
-                foreach (var claim in OperationClaimList)
+                var operationClaims = request.OperationClaims;
+                foreach (var claim in operationClaims)
                 {
                     var result =
-                        await _userClaimsRepository.GetCountAsync(x =>
-                            x.UsersId == request.UserId && x.ClaimId == claim.Id);
+                        (await _userClaimsRepository.AnyAsync(x =>
+                            x.UsersId == request.UserId && x.ClaimId == claim.ClaimId));
 
-                    if (result == 0)
-                        _userClaimsRepository.Add(new UserClaim
+                    if (!result)
+                        await _userClaimsRepository.AddAsync(new UserClaim
                         {
-                            ClaimId = claim.Id,
+                            ClaimId = claim.ClaimId,
                             UsersId = request.UserId
                         });
                 }
 
-                await _userClaimsRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.Added);
             }
         }
