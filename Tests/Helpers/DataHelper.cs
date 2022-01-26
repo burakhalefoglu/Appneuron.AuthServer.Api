@@ -13,9 +13,8 @@ namespace Tests.Helpers
 
             return new User
             {
-                UserId = 1,
                 Email = "test@test.com",
-                Name = string.Format("{0} {1} {2}", name, name, name),
+                Name = $"{name} {name} {name}",
                 RecordDate = DateTime.Now,
                 PasswordHash = passwordSalt,
                 PasswordSalt = passwordHash,
@@ -33,9 +32,8 @@ namespace Tests.Helpers
             {
                 var user = new User
                 {
-                    UserId = i,
                     Email = "test@test.com",
-                    Name = string.Format("name {0} name {1} name {2}", i, i, i),
+                    Name = $"name {i} name {i} name {i}",
                     RecordDate = DateTime.Now,
                     PasswordHash = passwordSalt,
                     PasswordSalt = passwordHash,

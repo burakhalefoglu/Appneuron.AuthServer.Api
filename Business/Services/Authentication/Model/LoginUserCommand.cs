@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Core.Utilities.Results;
+﻿using Core.Utilities.Results;
 using MediatR;
 
 namespace Business.Services.Authentication.Model

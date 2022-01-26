@@ -2,8 +2,8 @@
 {
     public class UserClaim : DocumentDbEntity
     {
-        public int UsersId { get; set; }
-        public int ClaimId { get; set; }
         public bool Status = true;
+        public string UsersId { get; set; }
+        public string ClaimId { get; set; }
     }
 }

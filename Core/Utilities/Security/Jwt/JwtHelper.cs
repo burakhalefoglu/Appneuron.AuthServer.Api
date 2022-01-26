@@ -96,7 +96,7 @@ namespace Core.Utilities.Security.Jwt
                         userClaimModel.OperationClaims[i]);
 
             var claims = new List<Claim>();
-            claims.AddNameIdentifier(userClaimModel.UserId.ToString());
+            claims.AddNameIdentifier(userClaimModel.UserId);
             claims.AddRoles(userClaimModel.OperationClaims);
             if (ProjectIdList.Count > 0)
                 ProjectIdList.ForEach(x => { claims.AddProjectId(x); });

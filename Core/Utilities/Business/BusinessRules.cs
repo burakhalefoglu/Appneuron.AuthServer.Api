@@ -1,4 +1,5 @@
-﻿using Core.Utilities.Results;
+﻿using System.Linq;
+using Core.Utilities.Results;
 
 namespace Core.Utilities.Business
 {
@@ -6,10 +7,7 @@ namespace Core.Utilities.Business
     {
         public static IResult Run(params IResult[] logics)
         {
-            foreach (var result in logics)
-                if (!result.Success)
-                    return result;
-            return null;
+            return logics.FirstOrDefault(result => !result.Success);
         }
     }
 }

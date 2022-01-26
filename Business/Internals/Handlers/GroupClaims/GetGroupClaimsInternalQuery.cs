@@ -13,15 +13,16 @@ namespace Business.Internals.Handlers.GroupClaims
 {
     public class GetGroupClaimsLookupByGroupIdInternalQuery : IRequest<IDataResult<IEnumerable<SelectionItem>>>
     {
-        public int GroupId { get; set; }
+        public string GroupId { get; set; }
 
         public class GetGroupClaimsLookupByGroupIdQueryHandler : IRequestHandler<
             GetGroupClaimsLookupByGroupIdInternalQuery, IDataResult<IEnumerable<SelectionItem>>>
         {
-            private readonly IMediator _mediator;
             private readonly IGroupClaimRepository _groupClaimRepository;
+            private readonly IMediator _mediator;
 
-            public GetGroupClaimsLookupByGroupIdQueryHandler(IGroupClaimRepository groupClaimRepository, IMediator mediator)
+            public GetGroupClaimsLookupByGroupIdQueryHandler(IGroupClaimRepository groupClaimRepository,
+                IMediator mediator)
             {
                 _mediator = mediator;
                 _groupClaimRepository = groupClaimRepository;
@@ -31,22 +32,24 @@ namespace Business.Internals.Handlers.GroupClaims
                 GetGroupClaimsLookupByGroupIdInternalQuery request, CancellationToken cancellationToken)
             {
                 var oClaims = new List<SelectionItem>();
-                _groupClaimRepository.GetListAsync(x=> x.GroupId == request.GroupId)
+                _groupClaimRepository.GetListAsync(x => x.GroupId == request.GroupId)
                     .Result.ToList().ForEach(Action);
-                
+
                 async void Action(GroupClaim x)
                 {
-                    var result = await _mediator.Send(new GetOperationClaimsByIdInternalQuery() {Id = x.ClaimId}, cancellationToken);
+                    var result = await _mediator.Send(new GetOperationClaimsByIdInternalQuery {Id = x.ClaimId},
+                        cancellationToken);
                     if (result.Data is null)
                         return;
-                    oClaims.Add(new SelectionItem()
+                    oClaims.Add(new SelectionItem
                     {
-                        Id = result.Data.ClaimId,
+                        Id = result.Data.ObjectId,
                         Label = result.Data.Name
                     });
-                } 
-                
-                return Task.FromResult<IDataResult<IEnumerable<SelectionItem>>>(new SuccessDataResult<IEnumerable<SelectionItem>>(oClaims));
+                }
+
+                return Task.FromResult<IDataResult<IEnumerable<SelectionItem>>>(
+                    new SuccessDataResult<IEnumerable<SelectionItem>>(oClaims));
             }
         }
     }

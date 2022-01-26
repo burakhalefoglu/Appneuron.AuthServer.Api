@@ -7,11 +7,11 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 
-namespace Business.Fakes.Handlers.UserClaims
+namespace Business.Internals.Handlers.UserClaims
 {
     public class GetUserClaimLookupInternalQuery : IRequest<IDataResult<IEnumerable<UserClaim>>>
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         public class GetUserClaimQueryHandler : IRequestHandler<GetUserClaimLookupInternalQuery,
             IDataResult<IEnumerable<UserClaim>>>

@@ -6,8 +6,9 @@ namespace Business.MessageBrokers
 {
     public interface IMessageBroker
     {
-        Task<IResult> SendMessageAsync<T>(T messageModel) where T:
+        Task<IResult> SendMessageAsync<T>(T messageModel) where T :
             class, new();
+
         Task GetMessageAsync<T>(string topic, string consumerGroup, Func<T, Task<IResult>> callback);
     }
 }

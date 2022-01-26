@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -35,10 +34,10 @@ namespace Business.Handlers.Users.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(UserChangePasswordCommand request, CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var user = await _userRepository.GetAsync(u => u.UserId == userId);
+                var user = await _userRepository.GetAsync(u => u.ObjectId == userId);
                 if (user == null)
                     return new ErrorResult(Messages.UserNotFound);
 
@@ -50,7 +49,7 @@ namespace Business.Handlers.Users.Commands
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
 
-                await _userRepository.UpdateAsync(user,x=> x.UserId == user.UserId);
+                await _userRepository.UpdateAsync(user, x => x.ObjectId == user.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

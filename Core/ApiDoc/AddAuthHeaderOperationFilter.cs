@@ -21,17 +21,17 @@ namespace Core.ApiDoc
 
             if (!isAuthorized) return;
 
-            operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
-            operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
+            operation.Responses.Add("401", new OpenApiResponse {Description = "Unauthorized"});
+            operation.Responses.Add("403", new OpenApiResponse {Description = "Forbidden"});
 
             var jwtbearerScheme = new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearer" }
+                Reference = new OpenApiReference {Type = ReferenceType.SecurityScheme, Id = "bearer"}
             };
 
             operation.Security = new List<OpenApiSecurityRequirement>
             {
-                new OpenApiSecurityRequirement { [jwtbearerScheme] = new string[] { } }
+                new OpenApiSecurityRequirement {[jwtbearerScheme] = new string[] { }}
             };
         }
     }

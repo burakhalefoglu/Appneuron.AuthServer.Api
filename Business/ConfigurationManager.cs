@@ -11,7 +11,7 @@ namespace Business
         public ConfigurationManager(IConfiguration configuration, IHostEnvironment env)
         {
             _configuration = configuration;
-            Mode = (ApplicationMode)Enum.Parse(typeof(ApplicationMode), env.EnvironmentName);
+            Mode = (ApplicationMode) Enum.Parse(typeof(ApplicationMode), env.EnvironmentName);
         }
 
         public ApplicationMode Mode { get; }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
@@ -33,17 +31,17 @@ namespace Business.Handlers.Users.Commands
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(LogstashLogger))]
-            [TransactionScopeAspectAsync]
+            [TransactionScopeAspect]
             public async Task<IResult> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var userToDelete = await _userRepository.GetAsync(p => p.UserId == userId);
+                var userToDelete = await _userRepository.GetAsync(p => p.ObjectId == userId);
                 if (userToDelete == null) return new ErrorResult(Messages.UserNotFound);
                 userToDelete.Status = false;
 
-                await _userRepository.UpdateAsync(userToDelete, x=> x.UserId == userToDelete.UserId);
+                await _userRepository.UpdateAsync(userToDelete, x => x.ObjectId == userToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

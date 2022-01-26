@@ -18,13 +18,11 @@ namespace Business.Handlers.UserProjects.Queries
         public class
             GetUserProjectsQueryHandler : IRequestHandler<GetUserProjectsQuery, IDataResult<IEnumerable<UserProject>>>
         {
-            private readonly IMediator _mediator;
             private readonly IUserProjectRepository _userProjectRepository;
 
-            public GetUserProjectsQueryHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
+            public GetUserProjectsQueryHandler(IUserProjectRepository userProjectRepository)
             {
                 _userProjectRepository = userProjectRepository;
-                _mediator = mediator;
             }
 
             [PerformanceAspect(5)]

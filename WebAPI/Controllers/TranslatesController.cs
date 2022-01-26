@@ -4,7 +4,6 @@ using Business.Handlers.Translates.Commands;
 using Business.Handlers.Translates.Queries;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +16,6 @@ namespace WebAPI.Controllers
     [ApiController]
     public class TranslatesController : BaseApiController
     {
-
         /// <summary>
         ///     List Translate
         /// </summary>
@@ -46,9 +44,9 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<Translate>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpGet("getbyid")]
-        public async Task<IActionResult> GetById(int translateId)
+        public async Task<IActionResult> GetById(string translateId)
         {
-            var result = await Mediator.Send(new GetTranslateQuery { Id = translateId });
+            var result = await Mediator.Send(new GetTranslateQuery {Id = translateId});
             if (result.Success) return Ok(result);
 
             return BadRequest(result);

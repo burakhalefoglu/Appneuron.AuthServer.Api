@@ -49,6 +49,6 @@
 
         public static string ProjectNotFound => "Project not found!";
         public static string GroupClaimExit => "Group claim not found!";
-        public static string UserProjectNotFound  => "User project not found!";
+        public static string UserProjectNotFound => "User project not found!";
     }
 }

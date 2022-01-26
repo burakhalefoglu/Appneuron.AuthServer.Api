@@ -12,7 +12,7 @@ namespace Core.DataAccess
         T Add(T entity);
 
         T Update(T entity);
-        
+
         IEnumerable<T> GetList(Expression<Func<T, bool>> expression = null);
 
         Task<IEnumerable<T>> GetListAsync(Expression<Func<T, bool>> expression = null);

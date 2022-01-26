@@ -22,10 +22,10 @@ namespace Core.CrossCuttingConcerns.Logging.Serilog.Loggers
 
             IDictionary<string, ColumnWriterBase> columnWriters = new Dictionary<string, ColumnWriterBase>
             {
-                { "MessageTemplate", new MessageTemplateColumnWriter() },
-                { "Level", new LevelColumnWriter(true, NpgsqlDbType.Varchar) },
-                { "TimeStamp", new TimestampColumnWriter(NpgsqlDbType.Timestamp) },
-                { "Exception", new ExceptionColumnWriter() }
+                {"MessageTemplate", new MessageTemplateColumnWriter()},
+                {"Level", new LevelColumnWriter(true, NpgsqlDbType.Varchar)},
+                {"TimeStamp", new TimestampColumnWriter(NpgsqlDbType.Timestamp)},
+                {"Exception", new ExceptionColumnWriter()}
             };
 
             var seriLogConfig = new LoggerConfiguration()

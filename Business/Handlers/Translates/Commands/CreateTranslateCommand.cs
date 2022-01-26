@@ -18,7 +18,7 @@ namespace Business.Handlers.Translates.Commands
     /// </summary>
     public class CreateTranslateCommand : IRequest<IResult>
     {
-        public int LangId { get; set; }
+        public string LangId { get; set; }
         public string Value { get; set; }
         public string Code { get; set; }
 
@@ -38,14 +38,13 @@ namespace Business.Handlers.Translates.Commands
             public async Task<IResult> Handle(CreateTranslateCommand request, CancellationToken cancellationToken)
             {
                 var isThereTranslateRecord = await _translateRepository
-                    .AnyAsync(u => u.LangId == request.LangId && u.Code == request.Code);
+                    .AnyAsync(u => u.ObjectId == request.LangId && u.Code == request.Code);
 
                 if (isThereTranslateRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedTranslate = new Translate
                 {
-                    LangId = request.LangId,
                     Value = request.Value,
                     Code = request.Code
                 };

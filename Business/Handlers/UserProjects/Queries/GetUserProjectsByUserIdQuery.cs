@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,8 +39,8 @@ namespace Business.Handlers.UserProjects.Queries
             public async Task<IDataResult<IEnumerable<UserProject>>> Handle(GetUserProjectsByUserIdQuery request,
                 CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var result = await
                     _userProjectRepository.GetListAsync(p => p.UserId == userId);

@@ -2,9 +2,8 @@
 {
     public class GroupClaim : DocumentDbEntity
     {
-        public int GroupId { get; set; }
-        public int ClaimId { get; set; }
-
         public bool Status = true;
+        public string GroupId { get; set; }
+        public string ClaimId { get; set; }
     }
 }

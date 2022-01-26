@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,7 +6,9 @@ using Business.Constants;
 using Business.Handlers.Authorizations.ValidationRules;
 using Business.Helpers;
 using Business.Internals.Handlers.GroupClaims;
+using Business.Internals.Handlers.Groups.Queries;
 using Business.Internals.Handlers.UserClaims;
+using Business.Internals.Handlers.UserGroups.Commands;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -21,6 +22,7 @@ using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using MediatR;
+using MongoDB.Bson;
 
 namespace Business.Handlers.Authorizations.Commands
 {
@@ -48,12 +50,12 @@ namespace Business.Handlers.Authorizations.Commands
             [ValidationAspect(typeof(RegisterUserValidator), Priority = 2)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(LogstashLogger))]
-            [TransactionScopeAspectAsync]
+            [TransactionScopeAspect]
             public async Task<IResult> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
             {
-                var userExits = await _userRepository.GetAsync(u => u.Email == request.Email);
+                var userExits = await _userRepository.AnyAsync(u => u.Email == request.Email);
 
-                if (userExits != null)
+                if (userExits)
                     return new ErrorResult(Messages.DefaultError);
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
@@ -67,24 +69,41 @@ namespace Business.Handlers.Authorizations.Commands
                 };
 
                 await _userRepository.AddAsync(user);
+                
+                var usr = await _userRepository.GetAsync(x => x.Email == user.Email);
+                var group = await _mediator.Send(new GetGroupByNameInternalQuery
+                {
+                    GroupName = "customer_group"
+                }, cancellationToken);
+                
+                _ = await _mediator.Send(new CreateUserGroupInternalCommand
+                {
+                    UserId = usr.ObjectId,
+                    GroupId = group.Data.ObjectId
+                }, cancellationToken);
+                
                 var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
                 {
-                    GroupId = 1
+                    GroupId = group.Data.ObjectId
                 }, cancellationToken);
 
                 var selectionItems = result.Data.ToList();
-                var operationClaims = selectionItems.Select(item => 
-                    new OperationClaim {Id = Convert.ToInt32(item.Id), Name = item.Label}).ToList();
+                var oClaims = new List<OperationClaim>();
+
+                if (selectionItems.ToList().Count > 0)
+                    oClaims = selectionItems.Select(item =>
+                        new OperationClaim {Id = new ObjectId(item.Id), Name = item.Label}).ToList();
+
                 await _mediator.Send(new CreateUserClaimsInternalCommand
                 {
-                    UserId = user.UserId,
-                    OperationClaims = operationClaims
+                    UserId = user.ObjectId,
+                    OperationClaims = oClaims
                 }, cancellationToken);
 
                 var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
                 {
-                    UserId = user.UserId,
-                    OperationClaims = operationClaims.Select(x => x.Name).ToArray()
+                    UserId = user.ObjectId,
+                    OperationClaims = oClaims.Select(x => x.Name).ToArray()
                 }, new List<string>());
 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);

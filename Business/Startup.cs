@@ -18,9 +18,9 @@ using Core.Utilities.ElasticSearch;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
-using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.EntityFramework.Contexts;
 using DataAccess.Concrete.MongoDb;
+using DataAccess.Concrete.MongoDb.Collections;
 using DataAccess.Concrete.MongoDb.Context;
 using FluentValidation;
 using MediatR;
@@ -33,15 +33,15 @@ namespace Business
 {
     public class BusinessStartup
     {
-        protected readonly IHostEnvironment HostEnvironment;
+        private readonly IHostEnvironment _hostEnvironment;
 
         public BusinessStartup(IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             Configuration = configuration;
-            HostEnvironment = hostEnvironment;
+            _hostEnvironment = hostEnvironment;
         }
 
-        public IConfiguration Configuration { get; }
+        protected IConfiguration Configuration { get; }
 
         /// <summary>
         ///     This method gets called by the runtime. Use this method to add services to the container.
@@ -53,11 +53,9 @@ namespace Business
         /// <param name="services"></param>
         public virtual void ConfigureServices(IServiceCollection services)
         {
-            Func<IServiceProvider, ClaimsPrincipal> getPrincipal = sp =>
-                sp.GetService<IHttpContextAccessor>().HttpContext?.User ??
-                new ClaimsPrincipal(new ClaimsIdentity(Messages.Unknown));
+            ClaimsPrincipal GetPrincipal(IServiceProvider sp) => sp.GetService<IHttpContextAccessor>()?.HttpContext?.User ?? new ClaimsPrincipal(new ClaimsIdentity(Messages.Unknown));
 
-            services.AddScoped<IPrincipal>(getPrincipal);
+            services.AddScoped<IPrincipal>((Func<IServiceProvider, ClaimsPrincipal>) GetPrincipal);
             services.AddMemoryCache();
 
             services.AddDependencyResolvers(Configuration, new ICoreModule[]
@@ -78,10 +76,7 @@ namespace Business
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddMediatR(typeof(BusinessStartup).GetTypeInfo().Assembly);
 
-            ValidatorOptions.Global.DisplayNameResolver = (type, memberInfo, expression) =>
-            {
-                return memberInfo.GetCustomAttribute<DisplayAttribute>()?.GetName();
-            };
+            ValidatorOptions.Global.DisplayNameResolver = (type, memberInfo, expression) => memberInfo.GetCustomAttribute<DisplayAttribute>()?.GetName();
         }
 
         /// <summary>
@@ -91,20 +86,40 @@ namespace Business
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             ConfigureServices(services);
-            services.AddTransient<IClientRepository, ClientRepository>();
-            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
-
-            services.AddTransient<ILogRepository, LogRepository>();
-            services.AddTransient<ITranslateRepository, TranslateRepository>();
-            services.AddTransient<ILanguageRepository, LanguageRepository>();
-
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IUserClaimRepository, UserClaimRepository>();
-            services.AddTransient<IOperationClaimRepository, OperationClaimRepository>();
-            services.AddTransient<IGroupRepository, GroupRepository>();
-            services.AddTransient<IGroupClaimRepository, GroupClaimRepository>();
-            services.AddTransient<IUserGroupRepository, UserGroupRepository>();
-
+            
+            services.AddTransient<IClientRepository>(x => new ClientRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserProjectRepository>(x => new UserProjectRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<ILogRepository>(x => new LogRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<ITranslateRepository>(x => new TranslateRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<ILanguageRepository>(x => new LanguageRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserRepository>(x => new UserRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserClaimRepository>(x => new UserClaimRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IOperationClaimRepository>(x => new OperationClaimRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IGroupRepository>(x => new GroupRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IGroupClaimRepository>(x => new GroupClaimRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserGroupRepository>(x => new UserGroupRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
             services.AddDbContext<ProjectDbContext, DArchInMemory>(ServiceLifetime.Transient);
             services.AddSingleton<MongoDbContextBase, MongoDbContext>();
         }
@@ -116,21 +131,42 @@ namespace Business
         public void ConfigureStagingServices(IServiceCollection services)
         {
             ConfigureServices(services);
-            services.AddTransient<IClientRepository, ClientRepository>();
-            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
+            
+                    
+            services.AddTransient<IClientRepository>(x => new ClientRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserProjectRepository>(x => new UserProjectRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<ILogRepository>(x => new LogRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<ITranslateRepository>(x => new TranslateRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<ILanguageRepository>(x => new LanguageRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserRepository>(x => new UserRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserClaimRepository>(x => new UserClaimRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IOperationClaimRepository>(x => new OperationClaimRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IGroupRepository>(x => new GroupRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IGroupClaimRepository>(x => new GroupClaimRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserGroupRepository>(x => new UserGroupRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
 
-            services.AddTransient<ILogRepository, LogRepository>();
-            services.AddTransient<ITranslateRepository, TranslateRepository>();
-            services.AddTransient<ILanguageRepository, LanguageRepository>();
-
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IUserClaimRepository, UserClaimRepository>();
-            services.AddTransient<IOperationClaimRepository, OperationClaimRepository>();
-            services.AddTransient<IGroupRepository, GroupRepository>();
-            services.AddTransient<IGroupClaimRepository, GroupClaimRepository>();
-            services.AddTransient<IUserGroupRepository, UserGroupRepository>();
             services.AddDbContext<ProjectDbContext>();
-
             services.AddSingleton<MongoDbContextBase, MongoDbContext>();
         }
 
@@ -141,21 +177,42 @@ namespace Business
         public void ConfigureProductionServices(IServiceCollection services)
         {
             ConfigureServices(services);
-            services.AddTransient<IClientRepository, ClientRepository>();
-            services.AddTransient<IUserProjectRepository, UserProjectRepository>();
-
-            services.AddTransient<ILogRepository, LogRepository>();
-            services.AddTransient<ITranslateRepository, TranslateRepository>();
-            services.AddTransient<ILanguageRepository, LanguageRepository>();
-
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IUserClaimRepository, UserClaimRepository>();
-            services.AddTransient<IOperationClaimRepository, OperationClaimRepository>();
-            services.AddTransient<IGroupRepository, GroupRepository>();
-            services.AddTransient<IGroupClaimRepository, GroupClaimRepository>();
+            
+                  
+            services.AddTransient<IClientRepository>(x => new ClientRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserProjectRepository>(x => new UserProjectRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<ILogRepository>(x => new LogRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<ITranslateRepository>(x => new TranslateRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<ILanguageRepository>(x => new LanguageRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserRepository>(x => new UserRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserClaimRepository>(x => new UserClaimRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IOperationClaimRepository>(x => new OperationClaimRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IGroupRepository>(x => new GroupRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IGroupClaimRepository>(x => new GroupClaimRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
+            
+            services.AddTransient<IUserGroupRepository>(x => new UserGroupRepository(
+                x.GetRequiredService<MongoDbContextBase>(), Collections.Client));
 
             services.AddDbContext<ProjectDbContext>();
-
             services.AddSingleton<MongoDbContextBase, MongoDbContext>();
         }
 
@@ -164,7 +221,7 @@ namespace Business
         /// <param name="builder"></param>
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule(new AutofacBusinessModule(new ConfigurationManager(Configuration, HostEnvironment)));
+            builder.RegisterModule(new AutofacBusinessModule(new ConfigurationManager(Configuration, _hostEnvironment)));
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Core.Extensions
         /// <returns></returns>
         public static DbSet<T> Set<T>(this DbContext context, Type t) where T : class
         {
-            return (DbSet<T>)context.GetType().GetMethod("Set").MakeGenericMethod(t).Invoke(context, null);
+            return (DbSet<T>) context.GetType().GetMethod("Set").MakeGenericMethod(t).Invoke(context, null);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Core.Extensions
         public static IQueryable<T> QueryableOf<T>(this DbContext context, string typeName) where T : class
         {
             var type = context.Model.GetEntityTypes(typeName).First();
-            var q = (IQueryable)context
+            var q = (IQueryable) context
                 .GetType()
                 .GetMethod("Set")
                 .MakeGenericMethod(type.ClrType)

@@ -21,25 +21,43 @@ namespace WebAPI.Controllers
         /// </summary>
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 
-       
+
+        /// <summary>
+        /// </summary>
+        /// <param name="result"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult GetResponse<T>(IDataResult<T> result)
         {
             return result.Success ? Ok(result) : BadRequest(result);
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult GetResponseOnlyResult(IResult result)
         {
             return result.Success ? Ok(result) : BadRequest(result);
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult GetResponseOnlyResultMessage(IResult result)
         {
             return result.Success ? Ok(result.Message) : BadRequest(result.Message);
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="result"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult GetResponseOnlyResultData<T>(IDataResult<T> result)
         {

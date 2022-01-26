@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -34,10 +33,10 @@ namespace Business.Handlers.Users.Queries
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IDataResult<UserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var user = await _userRepository.GetAsync(p => p.UserId == userId);
+                var user = await _userRepository.GetAsync(p => p.ObjectId == userId);
                 var userDto = _mapper.Map<UserDto>(user);
                 return new SuccessDataResult<UserDto>(userDto);
             }

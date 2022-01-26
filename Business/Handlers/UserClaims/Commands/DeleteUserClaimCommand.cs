@@ -7,14 +7,13 @@ using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using MediatR;        
-
+using MediatR;
 
 namespace Business.Handlers.UserClaims.Commands
 {
     public class DeleteUserClaimCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteUserClaimCommandHandler : IRequestHandler<DeleteUserClaimCommand, IResult>
         {
@@ -33,7 +32,7 @@ namespace Business.Handlers.UserClaims.Commands
                 var entityToDelete = await _userClaimRepository.GetAsync(x => x.UsersId == request.Id);
                 if (entityToDelete == null) return new ErrorResult(Messages.UserClaimNotFound);
                 entityToDelete.Status = false;
-                await _userClaimRepository.UpdateAsync(entityToDelete, x=> x.UsersId == entityToDelete.UsersId);
+                await _userClaimRepository.UpdateAsync(entityToDelete, x => x.UsersId == entityToDelete.UsersId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

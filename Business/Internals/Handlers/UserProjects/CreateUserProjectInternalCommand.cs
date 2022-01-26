@@ -15,7 +15,7 @@ namespace Business.Internals.Handlers.UserProjects
 {
     public class CreateUserProjectInternalCommand : IRequest<IResult>
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string ProjectKey { get; set; }
 
         public class

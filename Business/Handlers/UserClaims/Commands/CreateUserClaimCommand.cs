@@ -14,8 +14,8 @@ namespace Business.Handlers.UserClaims.Commands
 {
     public class CreateUserClaimCommand : IRequest<IResult>
     {
-        public int UserId { get; set; }
-        public int ClaimId { get; set; }
+        public string UserId { get; set; }
+        public string ClaimId { get; set; }
 
         public class CreateUserClaimCommandHandler : IRequestHandler<CreateUserClaimCommand, IResult>
         {
@@ -33,10 +33,7 @@ namespace Business.Handlers.UserClaims.Commands
             {
                 var userClaimExist = await _userClaimRepository.GetAsync(x => x.ClaimId == request.ClaimId);
 
-                if (userClaimExist != null)
-                {
-                    return new ErrorResult(Messages.UserClaimExit);
-                }
+                if (userClaimExist != null) return new ErrorResult(Messages.UserClaimExit);
 
                 var userClaim = new UserClaim
                 {

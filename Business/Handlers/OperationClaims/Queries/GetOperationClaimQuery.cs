@@ -12,7 +12,7 @@ namespace Business.Handlers.OperationClaims.Queries
 {
     public class GetOperationClaimQuery : IRequest<IDataResult<OperationClaim>>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public class
             GetOperationClaimQueryHandler : IRequestHandler<GetOperationClaimQuery, IDataResult<OperationClaim>>
@@ -30,7 +30,7 @@ namespace Business.Handlers.OperationClaims.Queries
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<OperationClaim>(await _operationClaimRepository
-                    .GetAsync(x => x.ClaimId == request.Id));
+                    .GetAsync(x => x.ObjectId == request.Id));
             }
         }
     }

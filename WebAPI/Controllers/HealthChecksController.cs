@@ -5,17 +5,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
-{ 
-
+{
     /// <summary>
-    /// 
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class HealthChecksController : BaseApiController
     {
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]

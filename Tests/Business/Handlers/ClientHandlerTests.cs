@@ -8,7 +8,6 @@ using Business.Fakes.Handlers.UserProjects;
 using Business.Handlers.Clients.Commands;
 using Business.Internals.Handlers.GroupClaims;
 using Business.MessageBrokers;
-using Business.Services.Authentication;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
@@ -27,14 +26,6 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class ClientHandlerTests
     {
-        private Mock<ITokenHelper> _tokenHelper;
-        private Mock<IClientRepository> _clientRepository;
-        private Mock<IMediator> _mediator;
-        private Mock<IMessageBroker> _messageBroker;
-
-
-        private CreateTokenCommandHandler _createTokenCommandHandler;
-
         [SetUp]
         public void Setup()
         {
@@ -47,7 +38,13 @@ namespace Tests.Business.Handlers
                 _tokenHelper.Object, _mediator.Object, _messageBroker.Object);
         }
 
-       
+        private Mock<ITokenHelper> _tokenHelper;
+        private Mock<IClientRepository> _clientRepository;
+        private Mock<IMediator> _mediator;
+        private Mock<IMessageBroker> _messageBroker;
+
+
+        private CreateTokenCommandHandler _createTokenCommandHandler;
 
 
         [Test]
@@ -55,8 +52,8 @@ namespace Tests.Business.Handlers
         {
             var command = new CreateTokenCommand
             {
-                ClientId = "dasdas",
-                ProjectId = "wqweqwe"
+                ClientId = "test_client_ıd",
+                ProjectId = "test_project_ıd"
             };
 
             _mediator.Setup(x => x.Send(It.IsAny<GetUserProjectInternalQuery>(),
@@ -75,31 +72,23 @@ namespace Tests.Business.Handlers
         {
             var command = new CreateTokenCommand
             {
-                ClientId = "dasdas",
-                ProjectId = "wqweqwe"
+                ClientId = "test_client_ıd",
+                ProjectId = "test_project_ıd"
             };
 
             _mediator.Setup(x => x.Send(It.IsAny<GetUserProjectInternalQuery>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new SuccessDataResult<UserProject>(new UserProject
                 {
-                    ProjectKey = "sadasd",
-                    Id = 1,
-                    UserId = 10
+                    ProjectKey = "test_project_key",
+                    UserId = "test_user_ıd"
                 }));
 
             _clientRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<Client, bool>>>()))
                 .Returns(Task.FromResult<Client>(null));
 
-            _clientRepository.Setup(x => x.Add(It.IsAny<Client>()))
-                .Returns(new Client
-                {
-                    ClientId = "ljhjhdfhft",
-                    Id = 2,
-                    ProjectId = "zffcsffcas"
-                });
-
+            _clientRepository.Setup(x => x.Add(It.IsAny<Client>()));
             _mediator.Setup(x => x.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult<IDataResult<IEnumerable<SelectionItem>>>
@@ -108,10 +97,10 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            Id = 1,
+                            Id = "507f1f77bcf86cd799439011",
                             IsDisabled = false,
                             Label = "Test",
-                            ParentId = "dfsa"
+                            ParentId = "test_parent_ıd"
                         }
                     })));
             _tokenHelper.Setup(x => x.CreateClientToken<AccessToken>(It.IsAny<ClientClaimModel>()))
@@ -128,26 +117,23 @@ namespace Tests.Business.Handlers
         {
             var command = new CreateTokenCommand
             {
-                ClientId = "dasdas",
-                ProjectId = "wqweqwe"
+                ClientId = "test_client_ıd",
+                ProjectId = "test_project_ıd"
             };
 
             _mediator.Setup(x => x.Send(It.IsAny<GetUserProjectInternalQuery>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new SuccessDataResult<UserProject>(new UserProject
                 {
-                    ProjectKey = "sadasd",
-                    Id = 1,
-                    UserId = 10
+                    ProjectKey = "test_project_ıd",
+                    UserId = "test_user_ıd"
                 }));
 
             _clientRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<Client, bool>>>()))
                 .Returns(Task.FromResult(new Client
                 {
-                    ClientId = "ljhjhdfhft",
-                    Id = 2,
-                    ProjectId = "zffcsffcas"
+                    ProjectId = "test_project_ıd"
                 }));
 
             _mediator.Setup(x => x.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
@@ -158,10 +144,10 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            Id = 1,
+                            Id = "507f1f77bcf86cd799439011",
                             IsDisabled = false,
                             Label = "Test",
-                            ParentId = "dfsa"
+                            ParentId = "test_ıd"
                         }
                     })));
             _tokenHelper.Setup(x => x.CreateClientToken<AccessToken>(It.IsAny<ClientClaimModel>()))

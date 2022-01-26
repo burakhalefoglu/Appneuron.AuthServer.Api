@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
 using Business.MessageBrokers;
-using Business.MessageBrokers.Kafka;
 using Business.MessageBrokers.Manager;
 using Business.MessageBrokers.Models;
 using Core.Utilities.IoC;
@@ -20,12 +19,13 @@ namespace WebAPI
         /// <summary>
         /// </summary>
         /// <param name="args"></param>
-        public static async Task Main(string[] args)
+        public static Task Main(string[] args)
         {
-            var result =  CreateHostBuilder(args).Build().RunAsync();
+            var result = CreateHostBuilder(args).Build().RunAsync();
             var consumer = ConsumerAdapter();
             result.Wait();
             consumer.Wait();
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -61,9 +61,11 @@ namespace WebAPI
             var messageBroker = ServiceTool.ServiceProvider.GetService<IMessageBroker>();
             var createProjectMessageService = ServiceTool.ServiceProvider.GetService<IGetCreateProjectMessageService>();
 
-            await messageBroker.GetMessageAsync<ProjectMessageCommand>("ProjectMessageCommand",
-                "ProjectCreationConsumerGroup",
-                createProjectMessageService.GetProjectCreationMessageQuery);
+            if (messageBroker != null)
+                if (createProjectMessageService != null)
+                    await messageBroker.GetMessageAsync<ProjectMessageCommand>("ProjectMessageCommand",
+                        "ProjectCreationConsumerGroup",
+                        createProjectMessageService.GetProjectCreationMessageQuery);
         }
     }
 }

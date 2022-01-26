@@ -15,7 +15,7 @@ namespace Tests.Core.Extensions
         public void Setup()
         {
             _claimList = new List<Claim>();
-            _roles = new string[3] { "Admin", "User", "MasterUser" };
+            _roles = new string[3] {"Admin", "User", "MasterUser"};
         }
 
         private List<Claim> _claimList;

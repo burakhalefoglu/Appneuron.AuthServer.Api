@@ -15,8 +15,8 @@ namespace Business.Handlers.Translates.Commands
 {
     public class UpdateTranslateCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
-        public int LangId { get; set; }
+        public string Id { get; set; }
+        public string LangId { get; set; }
         public string Value { get; set; }
         public string Code { get; set; }
 
@@ -35,14 +35,13 @@ namespace Business.Handlers.Translates.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(UpdateTranslateCommand request, CancellationToken cancellationToken)
             {
-                var isThereTranslateRecord = await _translateRepository.GetAsync(u => u.LangId == request.Id);
+                var isThereTranslateRecord = await _translateRepository.GetAsync(u => u.ObjectId == request.Id);
 
-                isThereTranslateRecord.LangId = request.Id;
-                isThereTranslateRecord.LangId = request.LangId;
                 isThereTranslateRecord.Value = request.Value;
                 isThereTranslateRecord.Code = request.Code;
 
-                await _translateRepository.UpdateAsync(isThereTranslateRecord, x=> x.LangId == isThereTranslateRecord.LangId);
+                await _translateRepository.UpdateAsync(isThereTranslateRecord,
+                    x => x.ObjectId == isThereTranslateRecord.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

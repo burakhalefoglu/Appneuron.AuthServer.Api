@@ -15,7 +15,7 @@ namespace Business.Handlers.Languages.Commands
 {
     public class UpdateLanguageCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
 
@@ -34,12 +34,12 @@ namespace Business.Handlers.Languages.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)
             {
-                var isThereLanguageRecord = await _languageRepository.GetAsync(u => u.LanguageId == request.Id);
+                var isThereLanguageRecord = await _languageRepository.GetAsync(u => u.ObjectId == request.Id);
 
-                isThereLanguageRecord.LanguageId = request.Id;
                 isThereLanguageRecord.Name = request.Name;
                 isThereLanguageRecord.Code = request.Code;
-                await _languageRepository.UpdateAsync(isThereLanguageRecord, x=> x.LanguageId == isThereLanguageRecord.LanguageId);
+                await _languageRepository.UpdateAsync(isThereLanguageRecord,
+                    x => x.ObjectId == isThereLanguageRecord.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

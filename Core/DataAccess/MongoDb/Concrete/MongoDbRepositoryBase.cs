@@ -18,11 +18,13 @@ namespace Core.DataAccess.MongoDb.Concrete
         protected MongoDbRepositoryBase(MongoConnectionSettings mongoConnectionSetting, string collectionName)
         {
             CollectionName = collectionName;
-            var url = $"mongodb://{mongoConnectionSetting.UserName}:{mongoConnectionSetting.Password}@{mongoConnectionSetting.Host}:{mongoConnectionSetting.Port}/?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
+            var url =
+                $"mongodb://{mongoConnectionSetting.UserName}:{mongoConnectionSetting.Password}@{mongoConnectionSetting.Host}:{mongoConnectionSetting.Port}/?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
             var client = new MongoClient(url);
             var database = client.GetDatabase(mongoConnectionSetting.DatabaseName);
             _collection = database.GetCollection<T>(collectionName);
         }
+
         public virtual T GetById(ObjectId id)
         {
             return _collection.Find(x => x.Id == id).FirstOrDefault();
@@ -32,7 +34,7 @@ namespace Core.DataAccess.MongoDb.Concrete
         {
             return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
         }
-        
+
         public virtual async Task<T> GetAsync(Expression<Func<T, bool>> predicate)
         {
             return await _collection.Find(predicate).FirstOrDefaultAsync();
@@ -40,26 +42,26 @@ namespace Core.DataAccess.MongoDb.Concrete
 
         public virtual void Add(T entity)
         {
-            var options = new InsertOneOptions { BypassDocumentValidation = false };
+            var options = new InsertOneOptions {BypassDocumentValidation = false};
             _collection.InsertOne(entity, options);
         }
 
         public virtual async Task AddAsync(T entity)
         {
-            var options = new InsertOneOptions { BypassDocumentValidation = false };
+            var options = new InsertOneOptions {BypassDocumentValidation = false};
             await _collection.InsertOneAsync(entity, options);
         }
 
         public virtual void AddMany(IEnumerable<T> entities)
         {
-            var options = new BulkWriteOptions { IsOrdered = false, BypassDocumentValidation = false };
-            _collection.BulkWriteAsync((IEnumerable<WriteModel<T>>)entities, options);
+            var options = new BulkWriteOptions {IsOrdered = false, BypassDocumentValidation = false};
+            _collection.BulkWriteAsync((IEnumerable<WriteModel<T>>) entities, options);
         }
 
         public virtual async Task AddManyAsync(IEnumerable<T> entities)
         {
-            var options = new BulkWriteOptions { IsOrdered = false, BypassDocumentValidation = false };
-            await _collection.BulkWriteAsync((IEnumerable<WriteModel<T>>)entities, options);
+            var options = new BulkWriteOptions {IsOrdered = false, BypassDocumentValidation = false};
+            await _collection.BulkWriteAsync((IEnumerable<WriteModel<T>>) entities, options);
         }
 
         public virtual IQueryable<T> GetList(Expression<Func<T, bool>> predicate = null)

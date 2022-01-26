@@ -13,7 +13,7 @@ namespace Business.Handlers.UserGroups.Queries
 {
     public class GetUserGroupQuery : IRequest<IDataResult<UserGroup>>
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         public class GetUserGroupQueryHandler : IRequestHandler<GetUserGroupQuery, IDataResult<UserGroup>>
         {

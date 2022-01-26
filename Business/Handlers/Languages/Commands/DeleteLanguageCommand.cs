@@ -13,11 +13,12 @@ namespace Business.Handlers.Languages.Commands
 {
     public class DeleteLanguageCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteLanguageCommandHandler : IRequestHandler<DeleteLanguageCommand, IResult>
         {
             private readonly ILanguageRepository _languageRepository;
+
             public DeleteLanguageCommandHandler(ILanguageRepository languageRepository)
             {
                 _languageRepository = languageRepository;
@@ -28,9 +29,10 @@ namespace Business.Handlers.Languages.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteLanguageCommand request, CancellationToken cancellationToken)
             {
-                var languageToDelete =await _languageRepository.GetAsync(p => p.LanguageId == request.Id);
+                var languageToDelete = await _languageRepository.GetAsync(p => p.ObjectId == request.Id);
                 languageToDelete.Status = false;
-                await _languageRepository.UpdateAsync(languageToDelete, x=> x.LanguageId == languageToDelete.LanguageId);
+                await _languageRepository.UpdateAsync(languageToDelete,
+                    x => x.ObjectId == languageToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Business.MessageBrokers.Kafka.Model;
 using Business.MessageBrokers.Models;
 using Confluent.Kafka;
 using Core.Utilities.IoC;
@@ -18,8 +17,9 @@ namespace Business.MessageBrokers.Kafka
         public KafkaMessageBroker()
         {
             var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-            if (configuration != null) _kafkaOptions = configuration
-                .GetSection("MessageBrokerOptions").Get<MessageBrokerOption>();
+            if (configuration != null)
+                _kafkaOptions = configuration
+                    .GetSection("MessageBrokerOptions").Get<MessageBrokerOption>();
         }
 
         public async Task GetMessageAsync<T>(string topic, string consumerGroup,
@@ -97,8 +97,6 @@ namespace Business.MessageBrokers.Kafka
                     consumer.Close();
                 }
             });
-
-
         }
 
         public async Task<IResult> SendMessageAsync<T>(T messageModel) where T :

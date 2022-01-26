@@ -15,7 +15,7 @@ namespace Business.Internals.Handlers.UserClaims
     /// </summary>
     public class CreateUserClaimsInternalCommand : IRequest<IResult>
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public List<OperationClaim> OperationClaims { get; set; }
 
         public class CreateUserClaimsInternalCommandHandler : IRequestHandler<CreateUserClaimsInternalCommand, IResult>
@@ -34,13 +34,13 @@ namespace Business.Internals.Handlers.UserClaims
                 foreach (var claim in operationClaims)
                 {
                     var result =
-                        (await _userClaimsRepository.AnyAsync(x =>
-                            x.UsersId == request.UserId && x.ClaimId == claim.ClaimId));
+                        await _userClaimsRepository.AnyAsync(x =>
+                            x.UsersId == request.UserId && x.ClaimId == claim.ObjectId);
 
                     if (!result)
                         await _userClaimsRepository.AddAsync(new UserClaim
                         {
-                            ClaimId = claim.ClaimId,
+                            ClaimId = claim.ObjectId,
                             UsersId = request.UserId
                         });
                 }

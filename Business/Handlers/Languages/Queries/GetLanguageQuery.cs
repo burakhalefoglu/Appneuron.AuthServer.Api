@@ -12,7 +12,7 @@ namespace Business.Handlers.Languages.Queries
 {
     public class GetLanguageQuery : IRequest<IDataResult<Language>>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public class GetLanguageQueryHandler : IRequestHandler<GetLanguageQuery, IDataResult<Language>>
         {
@@ -28,7 +28,7 @@ namespace Business.Handlers.Languages.Queries
             public async Task<IDataResult<Language>> Handle(GetLanguageQuery request,
                 CancellationToken cancellationToken)
             {
-                var language = await _languageRepository.GetAsync(p => p.LanguageId == request.Id);
+                var language = await _languageRepository.GetAsync(p => p.ObjectId == request.Id);
                 return new SuccessDataResult<Language>(language);
             }
         }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,7 +6,6 @@ using Business.Constants;
 using Business.Handlers.GroupClaims.Commands;
 using Business.Handlers.GroupClaims.Queries;
 using Core.Entities.Concrete;
-using Core.Entities.Dtos;
 using DataAccess.Abstract;
 using FluentAssertions;
 using Moq;
@@ -17,9 +14,6 @@ using static Business.Handlers.GroupClaims.Commands.CreateGroupClaimCommand;
 using static Business.Handlers.GroupClaims.Commands.DeleteGroupClaimCommand;
 using static Business.Handlers.GroupClaims.Commands.UpdateGroupClaimCommand;
 using static Business.Handlers.GroupClaims.Queries.GetGroupClaimQuery;
-using static Business.Handlers.GroupClaims.Queries.GetGroupClaimsLookupByGroupIdQuery;
-using static Business.Handlers.GroupClaims.Queries.GetGroupClaimsQuery;
-
 
 namespace Tests.Business.Handlers
 {
@@ -32,14 +26,13 @@ namespace Tests.Business.Handlers
             _groupClaimRepository = new Mock<IGroupClaimRepository>();
             _operationClaimRepository = new Mock<IOperationClaimRepository>();
 
-            _createGroupClaimCommandHandler = new CreateGroupClaimCommandHandler(_groupClaimRepository.Object, _operationClaimRepository.Object);
+            _createGroupClaimCommandHandler =
+                new CreateGroupClaimCommandHandler(_groupClaimRepository.Object, _operationClaimRepository.Object);
             _deleteGroupClaimCommandHandler = new DeleteGroupClaimCommandHandler(_groupClaimRepository.Object);
-            _updateGroupClaimCommandHandler = new UpdateGroupClaimCommandHandler(_groupClaimRepository.Object, _operationClaimRepository.Object);
+            _updateGroupClaimCommandHandler =
+                new UpdateGroupClaimCommandHandler(_groupClaimRepository.Object, _operationClaimRepository.Object);
 
             _getGroupClaimQueryHandler = new GetGroupClaimQueryHandler(_groupClaimRepository.Object);
-            _getGroupClaimsLookupByGroupIdQueryHandler =
-                new GetGroupClaimsLookupByGroupIdQueryHandler(_groupClaimRepository.Object);
-            _getGroupClaimsQueryHandler = new GetGroupClaimsQueryHandler(_groupClaimRepository.Object);
         }
 
         private Mock<IGroupClaimRepository> _groupClaimRepository;
@@ -50,8 +43,6 @@ namespace Tests.Business.Handlers
         private UpdateGroupClaimCommandHandler _updateGroupClaimCommandHandler;
 
         private GetGroupClaimQueryHandler _getGroupClaimQueryHandler;
-        private GetGroupClaimsLookupByGroupIdQueryHandler _getGroupClaimsLookupByGroupIdQueryHandler;
-        private GetGroupClaimsQueryHandler _getGroupClaimsQueryHandler;
 
         [Test]
         public async Task GroupClaim_CreateGroupClaim_OperationClaimNotFound()
@@ -64,8 +55,8 @@ namespace Tests.Business.Handlers
             _operationClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<OperationClaim, bool>>>()))
                 .Returns(Task.FromResult<OperationClaim>(null));
- 
-            
+
+
             _groupClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
                 .Returns(Task.FromResult<GroupClaim>(null));
@@ -76,7 +67,7 @@ namespace Tests.Business.Handlers
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.OperationClaimNotFound);
         }
-     
+
         [Test]
         public async Task GroupClaim_CreateGroupClaim_GroupClaimExit()
         {
@@ -87,12 +78,12 @@ namespace Tests.Business.Handlers
 
             _operationClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<OperationClaim, bool>>>()))
-                .Returns(Task.FromResult<OperationClaim>(new OperationClaim()));
- 
-            
+                .Returns(Task.FromResult(new OperationClaim()));
+
+
             _groupClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
-                .Returns(Task.FromResult<GroupClaim>(new GroupClaim()));
+                .Returns(Task.FromResult(new GroupClaim()));
 
             _operationClaimRepository.Setup(x => x.Add(It.IsAny<OperationClaim>()));
 
@@ -111,18 +102,16 @@ namespace Tests.Business.Handlers
 
             _operationClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<OperationClaim, bool>>>()))
-                .Returns(Task.FromResult<OperationClaim>(new OperationClaim()));
- 
-            
+                .Returns(Task.FromResult(new OperationClaim()));
+
+
             _groupClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
                 .Returns(Task.FromResult<GroupClaim>(null));
 
             _operationClaimRepository.Setup(x => x.Add(It.IsAny<OperationClaim>()));
-            
-            var result = await _createGroupClaimCommandHandler.Handle(command, new CancellationToken());
 
-            _groupClaimRepository.Verify(x => x.SaveChangesAsync());
+            var result = await _createGroupClaimCommandHandler.Handle(command, new CancellationToken());
 
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Added);
@@ -134,10 +123,10 @@ namespace Tests.Business.Handlers
         {
             var command = new UpdateGroupClaimCommand
             {
-                GroupId = 1,
-                Id = 2,
-               ClaimId = 1,
-               ClaimName = "Test"
+                GroupId = "test_group_ıd",
+                Id = "test_ıd",
+                ClaimId = "claim_ıd",
+                ClaimName = "Test"
             };
 
             _operationClaimRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
@@ -150,8 +139,6 @@ namespace Tests.Business.Handlers
                 It.IsAny<GroupClaim>()));
 
             var result = await _updateGroupClaimCommandHandler.Handle(command, new CancellationToken());
-                       
-            _groupClaimRepository.Verify(x => x.SaveChangesAsync());
 
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Updated);
@@ -162,14 +149,14 @@ namespace Tests.Business.Handlers
         {
             var command = new UpdateGroupClaimCommand
             {
-                GroupId = 1,
-                Id = 2,
-               ClaimId = 1,
-               ClaimName = "Test"
+                GroupId = "test_group_ıd",
+                Id = "test_ıd",
+                ClaimId = "claim_ıd",
+                ClaimName = "Test"
             };
 
             _operationClaimRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
-                .ReturnsAsync((OperationClaim)null);
+                .ReturnsAsync((OperationClaim) null);
 
             _groupClaimRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GroupClaim, bool>>>()))
                 .ReturnsAsync(new GroupClaim());
@@ -178,7 +165,7 @@ namespace Tests.Business.Handlers
                 It.IsAny<GroupClaim>()));
 
             var result = await _updateGroupClaimCommandHandler.Handle(command, new CancellationToken());
-            
+
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.OperationClaimNotFound);
         }
@@ -189,23 +176,23 @@ namespace Tests.Business.Handlers
         {
             var command = new UpdateGroupClaimCommand
             {
-                GroupId = 1,
-                Id = 2,
-               ClaimId = 1,
-               ClaimName = "Test"
+                GroupId = "test_group_ıd",
+                Id = "test_ıd",
+                ClaimId = "claim_ıd",
+                ClaimName = "Test"
             };
 
             _operationClaimRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
                 .ReturnsAsync(new OperationClaim());
 
             _groupClaimRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GroupClaim, bool>>>()))
-                .ReturnsAsync((GroupClaim)null);
+                .ReturnsAsync((GroupClaim) null);
 
             _groupClaimRepository.Setup(x => x.Add(
                 It.IsAny<GroupClaim>()));
 
             var result = await _updateGroupClaimCommandHandler.Handle(command, new CancellationToken());
-            
+
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.GroupClaimNotFound);
         }
@@ -216,7 +203,7 @@ namespace Tests.Business.Handlers
         {
             var command = new DeleteGroupClaimCommand
             {
-                Id = 1
+                Id = "test_ıd"
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
@@ -233,25 +220,21 @@ namespace Tests.Business.Handlers
         {
             var command = new DeleteGroupClaimCommand
             {
-                Id = 1
+                Id = "test_ıd"
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
                 .Returns(Task.FromResult(new GroupClaim
                 {
-                    OperationClaim = new OperationClaim(),
-                    ClaimId = 1,
-                    Group = new Group(),
-                    GroupId = 1
+                    ClaimId = "test",
+                    GroupId = "test"
                 }));
 
-            _groupClaimRepository.Setup(x => x.Delete(It.IsAny<GroupClaim>()));
+            _groupClaimRepository.Setup(x =>
+                x.UpdateAsync(It.IsAny<GroupClaim>(), It.IsAny<Expression<Func<GroupClaim, bool>>>()));
 
             var result = await _deleteGroupClaimCommandHandler.Handle(command, new CancellationToken());
-  
-            _groupClaimRepository.Verify(x => x.SaveChangesAsync());
-
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Deleted);
         }
@@ -262,88 +245,20 @@ namespace Tests.Business.Handlers
         {
             var command = new GetGroupClaimQuery
             {
-                Id = 1
+                Id = "test_ıd"
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
                 .Returns(Task.FromResult(new GroupClaim
                 {
-                    OperationClaim = new OperationClaim(),
-                    ClaimId = 1,
-                    Group = new Group(),
-                    GroupId = 1
+                    ClaimId = "test",
+                    GroupId = "test"
                 }));
 
             var result = await _getGroupClaimQueryHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
-            result.Data.ClaimId.Should().Be(1);
-        }
-
-        [Test]
-        public async Task GroupClaim_GetGroupClaimsLookupByGroupIdClaim_Success()
-        {
-            var command = new GetGroupClaimsLookupByGroupIdQuery
-            {
-                GroupId = 1
-            };
-
-            _groupClaimRepository.Setup(x => x.GetGroupClaimsSelectedList(
-                    It.IsAny<int>()))
-                .Returns(Task.FromResult<IEnumerable<SelectionItem>>(
-                    new List<SelectionItem>
-                    {
-                        new()
-                        {
-                            Id = 1,
-                            IsDisabled = false,
-                            Label = "Test",
-                            ParentId = "asdasd"
-                        },
-                        new()
-                        {
-                            Id = 1,
-                            IsDisabled = false,
-                            Label = "Test2",
-                            ParentId = "gdfgdfg"
-                        }
-                    }));
-
-            var result = await _getGroupClaimsLookupByGroupIdQueryHandler.Handle(command, new CancellationToken());
-            result.Success.Should().BeTrue();
-            result.Data.ToList().Count.Should().BeGreaterThan(1);
-        }
-
-
-        [Test]
-        public async Task GroupClaim_GetGroupClaims_Success()
-        {
-            var command = new GetGroupClaimsQuery();
-
-            _groupClaimRepository.Setup(x => x.GetListAsync(
-                    It.IsAny<Expression<Func<GroupClaim, bool>>>()))
-                .Returns(Task.FromResult<IEnumerable<GroupClaim>>(
-                    new List<GroupClaim>
-                    {
-                        new()
-                        {
-                            OperationClaim = new OperationClaim(),
-                            ClaimId = 1,
-                            Group = new Group(),
-                            GroupId = 1
-                        },
-                        new()
-                        {
-                            OperationClaim = new OperationClaim(),
-                            ClaimId = 2,
-                            Group = new Group(),
-                            GroupId = 1
-                        }
-                    }));
-
-            var result = await _getGroupClaimsQueryHandler.Handle(command, new CancellationToken());
-            result.Success.Should().BeTrue();
-            result.Data.ToList().Count.Should().BeGreaterThan(1);
+            result.Data.ClaimId.Should().Be("test");
         }
     }
 }

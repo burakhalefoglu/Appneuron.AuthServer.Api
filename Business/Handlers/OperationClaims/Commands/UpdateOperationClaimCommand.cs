@@ -13,7 +13,7 @@ namespace Business.Handlers.OperationClaims.Commands
 {
     public class UpdateOperationClaimCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Alias { get; set; }
         public string Description { get; set; }
 
@@ -31,12 +31,13 @@ namespace Business.Handlers.OperationClaims.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(UpdateOperationClaimCommand request, CancellationToken cancellationToken)
             {
-                var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.ClaimId == request.Id);
+                var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.ObjectId == request.Id);
                 if (isOperationClaimsExits == null) return new ErrorResult(Messages.OperationClaimNotFound);
 
                 isOperationClaimsExits.Alias = request.Alias;
                 isOperationClaimsExits.Description = request.Description;
-                await _operationClaimRepository.UpdateAsync(isOperationClaimsExits, x=> x.ClaimId == isOperationClaimsExits.ClaimId);
+                await _operationClaimRepository.UpdateAsync(isOperationClaimsExits,
+                    x => x.ObjectId == isOperationClaimsExits.ObjectId);
 
                 return new SuccessResult(Messages.Updated);
             }

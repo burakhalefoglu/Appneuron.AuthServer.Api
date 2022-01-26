@@ -12,7 +12,7 @@ namespace Business.Handlers.Groups.Queries
 {
     public class GetGroupQuery : IRequest<IDataResult<Group>>
     {
-        public int GroupId { get; set; }
+        public string GroupId { get; set; }
 
         public class GetGroupQueryHandler : IRequestHandler<GetGroupQuery, IDataResult<Group>>
         {
@@ -28,7 +28,7 @@ namespace Business.Handlers.Groups.Queries
             public async Task<IDataResult<Group>> Handle(GetGroupQuery request, CancellationToken cancellationToken)
             {
                 var group = await _groupRepository
-                    .GetAsync(x => x.GroupId == request.GroupId);
+                    .GetAsync(x => x.ObjectId == request.GroupId);
                 return new SuccessDataResult<Group>(group);
             }
         }

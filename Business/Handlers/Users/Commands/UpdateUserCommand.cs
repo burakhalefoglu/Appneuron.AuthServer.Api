@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
@@ -37,15 +35,15 @@ namespace Business.Handlers.Users.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var isUserExits = await _userRepository.GetAsync(u => u.UserId == userId);
+                var isUserExits = await _userRepository.GetAsync(u => u.ObjectId == userId);
                 if (isUserExits == null) return new ErrorResult(Messages.UserNotFound);
                 isUserExits.Name = request.FullName;
                 isUserExits.Email = request.Email;
 
-                await _userRepository.UpdateAsync(isUserExits, x=> x.UserId == isUserExits.UserId);
+                await _userRepository.UpdateAsync(isUserExits, x => x.ObjectId == isUserExits.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

@@ -13,7 +13,7 @@ namespace Business.Handlers.GroupClaims.Commands
 {
     public class DeleteGroupClaimCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteGroupClaimCommandHandler : IRequestHandler<DeleteGroupClaimCommand, IResult>
         {
@@ -32,7 +32,8 @@ namespace Business.Handlers.GroupClaims.Commands
                 var groupClaimToDelete = await _groupClaimRepository.GetAsync(x => x.GroupId == request.Id);
                 if (groupClaimToDelete == null) return new ErrorResult(Messages.GroupClaimNotFound);
                 groupClaimToDelete.Status = false;
-                await _groupClaimRepository.UpdateAsync(groupClaimToDelete, x=> x.GroupId == groupClaimToDelete.GroupId);
+                await _groupClaimRepository.UpdateAsync(groupClaimToDelete,
+                    x => x.GroupId == groupClaimToDelete.GroupId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

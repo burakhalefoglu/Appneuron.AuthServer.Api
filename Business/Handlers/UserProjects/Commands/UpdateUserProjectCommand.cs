@@ -15,8 +15,8 @@ namespace Business.Handlers.UserProjects.Commands
 {
     public class UpdateUserProjectCommand : IRequest<IResult>
     {
-        public long Id { get; set; }
-        public int UserId { get; set; }
+        public string Id { get; set; }
+        public string UserId { get; set; }
         public string ProjectKey { get; set; }
 
         public class UpdateUserProjectCommandHandler : IRequestHandler<UpdateUserProjectCommand, IResult>
@@ -34,18 +34,15 @@ namespace Business.Handlers.UserProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateUserProjectCommand request, CancellationToken cancellationToken)
             {
-                var isThereUserProjectRecord = await _userProjectRepository.GetAsync(u => u.UserId == request.Id);
+                var isThereUserProjectRecord = await _userProjectRepository.GetAsync(u => u.ObjectId == request.Id);
 
-                if (isThereUserProjectRecord == null)
-                {
-                    return new ErrorResult(Messages.UserProjectNotFound);
-                }
+                if (isThereUserProjectRecord == null) return new ErrorResult(Messages.UserProjectNotFound);
 
                 isThereUserProjectRecord.UserId = request.UserId;
                 isThereUserProjectRecord.ProjectKey = request.ProjectKey;
 
-                await _userProjectRepository.UpdateAsync(isThereUserProjectRecord, 
-                    x=> x.UserId == isThereUserProjectRecord.UserId);
+                await _userProjectRepository.UpdateAsync(isThereUserProjectRecord,
+                    x => x.UserId == isThereUserProjectRecord.UserId);
                 return new SuccessResult(Messages.Updated);
             }
         }

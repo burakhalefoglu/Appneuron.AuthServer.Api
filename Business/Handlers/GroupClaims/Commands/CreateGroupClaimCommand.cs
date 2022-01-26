@@ -8,16 +8,16 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using MediatR;              
-
+using MediatR;
 
 namespace Business.Handlers.GroupClaims.Commands
 {
     public class CreateGroupClaimCommand : IRequest<IResult>
     {
-        public int GroupId { get; set; }
-        public int ClaimId { get; set; }
+        public string GroupId { get; set; }
+        public string ClaimId { get; set; }
         public string ClaimName { get; set; }
+
         public class CreateGroupClaimCommandHandler : IRequestHandler<CreateGroupClaimCommand, IResult>
         {
             private readonly IGroupClaimRepository _groupClaimRepository;
@@ -39,10 +39,10 @@ namespace Business.Handlers.GroupClaims.Commands
                     return new ErrorResult(Messages.OperationClaimNotFound);
 
 
-                if(IsGroupClaimExist(request.ClaimId, request.GroupId).Result)
+                if (IsGroupClaimExist(request.ClaimId, request.GroupId).Result)
                     return new ErrorResult(Messages.GroupClaimExit);
 
-                var groupClaim = new GroupClaim()
+                var groupClaim = new GroupClaim
                 {
                     GroupId = request.GroupId,
                     ClaimId = request.ClaimId
@@ -53,14 +53,14 @@ namespace Business.Handlers.GroupClaims.Commands
 
             private async Task<bool> IsClaimNotExists(string claimName)
             {
-                return (await _operationClaimRepository.GetAsync(x =>
-                    x.Name == claimName) is null);
+                return await _operationClaimRepository.GetAsync(x =>
+                    x.Name == claimName) is null;
             }
-            
-            private async Task<bool> IsGroupClaimExist(int claimId, int groupId)
+
+            private async Task<bool> IsGroupClaimExist(string claimId, string groupId)
             {
                 return !(await _groupClaimRepository.GetAsync(g => g.ClaimId == claimId
-                                                                  && g.GroupId == groupId) is null);
+                                                                   && g.GroupId == groupId) is null);
             }
         }
     }

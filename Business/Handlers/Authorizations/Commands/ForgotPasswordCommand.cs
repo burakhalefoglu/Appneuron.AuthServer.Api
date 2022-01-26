@@ -8,11 +8,12 @@ using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Transaction;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Mail;
-using Core.Utilities.Mail.Helpers;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Encyption;
 using DataAccess.Abstract;
 using MediatR;
+using MimeKit;
+using MimeKit.Text;
 
 namespace Business.Handlers.Authorizations.Commands
 {
@@ -40,7 +41,7 @@ namespace Business.Handlers.Authorizations.Commands
             [PerformanceAspect(5)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(LogstashLogger))]
-            [TransactionScopeAspectAsync]
+            [TransactionScopeAspect]
             public async Task<IResult> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
             {
                 var user = await _userRepository.GetAsync(u => u.Email == request.Email);
@@ -50,11 +51,11 @@ namespace Business.Handlers.Authorizations.Commands
                     return new SuccessResult(Messages.SendPassword);
 
                 var token = SecurityKeyHelper.GetRandomHexNumber(64);
-                var mailText = MailContentHepler.GetResetMailContent(user, token.ToLower());
-
+                var url = "https://webapi.appneuron.net/auth/api/Auth/resetpassword?token=" + token;
                 await _mailService.Send(new EmailMessage
                 {
-                    Content = mailText,
+                    Content = new TextPart(TextFormat.Html)
+                        {Text = $"<a href = '{url}'>reset your pass...</a>"},
                     FromAddresses =
                     {
                         new EmailAddress
@@ -76,7 +77,7 @@ namespace Business.Handlers.Authorizations.Commands
 
                 user.ResetPasswordToken = token.ToLower();
                 user.ResetPasswordExpires = DateTime.Now.AddMinutes(10);
-                await _userRepository.UpdateAsync(user, x=> x.Email == user.Email);
+                await _userRepository.UpdateAsync(user, x => x.Email == user.Email);
 
                 return new SuccessResult(Messages.SendPassword);
             }

@@ -17,6 +17,7 @@ using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using MediatR;
+using MongoDB.Bson;
 
 namespace Business.Handlers.Clients.Commands
 {
@@ -29,9 +30,9 @@ namespace Business.Handlers.Clients.Commands
         {
             private readonly IClientRepository _clientRepository;
             private readonly IMediator _mediator;
+            private readonly IMessageBroker _messageBroker;
 
             private readonly ITokenHelper _tokenHelper;
-            private readonly IMessageBroker _messageBroker;
 
             public CreateTokenCommandHandler(IClientRepository clientRepository,
                 ITokenHelper tokenHelper,
@@ -56,14 +57,13 @@ namespace Business.Handlers.Clients.Commands
                     return new ErrorDataResult<AccessToken>(Messages.ProjectNotFound);
 
                 var result = await _clientRepository.GetAsync(c =>
-                    c.ClientId == request.ClientId
+                    c.ObjectId == request.ClientId
                     && c.ProjectId == request.ProjectId);
 
                 if (result == null)
                 {
                     await _clientRepository.AddAsync(new Client
                     {
-                        ClientId = request.ClientId,
                         ProjectId = request.ProjectId
                     });
 
@@ -78,14 +78,14 @@ namespace Business.Handlers.Clients.Commands
 
                 var resultGroupClaim = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
                 {
-                    GroupId = 2
+                    GroupId = "2"
                 }, cancellationToken);
 
                 var selectionItems = resultGroupClaim.Data.ToList();
 
                 var operationClaims =
                     selectionItems.Select(item =>
-                            new OperationClaim { Id = Convert.ToInt32(item.Id), Name = item.Label })
+                            new OperationClaim {Id = new ObjectId(item.Id), Name = item.Label})
                         .ToList();
 
                 var accessToken = _tokenHelper.CreateClientToken<AccessToken>(new ClientClaimModel

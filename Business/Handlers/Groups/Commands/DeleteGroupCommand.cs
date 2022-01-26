@@ -13,7 +13,7 @@ namespace Business.Handlers.Groups.Commands
 {
     public class DeleteGroupCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteGroupCommandHandler : IRequestHandler<DeleteGroupCommand, IResult>
         {
@@ -30,11 +30,11 @@ namespace Business.Handlers.Groups.Commands
             public async Task<IResult> Handle(DeleteGroupCommand request, CancellationToken cancellationToken)
             {
                 var groupToDelete = await _groupRepository
-                    .GetAsync(x => x.GroupId == request.Id);
+                    .GetAsync(x => x.ObjectId == request.Id);
 
                 if (groupToDelete == null) return new ErrorResult(Messages.GroupNotFound);
                 groupToDelete.Status = false;
-                await _groupRepository.UpdateAsync(groupToDelete, x=> x.GroupId == groupToDelete.GroupId);
+                await _groupRepository.UpdateAsync(groupToDelete, x => x.ObjectId == groupToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

@@ -3,9 +3,7 @@ using System.Threading.Tasks;
 using Business.Handlers.Languages.Commands;
 using Business.Handlers.Languages.Queries;
 using Core.Entities.Concrete;
-using Core.Entities.Dtos;
 using Core.Utilities.Results;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +16,6 @@ namespace WebAPI.Controllers
     [ApiController]
     public class LanguagesController : BaseApiController
     {
-
         /// <summary>
         ///     List languages
         /// </summary>
@@ -47,9 +44,9 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<Language>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpGet("getbyid")]
-        public async Task<IActionResult> GetById(int languageId)
+        public async Task<IActionResult> GetById(string languageId)
         {
-            var result = await Mediator.Send(new GetLanguageQuery { Id = languageId });
+            var result = await Mediator.Send(new GetLanguageQuery {Id = languageId});
             if (result.Success) return Ok(result);
 
             return BadRequest(result);

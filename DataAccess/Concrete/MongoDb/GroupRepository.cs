@@ -7,7 +7,8 @@ namespace DataAccess.Concrete.MongoDb
 {
     public class GroupRepository : MongoDbRepositoryBase<Group>, IGroupRepository
     {
-        public GroupRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(mongoDbContext.MongoConnectionSettings, collectionName)
+        public GroupRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+            mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }
     }

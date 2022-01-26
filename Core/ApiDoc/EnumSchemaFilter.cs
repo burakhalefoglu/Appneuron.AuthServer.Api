@@ -21,7 +21,7 @@ namespace Core.ApiDoc
                 foreach (var n in Enum.GetNames(context.Type).ToList())
                 {
                     schema.Enum.Add(new OpenApiString(n));
-                    schema.Title = ((OpenApiPrimitive<int>)enumValues[i]).Value.ToString();
+                    schema.Title = ((OpenApiPrimitive<int>) enumValues[i]).Value.ToString();
                     i++;
                 }
             }

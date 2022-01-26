@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Core.Entities.Concrete
 {
@@ -11,13 +10,12 @@ namespace Core.Entities.Concrete
             ResetPasswordExpires = DateTime.MinValue;
             Status = true;
         }
-        public int UserId { get; set; }
+
         public string Name { get; set; }
         public string Email { get; set; }
         public bool Status { get; set; }
         public DateTime RecordDate { get; set; }
         public DateTime UpdateContactDate { get; set; }
-
         public byte[] PasswordSalt { get; set; }
         public byte[] PasswordHash { get; set; }
         public string ResetPasswordToken { get; set; }

@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Business.Handlers.Groups.Commands;
 using Business.Handlers.Groups.Queries;
 using Core.Entities.Concrete;
-using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -46,27 +44,9 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<Group>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpGet("getbyid")]
-        public async Task<IActionResult> GetById(int groupId)
+        public async Task<IActionResult> GetById(string groupId)
         {
-            var result = await Mediator.Send(new GetGroupQuery { GroupId = groupId });
-            if (result.Success) return Ok(result);
-
-            return BadRequest(result);
-        }
-
-        /// <summary>
-        ///     Group Lookup
-        /// </summary>
-        /// <remarks>Group Lookup döner </remarks>
-        /// <return>Grup Lokup</return>
-        /// <response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<SelectionItem>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getgrouplookup")]
-        public async Task<IActionResult> Getselectedlist()
-        {
-            var result = await Mediator.Send(new GetGroupLookupQuery());
+            var result = await Mediator.Send(new GetGroupQuery {GroupId = groupId});
             if (result.Success) return Ok(result);
 
             return BadRequest(result);

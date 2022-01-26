@@ -15,9 +15,8 @@ namespace Business.Handlers.UserGroups.Commands
 {
     public class UpdateUserGroupCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public int[] GroupId { get; set; }
+        public string UserId { get; set; }
+        public string[] GroupId { get; set; }
 
         public class UpdateUserGroupCommandHandler : IRequestHandler<UpdateUserGroupCommand, IResult>
         {
@@ -33,7 +32,7 @@ namespace Business.Handlers.UserGroups.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(UpdateUserGroupCommand request, CancellationToken cancellationToken)
             {
-                var userGroupList = request.GroupId.Select(x => new UserGroup { GroupId = x, UserId = request.UserId });
+                var userGroupList = request.GroupId.Select(x => new UserGroup {GroupId = x, UserId = request.UserId});
 
                 await _userGroupRepository.AddManyAsync(userGroupList);
                 return new SuccessResult(Messages.Updated);

@@ -36,9 +36,9 @@ namespace Business.Internals.Handlers.OperationClaims
                 return new SuccessResult(Messages.Added);
             }
 
-            private async  Task<bool> IsClaimExists(string claimName)
+            private async Task<bool> IsClaimExists(string claimName)
             {
-                return await _operationClaimRepository.AnyAsync(x => x.Name == claimName) ;
+                return await _operationClaimRepository.AnyAsync(x => x.Name == claimName);
             }
         }
     }

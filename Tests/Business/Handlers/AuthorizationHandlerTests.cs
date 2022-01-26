@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
-using Business.Handlers.UserProjects.Queries;
 using Business.Internals.Handlers.GroupClaims;
-using Core.CrossCuttingConcerns.Caching;
+using Business.Internals.Handlers.Groups.Queries;
+using Business.Internals.Handlers.UserGroups.Commands;
+using Business.Internals.Handlers.UserGroups.Queries;
+using Business.Internals.Handlers.UserProjects;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
@@ -21,6 +23,7 @@ using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using Tests.Helpers;
@@ -40,7 +43,6 @@ namespace Tests.Business.Handlers
             _userRepository = new Mock<IUserRepository>();
             _tokenHelper = new Mock<ITokenHelper>();
             _mediator = new Mock<IMediator>();
-            _cacheManager = new Mock<ICacheManager>();
             _mailService = new Mock<IMailService>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
 
@@ -62,7 +64,6 @@ namespace Tests.Business.Handlers
         private Mock<IUserRepository> _userRepository;
         private Mock<ITokenHelper> _tokenHelper;
         private Mock<IMediator> _mediator;
-        private Mock<ICacheManager> _cacheManager;
         private Mock<IMailService> _mailService;
         private Mock<IHttpContextAccessor> _httpContextAccessor;
         private LoginUserQueryHandler _loginUserQueryHandler;
@@ -85,8 +86,20 @@ namespace Tests.Business.Handlers
             _userRepository.Setup(x =>
                 x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(Task.FromResult<User>(null));
 
-            _userRepository.Setup(x => x.GetClaims(It.IsAny<int>()))
-                .Returns(new List<OperationClaim> { new() { Id = 1, Name = "test" } });
+            _mediator.Setup(m =>
+                    m.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
+                        It.IsAny<CancellationToken>()))
+                .ReturnsAsync(
+                    new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
+                    {
+                        new()
+                        {
+                            Id = 1,
+                            Label = "test",
+                            IsDisabled = false,
+                            ParentId = "test"
+                        }
+                    }));
             _loginUserQuery = new LoginUserQuery
             {
                 Email = user.Email,
@@ -113,8 +126,21 @@ namespace Tests.Business.Handlers
             _userRepository.Setup(x =>
                 x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(() => Task.FromResult(user));
 
-            _userRepository.Setup(x => x.GetClaims(It.IsAny<int>()))
-                .Returns(new List<OperationClaim> { new() { Id = 1, Name = "test" } });
+            _mediator.Setup(m =>
+                    m.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
+                        It.IsAny<CancellationToken>()))
+                .ReturnsAsync(
+                    new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
+                    {
+                        new()
+                        {
+                            Id = 1,
+                            Label = "test",
+                            IsDisabled = false,
+                            ParentId = "test"
+                        }
+                    }));
+
             _loginUserQuery = new LoginUserQuery
             {
                 Email = user.Email,
@@ -141,6 +167,12 @@ namespace Tests.Business.Handlers
             _userRepository.Setup(x =>
                 x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(() => Task.FromResult(user));
 
+            _mediator.Setup(m =>
+                m.Send(It.IsAny<GetUserGroupInternalQuery>(),
+                    It.IsAny<CancellationToken>())).ReturnsAsync( new SuccessDataResult<UserGroup>(new UserGroup
+            {
+                Id = new ObjectId("507f1f77bcf86cd799439011")
+            }));
 
             _mediator.Setup(m =>
                     m.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
@@ -150,7 +182,7 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            Id = 1,
+                            Id = "507f1f77bcf86cd799439011",
                             Label = "test",
                             IsDisabled = false,
                             ParentId = "test"
@@ -165,16 +197,13 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            Id = 1,
-                            ProjectKey = "sdfsdfds",
-                            UserId = 1
+                            ProjectKey = "test_key"
                         }
                     }));
 
 
             _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
-                UserId = user.UserId,
                 OperationClaims = null
             }, new List<string>())).Returns(new AccessToken());
 
@@ -194,7 +223,7 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Authorization_Register_EmailAlreadyExist()
         {
-            var registerUser = new User { Email = "test@test.com", Name = "test test" };
+            var registerUser = new User {Email = "test@test.com", Name = "test test"};
             _command = new RegisterUserCommand
             {
                 Email = registerUser.Email,
@@ -215,7 +244,7 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Authorization_Register_SuccessfulLogin()
         {
-            var registerUser = new User { UserId = 1, Email = "test@test.com", Name = "test test" };
+            var registerUser = new User {Email = "test@test.com", Name = "test test"};
             _command = new RegisterUserCommand
             {
                 Email = registerUser.Email,
@@ -223,12 +252,32 @@ namespace Tests.Business.Handlers
             };
 
             _userRepository.Setup(x =>
+                    x.AnyAsync(It.IsAny<Expression<Func<User, bool>>>()))
+                .ReturnsAsync(false);
+
+            _userRepository.Setup(x => x.AddAsync(It.IsAny<User>()));
+
+            _userRepository.Setup(x =>
                     x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(Task.FromResult<User>(null));
-
-            _userRepository.Setup(x => x.Add(It.IsAny<User>()))
-                .Returns(registerUser);
-
+                .Returns(Task.FromResult<User>(new User()
+                {
+                    Id = new ObjectId("107f1f77acf86cd799439011"),
+                    Email = registerUser.Email,
+                }));
+            
+            _mediator.Setup(m =>
+                    m.Send(It.IsAny<GetGroupByNameInternalQuery>(),
+                        It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new SuccessDataResult<Group>(new Group()
+                {
+                    Id = new ObjectId("507f1f77bcf86cd799439011")
+                }));
+            
+            _mediator.Setup(m =>
+                    m.Send(It.IsAny<CreateUserGroupInternalCommand>(),
+                        It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new SuccessResult());
+            
             _mediator.Setup(m =>
                     m.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
                         It.IsAny<CancellationToken>()))
@@ -237,7 +286,7 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            Id = 1,
+                            Id = "507f1f77bcf86cd799439011",
                             Label = "test",
                             IsDisabled = false,
                             ParentId = "test"
@@ -252,15 +301,13 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            Id = 1,
-                            ProjectKey = "sdfsdfds",
-                            UserId = 1
+                            ProjectKey = "test_key"
                         }
                     }));
 
             _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
-                UserId = registerUser.UserId,
+                UserId = "107f1f77acf86cd799439011",
                 OperationClaims = null
             }, new List<string>())).Returns(new AccessToken());
 
@@ -303,7 +350,7 @@ namespace Tests.Business.Handlers
 
             _mailService.Setup(x => x.Send(It.IsAny<EmailMessage>()));
 
-            _userRepository.Setup(x => x.Update(It.IsAny<User>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
 
             var result = await _forgotPasswordCommandHandler.Handle(_forgotPasswordCommand, new CancellationToken());
             result.Success.Should().BeTrue();
@@ -316,7 +363,7 @@ namespace Tests.Business.Handlers
         {
             var resetPasswordCommand = new ResetPasswordCommand
             {
-                Password = "fsdfjsdfkhsdlf"
+                Password = "test_pass"
             };
 
             _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
@@ -336,7 +383,7 @@ namespace Tests.Business.Handlers
         {
             var resetPasswordCommand = new ResetPasswordCommand
             {
-                Password = "fsdfjsdfkhsdlf"
+                Password = "test_pass"
             };
 
             var user = new User
@@ -362,7 +409,7 @@ namespace Tests.Business.Handlers
         {
             var resetPasswordCommand = new ResetPasswordCommand
             {
-                Password = "fsdfjsdfkhsdlf"
+                Password = "test_pass"
             };
 
             var user = new User
@@ -377,7 +424,7 @@ namespace Tests.Business.Handlers
                     x.HttpContext.Request.Query)
                 .Returns(() => new QueryCollection());
 
-            _userRepository.Setup(x => x.Update(It.IsAny<User>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
 
             var result = await _resetPasswordCommandHandler.Handle(resetPasswordCommand, new CancellationToken());
             result.Success.Should().BeTrue();

@@ -14,8 +14,8 @@ namespace Business.Handlers.UserGroups.Commands
 {
     public class CreateUserGroupCommand : IRequest<IResult>
     {
-        public int GroupId { get; set; }
-        public int UserId { get; set; }
+        public string GroupId { get; set; }
+        public string UserId { get; set; }
 
         public class CreateUserGroupCommandHandler : IRequestHandler<CreateUserGroupCommand, IResult>
         {

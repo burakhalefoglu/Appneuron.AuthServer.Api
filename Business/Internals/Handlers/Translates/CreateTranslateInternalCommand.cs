@@ -15,7 +15,7 @@ namespace Business.Internals.Handlers.Translates
     /// </summary>
     public class CreateTranslateInternalCommand : IRequest<IResult>
     {
-        public int LangId { get; set; }
+        public string LangId { get; set; }
         public string Value { get; set; }
         public string Code { get; set; }
 
@@ -34,14 +34,13 @@ namespace Business.Internals.Handlers.Translates
                 CancellationToken cancellationToken)
             {
                 var isThereTranslateRecord = await _translateRepository
-                    .AnyAsync(u => u.LangId == request.LangId && u.Code == request.Code);
+                    .AnyAsync(u => u.ObjectId == request.LangId && u.Code == request.Code);
 
                 if (isThereTranslateRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedTranslate = new Translate
                 {
-                    LangId = request.LangId,
                     Value = request.Value,
                     Code = request.Code
                 };

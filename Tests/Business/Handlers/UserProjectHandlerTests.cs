@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,18 +34,18 @@ namespace Tests.Business.Handlers
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
 
             _getUserProjectQueryHandler =
-                new GetUserProjectQueryHandler(_userProjectRepository.Object, _mediator.Object);
+                new GetUserProjectQueryHandler(_userProjectRepository.Object);
             _getUserProjectsQueryHandler =
-                new GetUserProjectsQueryHandler(_userProjectRepository.Object, _mediator.Object);
+                new GetUserProjectsQueryHandler(_userProjectRepository.Object);
             _getUserProjectsByUserIdQueryHandler = new GetUserProjectsByUserIdQueryHandler(
                 _userProjectRepository.Object, _mediator.Object, _httpContextAccessor.Object);
 
             _createUserProjectCommandHandler =
-                new CreateUserProjectCommandHandler(_userProjectRepository.Object, _mediator.Object);
+                new CreateUserProjectCommandHandler(_userProjectRepository.Object);
             _updateUserProjectCommandHandler =
-                new UpdateUserProjectCommandHandler(_userProjectRepository.Object, _mediator.Object);
+                new UpdateUserProjectCommandHandler(_userProjectRepository.Object);
             _deleteUserProjectCommandHandler =
-                new DeleteUserProjectCommandHandler(_userProjectRepository.Object, _mediator.Object);
+                new DeleteUserProjectCommandHandler(_userProjectRepository.Object);
         }
 
         private Mock<IUserProjectRepository> _userProjectRepository;
@@ -68,9 +69,8 @@ namespace Tests.Business.Handlers
             _userProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
                 .ReturnsAsync(new UserProject
                 {
-                    Id = 1,
-                    ProjectKey = "sadsfdsfsad",
-                    UserId = 12
+                    ProjectKey = "project_key",
+                    UserId = "test_user_ıd"
                 });
 
             //Act
@@ -78,7 +78,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.Id.Should().Be(1);
+            x.Data.UserId.Should().Be("test_user_ıd");
         }
 
         [Test]
@@ -87,30 +87,29 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetUserProjectsQuery();
 
-            _userProjectRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
+            _userProjectRepository.Setup(x =>
+                    x.GetListAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
                 .ReturnsAsync(new List<UserProject>
                 {
                     new()
                     {
-                        Id = 1,
-                        ProjectKey = "sdfsdfsdf",
-                        UserId = 1
+                        ProjectKey = "project_key_1",
+                        UserId = "test_user_ıd"
                     },
 
                     new()
                     {
-                        Id = 12,
-                        ProjectKey = "dasdsa",
-                        UserId = 2
+                        ProjectKey = "project_key_2",
+                        UserId = "test_user_ıd2"
                     }
-                });
+                }.AsQueryable());
 
             //Act
             var x = await _getUserProjectsQueryHandler.Handle(query, new CancellationToken());
 
             //Asset
             x.Success.Should().BeTrue();
-            ((List<UserProject>)x.Data).Count.Should().BeGreaterThan(1);
+            x.Data.ToList().Count.Should().BeGreaterThan(1);
         }
 
         [Test]
@@ -124,18 +123,16 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        Id = 1,
-                        ProjectKey = "sdfsdfsdf",
-                        UserId = 1
+                        ProjectKey = "project_key_1",
+                        UserId = "test_user_ıd"
                     },
 
                     new()
                     {
-                        Id = 12,
-                        ProjectKey = "dasdsa",
-                        UserId = 2
+                        ProjectKey = "project_key_2",
+                        UserId = "test_user_ıd2"
                     }
-                });
+                }.AsQueryable());
 
 
             _httpContextAccessor.SetupGet(x =>
@@ -147,7 +144,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            ((List<UserProject>)x.Data).Count.Should().BeGreaterThan(1);
+            x.Data.ToList().Count.Should().BeGreaterThan(1);
         }
 
         [Test]
@@ -156,8 +153,8 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new CreateUserProjectCommand
             {
-                ProjectKey = "fsdfsdffsd",
-                UserId = 1
+                ProjectKey = "project_key_1",
+                UserId = "test_user_ıd"
             };
 
             _userProjectRepository.Setup(x => x
@@ -165,17 +162,8 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult<UserProject>(null));
 
             _userProjectRepository.Setup(x =>
-                x.Add(It.IsAny<UserProject>())).Returns(new UserProject
-            {
-                Id = 1,
-                ProjectKey = "fsdfsdffsd",
-                UserId = 1
-            });
-
+                x.AddAsync(It.IsAny<UserProject>()));
             var x = await _createUserProjectCommandHandler.Handle(command, new CancellationToken());
-
-            _userProjectRepository.Verify(c=> c.SaveChangesAsync());
-
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
         }
@@ -186,14 +174,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new CreateUserProjectCommand
             {
-                ProjectKey = "fsdfsdffsd",
-                UserId = 1
+                ProjectKey = "project_key_1",
+                UserId = "test_user_ıd"
             };
 
             _userProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
                 .Returns(Task.FromResult(new UserProject()));
 
-            _userProjectRepository.Setup(x => x.Add(It.IsAny<UserProject>())).Returns(new UserProject());
+            _userProjectRepository.Setup(x => x.AddAsync(It.IsAny<UserProject>()));
 
             var x = await _createUserProjectCommandHandler.Handle(command, new CancellationToken());
 
@@ -207,45 +195,44 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateUserProjectCommand
             {
-                Id = 1,
-                ProjectKey = "fdsfsdf",
-                UserId = 1
+                Id = "test_ıd",
+                ProjectKey = "project_key_1",
+                UserId = "test_user_ıd"
             };
 
 
             _userProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
                 .ReturnsAsync(new UserProject
                 {
-                    Id = 1,
-                    ProjectKey = "kjhkj",
-                    UserId = 1
+                    ProjectKey = "project_key_1",
+                    UserId = "test_user_ıd"
                 });
 
-            _userProjectRepository.Setup(x => x.Update(It.IsAny<UserProject>())).Returns(new UserProject());
+            _userProjectRepository.Setup(x =>
+                x.UpdateAsync(It.IsAny<UserProject>(), It.IsAny<Expression<Func<UserProject, bool>>>()));
 
             var x = await _updateUserProjectCommandHandler.Handle(command, new CancellationToken());
-
-            _userProjectRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Updated);
         }
- 
+
         [Test]
         public async Task UserProject_UpdateCommand_UserProjectNotFound()
         {
             //Arrange
             var command = new UpdateUserProjectCommand
             {
-                Id = 1,
-                ProjectKey = "fdsfsdf",
-                UserId = 1
+                Id = "test_ıd",
+                ProjectKey = "project_key_1",
+                UserId = "test_user_ıd"
             };
 
 
             _userProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
-                .ReturnsAsync((UserProject)null);
+                .ReturnsAsync((UserProject) null);
 
-            _userProjectRepository.Setup(x => x.Update(It.IsAny<UserProject>())).Returns(new UserProject());
+            _userProjectRepository.Setup(x =>
+                x.UpdateAsync(It.IsAny<UserProject>(), It.IsAny<Expression<Func<UserProject, bool>>>()));
 
             var x = await _updateUserProjectCommandHandler.Handle(command, new CancellationToken());
 
@@ -259,22 +246,20 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteUserProjectCommand
             {
-                Id = 1
+                Id = "test_ıd"
             };
 
             _userProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
                 .ReturnsAsync(new UserProject
                 {
-                    Id = 1,
-                    ProjectKey = "fsdfsdf",
-                    UserId = 1
+                    ProjectKey = "test",
+                    UserId = "test_user_ıd"
                 });
 
-            _userProjectRepository.Setup(x => x.Delete(It.IsAny<UserProject>()));
+            _userProjectRepository.Setup(x =>
+                x.UpdateAsync(It.IsAny<UserProject>(), It.IsAny<Expression<Func<UserProject, bool>>>()));
 
             var x = await _deleteUserProjectCommandHandler.Handle(command, new CancellationToken());
-
-            _userProjectRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
         }
@@ -285,20 +270,19 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteUserProjectCommand
             {
-                Id = 1
+                Id = "test_ıd"
             };
 
             _userProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
-                .ReturnsAsync((UserProject)null);
+                .ReturnsAsync((UserProject) null);
 
-            _userProjectRepository.Setup(x => x.Delete(It.IsAny<UserProject>()));
+            _userProjectRepository.Setup(x =>
+                x.UpdateAsync(It.IsAny<UserProject>(), It.IsAny<Expression<Func<UserProject, bool>>>()));
 
             var x = await _deleteUserProjectCommandHandler.Handle(command, new CancellationToken());
-            
+
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.UserProjectNotFound);
         }
-
-
     }
 }

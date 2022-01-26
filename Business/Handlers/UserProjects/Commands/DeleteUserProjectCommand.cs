@@ -15,17 +15,15 @@ namespace Business.Handlers.UserProjects.Commands
     /// </summary>
     public class DeleteUserProjectCommand : IRequest<IResult>
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteUserProjectCommandHandler : IRequestHandler<DeleteUserProjectCommand, IResult>
         {
-            private readonly IMediator _mediator;
             private readonly IUserProjectRepository _userProjectRepository;
 
-            public DeleteUserProjectCommandHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
+            public DeleteUserProjectCommandHandler(IUserProjectRepository userProjectRepository)
             {
                 _userProjectRepository = userProjectRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -33,14 +31,12 @@ namespace Business.Handlers.UserProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteUserProjectCommand request, CancellationToken cancellationToken)
             {
-                var userProjectToDelete = await _userProjectRepository.GetAsync(p => p.UserId == request.Id);
+                var userProjectToDelete = await _userProjectRepository.GetAsync(p => p.ObjectId == request.Id);
 
-                if (userProjectToDelete == null)
-                {
-                    return new ErrorResult(Messages.UserProjectNotFound);
-                }
+                if (userProjectToDelete == null) return new ErrorResult(Messages.UserProjectNotFound);
                 userProjectToDelete.Status = false;
-                await _userProjectRepository.UpdateAsync(userProjectToDelete, x=> x.UserId == userProjectToDelete.UserId);
+                await _userProjectRepository.UpdateAsync(userProjectToDelete,
+                    x => x.UserId == userProjectToDelete.UserId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

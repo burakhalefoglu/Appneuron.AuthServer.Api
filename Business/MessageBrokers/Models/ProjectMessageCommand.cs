@@ -2,7 +2,7 @@
 {
     public class ProjectMessageCommand
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string ProjectKey { get; set; }
     }
 }

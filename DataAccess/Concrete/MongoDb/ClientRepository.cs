@@ -7,7 +7,8 @@ namespace DataAccess.Concrete.MongoDb
 {
     public class ClientRepository : MongoDbRepositoryBase<Client>, IClientRepository
     {
-        public ClientRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(mongoDbContext.MongoConnectionSettings, collectionName)
+        public ClientRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+            mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }
     }

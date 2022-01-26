@@ -32,15 +32,15 @@ namespace Core.Extensions
         private async Task HandleExceptionAsync(HttpContext httpContext, Exception e)
         {
             httpContext.Response.ContentType = "application/json";
-            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            httpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
             _ = e.Message;
             string message;
             message = e.Message;
 
             if (e.GetType() == typeof(ValidationException))
-                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                httpContext.Response.StatusCode = (int) HttpStatusCode.BadRequest;
             else if (e.GetType() == typeof(ApplicationException))
-                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                httpContext.Response.StatusCode = (int) HttpStatusCode.BadRequest;
             else if (e.GetType() == typeof(UnauthorizedAccessException))
                 httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
             else if (e.GetType() == typeof(SecurityException))

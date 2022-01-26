@@ -15,9 +15,9 @@ namespace Business.Handlers.UserClaims.Commands
 {
     public class UpdateUserClaimCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public int[] ClaimId { get; set; }
+        public string Id { get; set; }
+        public string UserId { get; set; }
+        public string[] ClaimId { get; set; }
 
         public class UpdateUserClaimCommandHandler : IRequestHandler<UpdateUserClaimCommand, IResult>
         {
@@ -33,7 +33,7 @@ namespace Business.Handlers.UserClaims.Commands
             [LogAspect(typeof(LogstashLogger))]
             public async Task<IResult> Handle(UpdateUserClaimCommand request, CancellationToken cancellationToken)
             {
-                var userList = request.ClaimId.Select(x => new UserClaim { ClaimId = x, UsersId = request.UserId });
+                var userList = request.ClaimId.Select(x => new UserClaim {ClaimId = x, UsersId = request.UserId});
                 await _userClaimRepository.AddManyAsync(userList);
                 return new SuccessResult(Messages.Updated);
             }

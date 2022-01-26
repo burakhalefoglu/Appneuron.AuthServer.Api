@@ -40,12 +40,11 @@ namespace Tests.Business.Handlers
 
             _logRepository.Setup(x => x.GetListAsync(
                     It.IsAny<Expression<Func<Log, bool>>>()))
-                .Returns(Task.FromResult<IEnumerable<Log>>(new List<Log>
+                .ReturnsAsync(new List<Log>
                 {
                     new()
                     {
                         Exception = "NoContentException",
-                        Id = 1,
                         Level = "Test",
                         MessageTemplate = "{'Id':1," +
                                           "'Level':'Test'," +
@@ -59,7 +58,6 @@ namespace Tests.Business.Handlers
                     new()
                     {
                         Exception = "ValidContentException",
-                        Id = 1,
                         Level = "Test",
                         MessageTemplate = "{'Id':1," +
                                           "'Level':'Test'," +
@@ -70,7 +68,7 @@ namespace Tests.Business.Handlers
                                           "'Type':'Test'}",
                         TimeStamp = new DateTimeOffset()
                     }
-                }.AsQueryable()));
+                }.AsQueryable());
 
             var result = await _getLogDtoQueryHandler.Handle(query, new CancellationToken());
             result.Success.Should().BeTrue();

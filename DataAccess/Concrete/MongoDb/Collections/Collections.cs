@@ -14,4 +14,4 @@
         public static string UserClaim => "userClaims";
         public static string UserGroup => "userGroups";
     }
-} 
+}

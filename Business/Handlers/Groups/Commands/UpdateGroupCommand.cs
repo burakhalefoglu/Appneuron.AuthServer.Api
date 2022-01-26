@@ -14,7 +14,6 @@ namespace Business.Handlers.Groups.Commands
 {
     public class UpdateGroupCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
         public string GroupName { get; set; }
 
         public class UpdateGroupCommandHandler : IRequestHandler<UpdateGroupCommand, IResult>
@@ -33,17 +32,13 @@ namespace Business.Handlers.Groups.Commands
             {
                 var isGroupExist = await _groupRepository.GetAsync(g => g.GroupName == request.GroupName);
 
-                if (isGroupExist == null)
-                {
-                    return new ErrorResult(Messages.GroupNotFound);
-                }
+                if (isGroupExist == null) return new ErrorResult(Messages.GroupNotFound);
 
                 var groupToUpdate = new Group
                 {
-                    GroupId = request.Id,
                     GroupName = request.GroupName
                 };
-                await _groupRepository.UpdateAsync(groupToUpdate,x=> x.GroupId == groupToUpdate.GroupId);
+                await _groupRepository.UpdateAsync(groupToUpdate, x => x.ObjectId == groupToUpdate.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

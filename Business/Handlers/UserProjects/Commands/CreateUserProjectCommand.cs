@@ -18,7 +18,7 @@ namespace Business.Handlers.UserProjects.Commands
     /// </summary>
     public class CreateUserProjectCommand : IRequest<IResult>
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string ProjectKey { get; set; }
 
         public class CreateUserProjectCommandHandler : IRequestHandler<CreateUserProjectCommand, IResult>
@@ -37,7 +37,7 @@ namespace Business.Handlers.UserProjects.Commands
             public async Task<IResult> Handle(CreateUserProjectCommand request, CancellationToken cancellationToken)
             {
                 var isThereUserProjectRecord = await _userProjectRepository
-                    .GetAsync(u => u.UserId == request.UserId);
+                    .GetAsync(u => u.ObjectId == request.UserId);
 
                 if (isThereUserProjectRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
