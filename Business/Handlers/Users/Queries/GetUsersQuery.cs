@@ -31,7 +31,7 @@ namespace Business.Handlers.Users.Queries
             [SecuredOperation(Priority = 1)]
             [PerformanceAspect(5)]
             [CacheAspect(10)]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IDataResult<IEnumerable<UserDto>>> Handle(GetUsersQuery request,
                 CancellationToken cancellationToken)
             {

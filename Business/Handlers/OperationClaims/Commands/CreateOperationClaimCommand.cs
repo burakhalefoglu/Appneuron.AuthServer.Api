@@ -27,7 +27,7 @@ namespace Business.Handlers.OperationClaims.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(CreateOperationClaimCommand request, CancellationToken cancellationToken)
             {
                 if (!await IsClaimExists(request.ClaimName))

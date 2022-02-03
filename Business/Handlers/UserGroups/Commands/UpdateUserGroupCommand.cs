@@ -29,7 +29,7 @@ namespace Business.Handlers.UserGroups.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateUserGroupCommand request, CancellationToken cancellationToken)
             {
                 var userGroupList = request.GroupId.Select(x => new UserGroup {GroupId = x, UserId = request.UserId});

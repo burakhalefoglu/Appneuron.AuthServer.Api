@@ -24,7 +24,7 @@ namespace Business.Handlers.GroupClaims.Queries
             }
 
             [SecuredOperation(Priority = 1)]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IDataResult<GroupClaim>> Handle(GetGroupClaimQuery request,
                 CancellationToken cancellationToken)
             {

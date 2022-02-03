@@ -30,7 +30,7 @@ namespace Business.Handlers.UserProjects.Commands
 
             [ValidationAspect(typeof(UpdateUserProjectValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateUserProjectCommand request, CancellationToken cancellationToken)
             {

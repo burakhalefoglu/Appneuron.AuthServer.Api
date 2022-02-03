@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Serilog;
+﻿using Serilog;
 
 namespace Core.CrossCuttingConcerns.Logging.Serilog.Loggers
 {
-    class ConsoleLogger
+    public class ConsoleLogger : LoggerServiceBase
     {
         public ConsoleLogger()
         {
 
             _ = new LoggerConfiguration()
-                .WriteTo.Console()
+                .WriteTo.Console(
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}")
                 .CreateLogger();
         }
     }

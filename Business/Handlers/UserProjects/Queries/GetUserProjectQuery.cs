@@ -23,7 +23,7 @@ namespace Business.Handlers.UserProjects.Queries
                 _userProjectRepository = userProjectRepository;
             }
 
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<UserProject>> Handle(GetUserProjectQuery request,
                 CancellationToken cancellationToken)

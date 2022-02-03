@@ -28,7 +28,7 @@ namespace Business.Handlers.UserClaims.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(CreateUserClaimCommand request, CancellationToken cancellationToken)
             {
                 var userClaimExist = await _userClaimRepository.GetAsync(x => x.ClaimId == request.ClaimId);

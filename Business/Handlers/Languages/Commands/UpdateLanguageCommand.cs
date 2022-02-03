@@ -31,7 +31,7 @@ namespace Business.Handlers.Languages.Commands
             [SecuredOperation(Priority = 1)]
             [ValidationAspect(typeof(CreateLanguageValidator), Priority = 2)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)
             {
                 var isThereLanguageRecord = await _languageRepository.GetAsync(u => u.ObjectId == request.Id);

@@ -28,7 +28,7 @@ namespace Business.Handlers.OperationClaims.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateOperationClaimCommand request, CancellationToken cancellationToken)
             {
                 var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.ObjectId == request.Id);

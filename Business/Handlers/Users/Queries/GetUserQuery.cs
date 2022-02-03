@@ -30,7 +30,7 @@ namespace Business.Handlers.Users.Queries
             }
 
             [SecuredOperation(Priority = 1)]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IDataResult<UserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
             {
                 var userId = _httpContextAccessor.HttpContext?.User.Claims

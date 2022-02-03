@@ -24,7 +24,7 @@ namespace Business.Handlers.Languages.Queries
             }
 
             [SecuredOperation(Priority = 1)]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IDataResult<Language>> Handle(GetLanguageQuery request,
                 CancellationToken cancellationToken)
             {

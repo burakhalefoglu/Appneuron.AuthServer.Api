@@ -30,7 +30,7 @@ namespace Business.Handlers.UserClaims.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateUserClaimCommand request, CancellationToken cancellationToken)
             {
                 var userList = request.ClaimId.Select(x => new UserClaim {ClaimId = x, UsersId = request.UserId});

@@ -27,7 +27,7 @@ namespace Business.Handlers.OperationClaims.Queries
 
             [SecuredOperation(Priority = 1)]
             [CacheAspect(10)]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IDataResult<IEnumerable<OperationClaim>>> Handle(GetOperationClaimsQuery request,
                 CancellationToken cancellationToken)
             {

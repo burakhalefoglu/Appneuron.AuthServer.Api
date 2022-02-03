@@ -32,7 +32,7 @@ namespace Business.Handlers.Users.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
             {
                 var userId = _httpContextAccessor.HttpContext?.User.Claims

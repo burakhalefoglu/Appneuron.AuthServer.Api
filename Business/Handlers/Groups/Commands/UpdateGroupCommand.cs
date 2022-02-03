@@ -27,7 +27,7 @@ namespace Business.Handlers.Groups.Commands
 
             [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
             {
                 var isGroupExist = await _groupRepository.GetAsync(g => g.GroupName == request.GroupName);

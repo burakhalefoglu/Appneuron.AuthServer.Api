@@ -40,7 +40,7 @@ namespace Business.Handlers.Authorizations.Commands
             /// <returns></returns>
             [PerformanceAspect(5)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [TransactionScopeAspect]
             public async Task<IResult> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
             {

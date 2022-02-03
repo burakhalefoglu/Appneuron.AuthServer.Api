@@ -40,7 +40,7 @@ namespace Business.Handlers.Authorizations.Queries
                 _mediator = mediator;
             }
 
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IDataResult<AccessToken>> Handle(LoginUserQuery request,
                 CancellationToken cancellationToken)
             {

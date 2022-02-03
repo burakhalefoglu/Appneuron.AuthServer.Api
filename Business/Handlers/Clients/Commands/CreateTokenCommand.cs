@@ -45,7 +45,7 @@ namespace Business.Handlers.Clients.Commands
                 _tokenHelper = tokenHelper;
             }
 
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [ValidationAspect(typeof(CreateTokenValidator), Priority = 1)]
             public async Task<IResult> Handle(CreateTokenCommand request, CancellationToken cancellationToken)
             {
