@@ -31,7 +31,7 @@ namespace Business.Handlers.OperationClaims.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateOperationClaimCommand request, CancellationToken cancellationToken)
             {
-                var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.ObjectId == request.Id);
+                var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.ObjectId == request.Id && u.Status == true);
                 if (isOperationClaimsExits == null) return new ErrorResult(Messages.OperationClaimNotFound);
 
                 isOperationClaimsExits.Alias = request.Alias;

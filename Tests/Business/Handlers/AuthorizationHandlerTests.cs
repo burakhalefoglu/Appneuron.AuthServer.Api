@@ -231,8 +231,8 @@ namespace Tests.Business.Handlers
             };
 
             _userRepository.Setup(x =>
-                    x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(Task.FromResult(registerUser));
+                    x.AnyAsync(It.IsAny<Expression<Func<User, bool>>>()))
+                .ReturnsAsync(true);
 
 
             var result = await _registerUserCommandHandler.Handle(_command, new CancellationToken());

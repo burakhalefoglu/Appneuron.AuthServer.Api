@@ -29,7 +29,7 @@ namespace Business.Handlers.Languages.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteLanguageCommand request, CancellationToken cancellationToken)
             {
-                var languageToDelete = await _languageRepository.GetAsync(p => p.ObjectId == request.Id);
+                var languageToDelete = await _languageRepository.GetAsync(p => p.ObjectId == request.Id && p.Status == true);
                 languageToDelete.Status = false;
                 await _languageRepository.UpdateAsync(languageToDelete,
                     x => x.ObjectId == languageToDelete.ObjectId);

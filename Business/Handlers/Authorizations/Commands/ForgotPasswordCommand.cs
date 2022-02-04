@@ -46,7 +46,7 @@ namespace Business.Handlers.Authorizations.Commands
             {
                 var user = await _userRepository.GetAsync(u => u.Email == request.Email);
 
-                if (user == null)
+                if (user == null || user.Status == false)
                     // if is not email do noting. But return success result to not give database information !!!
                     return new SuccessResult(Messages.SendPassword);
 

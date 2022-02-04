@@ -38,7 +38,7 @@ namespace Business.Handlers.Users.Commands
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var isUserExits = await _userRepository.GetAsync(u => u.ObjectId == userId);
+                var isUserExits = await _userRepository.GetAsync(u => u.ObjectId == userId && u.Status == true);
                 if (isUserExits == null) return new ErrorResult(Messages.UserNotFound);
                 isUserExits.Name = request.FullName;
                 isUserExits.Email = request.Email;

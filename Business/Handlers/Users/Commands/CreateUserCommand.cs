@@ -38,7 +38,7 @@ namespace Business.Handlers.Users.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(CreateUserCommand request, CancellationToken cancellationToken)
             {
-                var userExits = await _userRepository.GetAsync(u => u.Email == request.Email);
+                var userExits = await _userRepository.GetAsync(u => u.Email == request.Email && u.Status == true);
 
                 if (userExits != null)
                     return new ErrorResult(Messages.NameAlreadyExist);

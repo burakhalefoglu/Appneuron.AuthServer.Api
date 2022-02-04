@@ -32,7 +32,7 @@ namespace Business.Handlers.UserProjects.Queries
             public async Task<IDataResult<IEnumerable<UserProject>>> Handle(GetUserProjectsQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<UserProject>>(await _userProjectRepository.GetListAsync());
+                return new SuccessDataResult<IEnumerable<UserProject>>(await _userProjectRepository.GetListAsync(x=> x.Status == true));
             }
         }
     }

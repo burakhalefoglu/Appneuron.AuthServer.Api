@@ -28,7 +28,7 @@ namespace Business.Handlers.UserProjects.Queries
             public async Task<IDataResult<UserProject>> Handle(GetUserProjectQuery request,
                 CancellationToken cancellationToken)
             {
-                var userProject = await _userProjectRepository.GetAsync(p => p.ObjectId == request.Id);
+                var userProject = await _userProjectRepository.GetAsync(p => p.ObjectId == request.Id && p.Status == true);
                 return new SuccessDataResult<UserProject>(userProject);
             }
         }

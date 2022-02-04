@@ -38,7 +38,7 @@ namespace Business.Handlers.Translates.Commands
             public async Task<IResult> Handle(CreateTranslateCommand request, CancellationToken cancellationToken)
             {
                 var isThereTranslateRecord = await _translateRepository
-                    .AnyAsync(u => u.ObjectId == request.LangId && u.Code == request.Code);
+                    .AnyAsync(u => u.ObjectId == request.LangId && u.Code == request.Code && u.Status == true);
 
                 if (isThereTranslateRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);

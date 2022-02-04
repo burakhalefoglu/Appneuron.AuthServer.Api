@@ -31,7 +31,7 @@ namespace Business.Handlers.Translates.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(DeleteTranslateCommand request, CancellationToken cancellationToken)
             {
-                var translateToDelete = await _translateRepository.GetAsync(p => p.ObjectId == request.Id);
+                var translateToDelete = await _translateRepository.GetAsync(p => p.ObjectId == request.Id && p.Status == true);
                 translateToDelete.Status = false;
                 await _translateRepository.UpdateAsync(translateToDelete,
                     x => x.ObjectId == translateToDelete.ObjectId);

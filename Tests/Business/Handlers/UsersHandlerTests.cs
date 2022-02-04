@@ -8,11 +8,13 @@ using AutoMapper;
 using Business.Constants;
 using Business.Handlers.Users.Commands;
 using Business.Handlers.Users.Queries;
+using Business.Internals.Handlers.Users;
 using Core.Entities.Concrete;
 using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using Tests.Helpers;
@@ -23,6 +25,7 @@ using static Business.Handlers.Users.Commands.UserChangePasswordCommand;
 using static Business.Handlers.Users.Queries.GetUserLookupQuery;
 using static Business.Handlers.Users.Queries.GetUserQuery;
 using static Business.Handlers.Users.Queries.GetUsersQuery;
+using static Business.Internals.Handlers.Users.GetUserInternalQuery;
 
 
 namespace Tests.Business.Handlers
@@ -47,6 +50,7 @@ namespace Tests.Business.Handlers
             _getUserQueryHandler = new GetUserQueryHandler(_userRepository.Object, _mapper.Object,
                 _httpContextAccessor.Object);
             _getUsersQueryHandler = new GetUsersQueryHandler(_userRepository.Object, _mapper.Object);
+            _getUserInternalQueryHandler = new GetUserInternalQueryHandler(_userRepository.Object);
         }
 
         private Mock<IUserRepository> _userRepository;
@@ -61,6 +65,7 @@ namespace Tests.Business.Handlers
         private GetUserQueryHandler _getUserQueryHandler;
         private GetUsersQueryHandler _getUsersQueryHandler;
 
+        private GetUserInternalQueryHandler _getUserInternalQueryHandler;
         [Test]
         public async Task User_CreateUser_Success()
         {
@@ -310,6 +315,24 @@ namespace Tests.Business.Handlers
             result.Success.Should().BeTrue();
         }
 
+        [Test]
+        public async Task User_GetUserInternalQuery_Success()
+        {
+            var query = new GetUserInternalQuery
+            {
+                Id = ObjectId.GenerateNewId().ToString()
+            };
+
+            _httpContextAccessor.SetupGet(x =>
+                x.HttpContext).Returns(new DefaultHttpContext());
+
+            _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
+                .ReturnsAsync(new User());
+
+            var result = await _getUserInternalQueryHandler.Handle(query, new CancellationToken());
+            result.Success.Should().BeTrue();
+        }
+        
         [Test]
         public async Task User_GetUsers_Success()
         {

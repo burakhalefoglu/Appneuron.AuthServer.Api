@@ -28,7 +28,7 @@ namespace Business.Handlers.Languages.Queries
             public async Task<IDataResult<Language>> Handle(GetLanguageQuery request,
                 CancellationToken cancellationToken)
             {
-                var language = await _languageRepository.GetAsync(p => p.ObjectId == request.Id);
+                var language = await _languageRepository.GetAsync(p => p.ObjectId == request.Id && p.Status == true);
                 return new SuccessDataResult<Language>(language);
             }
         }

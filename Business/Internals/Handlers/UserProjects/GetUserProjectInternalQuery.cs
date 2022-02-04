@@ -5,27 +5,25 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 
-namespace Business.Fakes.Handlers.UserProjects
+namespace Business.Internals.Handlers.UserProjects
 {
     public class GetUserProjectInternalQuery : IRequest<IDataResult<UserProject>>
     {
         public string ProjectKey { get; set; }
 
-        public class GetUserProjectQueryHandler : IRequestHandler<GetUserProjectInternalQuery, IDataResult<UserProject>>
+        public class GetUserProjectInternalQueryHandler : IRequestHandler<GetUserProjectInternalQuery, IDataResult<UserProject>>
         {
-            private readonly IMediator _mediator;
             private readonly IUserProjectRepository _userProjectRepository;
 
-            public GetUserProjectQueryHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
+            public GetUserProjectInternalQueryHandler(IUserProjectRepository userProjectRepository)
             {
                 _userProjectRepository = userProjectRepository;
-                _mediator = mediator;
             }
 
             public async Task<IDataResult<UserProject>> Handle(GetUserProjectInternalQuery request,
                 CancellationToken cancellationToken)
             {
-                var userProject = await _userProjectRepository.GetAsync(p => p.ProjectKey == request.ProjectKey);
+                var userProject = await _userProjectRepository.GetAsync(p => p.ProjectKey == request.ProjectKey && p.Status == true);
                 return new SuccessDataResult<UserProject>(userProject);
             }
         }

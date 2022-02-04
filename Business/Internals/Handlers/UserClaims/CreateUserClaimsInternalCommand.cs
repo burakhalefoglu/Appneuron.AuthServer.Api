@@ -35,7 +35,7 @@ namespace Business.Internals.Handlers.UserClaims
                 {
                     var result =
                         await _userClaimsRepository.AnyAsync(x =>
-                            x.UsersId == request.UserId && x.ClaimId == claim.ObjectId);
+                            x.UsersId == request.UserId && x.ClaimId == claim.ObjectId && x.Status == true);
 
                     if (!result)
                         await _userClaimsRepository.AddAsync(new UserClaim

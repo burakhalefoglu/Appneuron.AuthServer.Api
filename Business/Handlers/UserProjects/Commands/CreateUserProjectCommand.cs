@@ -37,9 +37,9 @@ namespace Business.Handlers.UserProjects.Commands
             public async Task<IResult> Handle(CreateUserProjectCommand request, CancellationToken cancellationToken)
             {
                 var isThereUserProjectRecord = await _userProjectRepository
-                    .GetAsync(u => u.ObjectId == request.UserId);
+                    .AnyAsync(u => u.ObjectId == request.UserId && u.Status == true);
 
-                if (isThereUserProjectRecord != null)
+                if (isThereUserProjectRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedUserProject = new UserProject

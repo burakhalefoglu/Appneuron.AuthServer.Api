@@ -32,7 +32,7 @@ namespace Business.Handlers.Groups.Queries
             public async Task<IDataResult<IEnumerable<Group>>> Handle(GetGroupsQuery request,
                 CancellationToken cancellationToken)
             {
-                var list = await _groupRepository.GetListAsync();
+                var list = await _groupRepository.GetListAsync(x=> x.Status == true);
                 return new SuccessDataResult<IEnumerable<Group>>(list.ToList());
             }
         }

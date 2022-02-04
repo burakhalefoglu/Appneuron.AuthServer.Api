@@ -43,7 +43,7 @@ namespace Business.Handlers.UserProjects.Queries
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var result = await
-                    _userProjectRepository.GetListAsync(p => p.UserId == userId);
+                    _userProjectRepository.GetListAsync(p => p.UserId == userId && p.Status == true);
                 return new SuccessDataResult<IEnumerable<UserProject>>(result);
             }
         }

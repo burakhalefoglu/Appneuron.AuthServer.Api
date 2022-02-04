@@ -41,7 +41,7 @@ namespace Business.Handlers.Groups.Queries
 
                 return new SuccessDataResult<IEnumerable<Group>>(await
                     _groupRepository.GetListAsync(x
-                        => x.GroupName.ToLower().Contains(request.GroupName.ToLower())));
+                        => x.GroupName.ToLower().Contains(request.GroupName.ToLower()) && x.Status == true));
             }
 
             private static IResult StringLengthMustBeGreaterThanThree(string searchString)

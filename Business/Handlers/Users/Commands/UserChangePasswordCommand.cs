@@ -37,7 +37,7 @@ namespace Business.Handlers.Users.Commands
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var user = await _userRepository.GetAsync(u => u.ObjectId == userId);
+                var user = await _userRepository.GetAsync(u => u.ObjectId == userId && u.Status == true);
                 if (user == null)
                     return new ErrorResult(Messages.UserNotFound);
 

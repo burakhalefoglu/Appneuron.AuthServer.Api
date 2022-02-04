@@ -35,7 +35,7 @@ namespace Business.Handlers.Translates.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateTranslateCommand request, CancellationToken cancellationToken)
             {
-                var isThereTranslateRecord = await _translateRepository.GetAsync(u => u.ObjectId == request.Id);
+                var isThereTranslateRecord = await _translateRepository.GetAsync(u => u.ObjectId == request.Id && u.Status == true);
 
                 isThereTranslateRecord.Value = request.Value;
                 isThereTranslateRecord.Code = request.Code;

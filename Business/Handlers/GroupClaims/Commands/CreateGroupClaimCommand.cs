@@ -54,13 +54,13 @@ namespace Business.Handlers.GroupClaims.Commands
             private async Task<bool> IsClaimNotExists(string claimName)
             {
                 return await _operationClaimRepository.GetAsync(x =>
-                    x.Name == claimName) is null;
+                    x.Name == claimName && x.Status == true) is null;
             }
 
             private async Task<bool> IsGroupClaimExist(string claimId, string groupId)
             {
                 return !(await _groupClaimRepository.GetAsync(g => g.ClaimId == claimId
-                                                                   && g.GroupId == groupId) is null);
+                                                                   && g.GroupId == groupId && g.Status == true) is null);
             }
         }
     }

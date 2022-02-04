@@ -53,7 +53,7 @@ namespace Business.Handlers.Authorizations.Commands
             [TransactionScopeAspect]
             public async Task<IResult> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
             {
-                var userExits = await _userRepository.AnyAsync(u => u.Email == request.Email);
+                var userExits = await _userRepository.AnyAsync(u => u.Email == request.Email && u.Status == true);
 
                 if (userExits)
                     return new ErrorResult(Messages.DefaultError);

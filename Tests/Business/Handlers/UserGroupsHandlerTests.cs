@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
+using Business.Constants;
 using Business.Handlers.UserGroups.Commands;
 using Business.Handlers.UserGroups.Queries;
+using Business.Internals.Handlers.UserGroups.Commands;
+using Business.Internals.Handlers.UserGroups.Queries;
+using Business.Internals.Handlers.Users;
 using Core.Entities.Concrete;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using FluentAssertions;
+using MediatR;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.UserGroups.Commands.CreateUserGroupCommand;
@@ -15,6 +21,8 @@ using static Business.Handlers.UserGroups.Commands.DeleteUserGroupCommand;
 using static Business.Handlers.UserGroups.Commands.UpdateUserGroupCommand;
 using static Business.Handlers.UserGroups.Queries.GetUserGroupsQuery;
 using static Business.Handlers.UserGroups.Queries.GetUserGroupQuery;
+using static Business.Internals.Handlers.UserGroups.Commands.CreateUserGroupInternalCommand;
+using static Business.Internals.Handlers.UserGroups.Queries.GetUserGroupInternalQuery;
 
 
 namespace Tests.Business.Handlers
@@ -25,26 +33,33 @@ namespace Tests.Business.Handlers
         [SetUp]
         public void Setup()
         {
+            _mediator = new Mock<IMediator>();
             _userGroupRepository = new Mock<IUserGroupRepository>();
             _createUserGroupCommandHandler = new CreateUserGroupCommandHandler(_userGroupRepository.Object);
-            _updateUserGroupCommandHandler = new UpdateUserGroupCommandHandler(_userGroupRepository.Object);
+            _updateUserGroupCommandHandler = new UpdateUserGroupCommandHandler(_userGroupRepository.Object, _mediator.Object);
             _deleteUserGroupCommandHandler = new DeleteUserGroupCommandHandler(_userGroupRepository.Object);
             _getUserGroupsQueryHandler = new GetUserGroupsQueryHandler(_userGroupRepository.Object);
             _getUserGroupQueryHandler = new GetUserGroupQueryHandler(_userGroupRepository.Object);
+            _createUserGroupInternalCommandHandler = new CreateUserGroupInternalCommandHandler(_userGroupRepository.Object);
+            _getUserGroupInternalQueryHandler = new GetUserGroupInternalQueryHandler(_userGroupRepository.Object);
         }
 
+        private Mock<IMediator> _mediator;
         private Mock<IUserGroupRepository> _userGroupRepository;
         private GetUserGroupsQueryHandler _getUserGroupsQueryHandler;
         private CreateUserGroupCommandHandler _createUserGroupCommandHandler;
         private UpdateUserGroupCommandHandler _updateUserGroupCommandHandler;
         private DeleteUserGroupCommandHandler _deleteUserGroupCommandHandler;
         private GetUserGroupQueryHandler _getUserGroupQueryHandler;
+        private CreateUserGroupInternalCommandHandler _createUserGroupInternalCommandHandler;
+        private GetUserGroupInternalQueryHandler _getUserGroupInternalQueryHandler;
+        
 
         [Test]
         public void Handler_GetUserGroups_Success()
         {
-            var userGroup = new UserGroup {GroupId = "test", UserId = "test"};
-            _userGroupRepository.Setup(x => x.GetListAsync(null))
+            var userGroup = new UserGroup {GroupId = "test", UserId = "test",Status = true};
+            _userGroupRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<UserGroup,bool>>>()))
                 .ReturnsAsync(new List<UserGroup> {userGroup}.AsQueryable());
 
             var result = _getUserGroupsQueryHandler.Handle(new GetUserGroupsQuery(), new CancellationToken()).Result;
@@ -61,9 +76,29 @@ namespace Tests.Business.Handlers
             };
 
             _userGroupRepository.Setup(x =>
-                x.GetAsync(It.IsAny<Expression<Func<UserGroup, bool>>>())).ReturnsAsync(new UserGroup());
+                x.GetAsync(It.IsAny<Expression<Func<UserGroup, bool>>>())).ReturnsAsync(new UserGroup{
+                Status = true
+                });
 
             var result = _getUserGroupQueryHandler.Handle(query, new CancellationToken()).Result;
+            result.Success.Should().BeTrue();
+        }
+
+
+        [Test]
+        public void Handler_GetUserGroupInternal_Success()
+        {
+            var query = new GetUserGroupInternalQuery
+            {
+                UserId = "test_user_ıd"
+            };
+
+            _userGroupRepository.Setup(x =>
+                x.GetAsync(It.IsAny<Expression<Func<UserGroup, bool>>>())).ReturnsAsync(new UserGroup{
+                Status = true
+            });
+
+            var result = _getUserGroupInternalQueryHandler.Handle(query, new CancellationToken()).Result;
             result.Success.Should().BeTrue();
         }
 
@@ -76,10 +111,29 @@ namespace Tests.Business.Handlers
                 UserId = "test_user_ıd",
                 GroupId = "test_group_ıd"
             };
+            _userGroupRepository.Setup(x => 
+                x.AnyAsync(It.IsAny<Expression<Func<UserGroup,bool>>>())).ReturnsAsync(false);
 
             _userGroupRepository.Setup(x => x.Add(It.IsAny<UserGroup>()));
 
             var result = _createUserGroupCommandHandler.Handle(createUserCommand, new CancellationToken()).Result;
+            result.Success.Should().BeTrue();
+        }
+
+        [Test]
+        public void Handler_CreateUserGroupInternalCommand_Success()
+        {
+            var createUserCommand = new CreateUserGroupInternalCommand()
+            {
+                UserId = "test_user_ıd",
+                GroupId = "test_group_ıd"
+            };
+            _userGroupRepository.Setup(x => 
+                x.AnyAsync(It.IsAny<Expression<Func<UserGroup,bool>>>())).ReturnsAsync(false);
+                
+            _userGroupRepository.Setup(x => x.Add(It.IsAny<UserGroup>()));
+
+            var result = _createUserGroupInternalCommandHandler.Handle(createUserCommand, new CancellationToken()).Result;
             result.Success.Should().BeTrue();
         }
 
@@ -91,16 +145,37 @@ namespace Tests.Business.Handlers
                 GroupId = new[] {"test_group_ıd"},
                 UserId = "test_user_ıd"
             };
-
+            _mediator.Setup(x => x.Send(It.IsAny<GetUserInternalQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new SuccessDataResult<User>(new User()));
+            
             _userGroupRepository.Setup(x => x
                 .AddManyAsync(It.IsAny<IEnumerable<UserGroup>>()));
-
 
             var result = _updateUserGroupCommandHandler.Handle(updateUserCommand, new CancellationToken()).Result;
 
             result.Success.Should().BeTrue();
         }
 
+        [Test]
+        public void Handler_UpdateUserGroup_UserNotFound()
+        {
+            var updateUserCommand = new UpdateUserGroupCommand
+            {
+                GroupId = new[] {"test_group_ıd"},
+                UserId = "test_user_ıd"
+            };
+            _mediator.Setup(x => x.Send(It.IsAny<GetUserInternalQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new SuccessDataResult<User>((User)null));
+            
+            _userGroupRepository.Setup(x => x
+                .AddManyAsync(It.IsAny<IEnumerable<UserGroup>>()));
+
+            var result = _updateUserGroupCommandHandler.Handle(updateUserCommand, new CancellationToken()).Result;
+
+            result.Success.Should().BeFalse();
+            result.Message.Should().Be(Messages.UserNotFound);
+        }
+        
         [Test]
         public void Handler_DeleteUser_Success()
         {

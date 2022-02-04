@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.OperationClaims.Commands;
 using Business.Handlers.OperationClaims.Queries;
+using Business.Internals.Handlers.OperationClaims;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using FluentAssertions;
+using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.OperationClaims.Commands.CreateOperationClaimCommand;
@@ -18,6 +20,7 @@ using static Business.Handlers.OperationClaims.Commands.UpdateOperationClaimComm
 using static Business.Handlers.OperationClaims.Queries.GetOperationClaimLookupQuery;
 using static Business.Handlers.OperationClaims.Queries.GetOperationClaimQuery;
 using static Business.Handlers.OperationClaims.Queries.GetOperationClaimsQuery;
+using static Business.Internals.Handlers.OperationClaims.GetOperationClaimsByIdInternalQuery;
 
 namespace Tests.Business.Handlers
 {
@@ -39,6 +42,8 @@ namespace Tests.Business.Handlers
                 new GetOperationClaimLookupQueryHandler(_operationClaimRepository.Object);
             _getOperationClaimQueryHandler = new GetOperationClaimQueryHandler(_operationClaimRepository.Object);
             _getOperationClaimsQueryHandler = new GetOperationClaimsQueryHandler(_operationClaimRepository.Object);
+            _getOperationClaimsByIdInternalQueryHandler =
+                new GetOperationClaimsByIdInternalQueryHandler(_operationClaimRepository.Object);
         }
 
         private Mock<IOperationClaimRepository> _operationClaimRepository;
@@ -50,6 +55,8 @@ namespace Tests.Business.Handlers
         private GetOperationClaimLookupQueryHandler _getOperationClaimLookupQueryHandler;
         private GetOperationClaimQueryHandler _getOperationClaimQueryHandler;
         private GetOperationClaimsQueryHandler _getOperationClaimsQueryHandler;
+
+        private GetOperationClaimsByIdInternalQueryHandler _getOperationClaimsByIdInternalQueryHandler;
 
         [Test]
         public async Task OperationClaim_Create_ClaimExists()
@@ -246,6 +253,31 @@ namespace Tests.Business.Handlers
             result.Data.Name.Should().Be("Test");
         }
 
+
+
+        [Test]
+        public async Task OperationClaim_GetOperationClaimByIdInternalQuery_Success()
+        {
+            var command = new GetOperationClaimsByIdInternalQuery
+            {
+                Id = ObjectId.GenerateNewId().ToString()
+            };
+
+            _operationClaimRepository.Setup(x =>
+                    x.GetAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
+                .Returns(Task.FromResult(
+                    new OperationClaim
+                    {
+                        Alias = "Test",
+                        Description = "Test",
+                        Name = "Test"
+                    }));
+
+            var result = await _getOperationClaimsByIdInternalQueryHandler.Handle(command, new CancellationToken());
+            result.Success.Should().BeTrue();
+            result.Data.Name.Should().Be("Test");
+        }
+        
         [Test]
         public async Task OperationClaim_GetOperationClaimsQuery_Success()
         {

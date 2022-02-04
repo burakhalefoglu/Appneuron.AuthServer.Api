@@ -34,7 +34,7 @@ namespace Business.Handlers.UserProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateUserProjectCommand request, CancellationToken cancellationToken)
             {
-                var isThereUserProjectRecord = await _userProjectRepository.GetAsync(u => u.ObjectId == request.Id);
+                var isThereUserProjectRecord = await _userProjectRepository.GetAsync(u => u.ObjectId == request.Id && u.Status == true);
 
                 if (isThereUserProjectRecord == null) return new ErrorResult(Messages.UserProjectNotFound);
 

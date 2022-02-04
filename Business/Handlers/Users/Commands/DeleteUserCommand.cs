@@ -37,7 +37,7 @@ namespace Business.Handlers.Users.Commands
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var userToDelete = await _userRepository.GetAsync(p => p.ObjectId == userId);
+                var userToDelete = await _userRepository.GetAsync(p => p.ObjectId == userId && p.Status == true);
                 if (userToDelete == null) return new ErrorResult(Messages.UserNotFound);
                 userToDelete.Status = false;
 

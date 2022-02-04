@@ -15,20 +15,18 @@ namespace Business.Internals.Handlers.UserProjects
         public class GetUserProjectsInternalQueryHandler : IRequestHandler<GetUserProjectsInternalQuery,
             IDataResult<IEnumerable<UserProject>>>
         {
-            private readonly IMediator _mediator;
             private readonly IUserProjectRepository _userProjectRepository;
 
-            public GetUserProjectsInternalQueryHandler(IUserProjectRepository userProjectRepository, IMediator mediator)
+            public GetUserProjectsInternalQueryHandler(IUserProjectRepository userProjectRepository)
             {
                 _userProjectRepository = userProjectRepository;
-                _mediator = mediator;
             }
 
             public async Task<IDataResult<IEnumerable<UserProject>>> Handle(GetUserProjectsInternalQuery request,
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<UserProject>>(
-                    await _userProjectRepository.GetListAsync(p => p.UserId == request.UserId));
+                    await _userProjectRepository.GetListAsync(p => p.UserId == request.UserId && p.Status == true));
             }
         }
     }

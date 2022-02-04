@@ -20,15 +20,12 @@ namespace Business.Internals.Handlers.Groups.Queries
 
             public GetGroupByNameInternalQueryHandler(IGroupRepository groupRepository)
             {
-                _groupRepository = groupRepository;
+                _groupRepository = groupRepository; 
             }
-
-            [SecuredOperation(Priority = 1)]
-            [LogAspect(typeof(LogstashLogger))]
             public async Task<IDataResult<Group>> Handle(GetGroupByNameInternalQuery request, CancellationToken cancellationToken)
             {
                 var group = await _groupRepository
-                    .GetAsync(x => x.GroupName == request.GroupName);
+                    .GetAsync(x => x.GroupName == request.GroupName && x.Status == true);
                 return new SuccessDataResult<Group>(group);
             }
         }

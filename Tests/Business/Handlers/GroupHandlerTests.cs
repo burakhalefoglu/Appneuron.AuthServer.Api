@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.Groups.Commands;
 using Business.Handlers.Groups.Queries;
+using Business.Internals.Handlers.Groups.Queries;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using FluentAssertions;
@@ -18,6 +19,7 @@ using static Business.Handlers.Groups.Commands.UpdateGroupCommand;
 using static Business.Handlers.Groups.Queries.SearchGroupsByNameQuery;
 using static Business.Handlers.Groups.Queries.GetGroupQuery;
 using static Business.Handlers.Groups.Queries.GetGroupsQuery;
+using static Business.Internals.Handlers.Groups.Queries.GetGroupByNameInternalQuery;
 
 namespace Tests.Business.Handlers
 {
@@ -34,6 +36,8 @@ namespace Tests.Business.Handlers
             _getGroupQueryHandler = new GetGroupQueryHandler(_groupRepository.Object);
             _getGroupsQueryHandler = new GetGroupsQueryHandler(_groupRepository.Object);
             _searchGroupsByNameQueryHandler = new SearchGroupsByNameQueryHandler(_groupRepository.Object);
+            _getGroupByNameInternalQueryHandler = new GetGroupByNameInternalQueryHandler(_groupRepository.Object);
+            
         }
 
         private Mock<IGroupRepository> _groupRepository;
@@ -44,7 +48,7 @@ namespace Tests.Business.Handlers
         private GetGroupQueryHandler _getGroupQueryHandler;
         private GetGroupsQueryHandler _getGroupsQueryHandler;
         private SearchGroupsByNameQueryHandler _searchGroupsByNameQueryHandler;
-
+        private GetGroupByNameInternalQueryHandler _getGroupByNameInternalQueryHandler; 
         [Test]
         public async Task Group_CreateGroup_Added()
         {
@@ -244,6 +248,28 @@ namespace Tests.Business.Handlers
 
             result.Success.Should().BeTrue();
             result.Data.Count().Should().BeGreaterThan(1);
+        }
+        
+        [Test]
+        public async Task Group_GetGroupByNameInternalQuery_Success()
+        {
+            var groupCommand = new GetGroupByNameInternalQuery
+            {
+                GroupName = "Test"
+            };
+
+            _groupRepository.Setup(x =>
+                    x.GetAsync(It.IsAny<Expression<Func<Group, bool>>>()))
+                .ReturnsAsync(new Group
+                {
+                    GroupName = "Test"
+                    
+                });
+
+            var result = await _getGroupByNameInternalQueryHandler.Handle(groupCommand, new CancellationToken());
+
+            result.Success.Should().BeTrue();
+            result.Data.GroupName.Should().Be("Test");
         }
     }
 }

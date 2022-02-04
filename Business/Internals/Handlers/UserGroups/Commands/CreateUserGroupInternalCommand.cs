@@ -25,12 +25,13 @@ namespace Business.Internals.Handlers.UserGroups.Commands
             {
                 _userGroupRepository = userGroupRepository;
             }
-
-            [SecuredOperation(Priority = 1)]
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(LogstashLogger))]
+            
             public async Task<IResult> Handle(CreateUserGroupInternalCommand request, CancellationToken cancellationToken)
             {
+                var userGroupIsExist = await _userGroupRepository.AnyAsync(x => x.UserId == request.UserId && x.Status == true);
+                if (userGroupIsExist)
+                    return new ErrorResult(Messages.UserGroupNotFound);
+                
                 var userGroup = new UserGroup
                 {
                     GroupId = request.GroupId,

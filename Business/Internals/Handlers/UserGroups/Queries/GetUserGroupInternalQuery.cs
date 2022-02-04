@@ -24,14 +24,10 @@ namespace Business.Internals.Handlers.UserGroups.Queries
             {
                 _userGroupRepository = userGroupRepository;
             }
-
-            [SecuredOperation(Priority = 1)]
-            [CacheAspect(10)]
-            [LogAspect(typeof(LogstashLogger))]
             public async Task<IDataResult<UserGroup>> Handle(GetUserGroupInternalQuery request,
                 CancellationToken cancellationToken)
             {
-                var userGroup = await _userGroupRepository.GetAsync(p => p.UserId == request.UserId);
+                var userGroup = await _userGroupRepository.GetAsync(p => p.UserId == request.UserId && p.Status == true);
                 return new SuccessDataResult<UserGroup>(userGroup);
             }
         }

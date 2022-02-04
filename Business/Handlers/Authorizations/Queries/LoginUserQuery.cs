@@ -46,7 +46,7 @@ namespace Business.Handlers.Authorizations.Queries
             {
                 var user = await _userRepository.GetAsync(u => u.Email == request.Email);
                 // Please return just default error to not give database information !!!
-                if (user == null)
+                if (user is null || user.Status == false)
                     return new ErrorDataResult<AccessToken>(Messages.DefaultError);
 
                 // Please return just default error to not give database information !!!

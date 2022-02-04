@@ -15,13 +15,13 @@ namespace Business.Internals.Handlers.GroupClaims
     {
         public string GroupId { get; set; }
 
-        public class GetGroupClaimsLookupByGroupIdQueryHandler : IRequestHandler<
+        public class GetGroupClaimsLookupByGroupIdInternalQueryHandler : IRequestHandler<
             GetGroupClaimsLookupByGroupIdInternalQuery, IDataResult<IEnumerable<SelectionItem>>>
         {
             private readonly IGroupClaimRepository _groupClaimRepository;
             private readonly IMediator _mediator;
 
-            public GetGroupClaimsLookupByGroupIdQueryHandler(IGroupClaimRepository groupClaimRepository,
+            public GetGroupClaimsLookupByGroupIdInternalQueryHandler(IGroupClaimRepository groupClaimRepository,
                 IMediator mediator)
             {
                 _mediator = mediator;
@@ -32,7 +32,7 @@ namespace Business.Internals.Handlers.GroupClaims
                 GetGroupClaimsLookupByGroupIdInternalQuery request, CancellationToken cancellationToken)
             {
                 var oClaims = new List<SelectionItem>();
-                _groupClaimRepository.GetListAsync(x => x.GroupId == request.GroupId)
+                _groupClaimRepository.GetListAsync(x => x.GroupId == request.GroupId && x.Status == true)
                     .Result.ToList().ForEach(Action);
 
                 async void Action(GroupClaim x)

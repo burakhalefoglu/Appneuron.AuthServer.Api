@@ -31,6 +31,9 @@ namespace Business.Handlers.UserGroups.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(CreateUserGroupCommand request, CancellationToken cancellationToken)
             {
+                var userGroupIsExist = await _userGroupRepository.AnyAsync(x => x.UserId == request.UserId && x.Status == true);
+                if (userGroupIsExist)
+                    return new ErrorResult(Messages.UserGroupNotFound);
                 var userGroup = new UserGroup
                 {
                     GroupId = request.GroupId,

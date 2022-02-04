@@ -30,7 +30,7 @@ namespace Business.Handlers.Groups.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
             {
-                var isGroupExist = await _groupRepository.GetAsync(g => g.GroupName == request.GroupName);
+                var isGroupExist = await _groupRepository.GetAsync(g => g.GroupName == request.GroupName && g.Status == true);
 
                 if (isGroupExist == null) return new ErrorResult(Messages.GroupNotFound);
 

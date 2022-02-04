@@ -30,7 +30,7 @@ namespace Business.Handlers.GroupClaims.Queries
             public async Task<IDataResult<IEnumerable<GroupClaim>>> Handle(GetGroupClaimsQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<GroupClaim>>(await _groupClaimRepository.GetListAsync());
+                return new SuccessDataResult<IEnumerable<GroupClaim>>(await _groupClaimRepository.GetListAsync(x=> x.Status == true));
             }
         }
     }

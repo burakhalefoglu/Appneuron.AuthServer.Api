@@ -5,15 +5,18 @@ using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.GroupClaims.Commands;
 using Business.Handlers.GroupClaims.Queries;
+using Business.Internals.Handlers.GroupClaims;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using FluentAssertions;
+using MediatR;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.GroupClaims.Commands.CreateGroupClaimCommand;
 using static Business.Handlers.GroupClaims.Commands.DeleteGroupClaimCommand;
 using static Business.Handlers.GroupClaims.Commands.UpdateGroupClaimCommand;
 using static Business.Handlers.GroupClaims.Queries.GetGroupClaimQuery;
+using static Business.Internals.Handlers.GroupClaims.GetGroupClaimsLookupByGroupIdInternalQuery;
 
 namespace Tests.Business.Handlers
 {
@@ -23,6 +26,7 @@ namespace Tests.Business.Handlers
         [SetUp]
         public void Setup()
         {
+            _mediator = new Mock<IMediator>();
             _groupClaimRepository = new Mock<IGroupClaimRepository>();
             _operationClaimRepository = new Mock<IOperationClaimRepository>();
 
@@ -33,7 +37,11 @@ namespace Tests.Business.Handlers
                 new UpdateGroupClaimCommandHandler(_groupClaimRepository.Object, _operationClaimRepository.Object);
 
             _getGroupClaimQueryHandler = new GetGroupClaimQueryHandler(_groupClaimRepository.Object);
+            _getGroupClaimsLookupByGroupIdInternalQueryHandler =
+                new GetGroupClaimsLookupByGroupIdInternalQueryHandler(_groupClaimRepository.Object, _mediator.Object);
         }
+
+        private Mock<IMediator> _mediator;
 
         private Mock<IGroupClaimRepository> _groupClaimRepository;
         private Mock<IOperationClaimRepository> _operationClaimRepository;
@@ -43,7 +51,7 @@ namespace Tests.Business.Handlers
         private UpdateGroupClaimCommandHandler _updateGroupClaimCommandHandler;
 
         private GetGroupClaimQueryHandler _getGroupClaimQueryHandler;
-
+        private GetGroupClaimsLookupByGroupIdInternalQueryHandler _getGroupClaimsLookupByGroupIdInternalQueryHandler;
         [Test]
         public async Task GroupClaim_CreateGroupClaim_OperationClaimNotFound()
         {
@@ -259,6 +267,27 @@ namespace Tests.Business.Handlers
             var result = await _getGroupClaimQueryHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Data.ClaimId.Should().Be("test");
+        }
+        
+        
+        [Test]
+        public async Task GroupClaim_GetGroupClaimsLookupByGroupIdInternal_Success()
+        {
+            var command = new GetGroupClaimsLookupByGroupIdInternalQuery
+            {
+                GroupId = "107f1f77bcf86cd799439011"
+            };
+
+            _groupClaimRepository.Setup(x => x.GetAsync(
+                    It.IsAny<Expression<Func<GroupClaim, bool>>>()))
+                .Returns(Task.FromResult(new GroupClaim
+                {
+                    ClaimId = "507f1f77bcf86cd799439011",
+                    GroupId = "107f1f77bcf86cd799439011"
+                }));
+
+            var result = await _getGroupClaimsLookupByGroupIdInternalQueryHandler.Handle(command, new CancellationToken());
+            result.Success.Should().BeTrue();
         }
     }
 }

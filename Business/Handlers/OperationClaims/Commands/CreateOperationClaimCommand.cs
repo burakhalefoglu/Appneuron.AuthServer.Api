@@ -44,7 +44,7 @@ namespace Business.Handlers.OperationClaims.Commands
             private async Task<bool> IsClaimExists(string claimName)
             {
                 return await _operationClaimRepository.GetAsync(x
-                    => x.Name == claimName) is null;
+                    => x.Name == claimName && x.Status == true) is null;
             }
         }
     }

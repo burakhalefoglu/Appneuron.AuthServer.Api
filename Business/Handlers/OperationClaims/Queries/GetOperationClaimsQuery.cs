@@ -32,7 +32,7 @@ namespace Business.Handlers.OperationClaims.Queries
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<OperationClaim>>(
-                    await _operationClaimRepository.GetListAsync());
+                    await _operationClaimRepository.GetListAsync(x=> x.Status == true));
             }
         }
     }

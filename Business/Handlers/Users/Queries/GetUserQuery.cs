@@ -36,7 +36,7 @@ namespace Business.Handlers.Users.Queries
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var user = await _userRepository.GetAsync(p => p.ObjectId == userId);
+                var user = await _userRepository.GetAsync(p => p.ObjectId == userId && p.Status == true);
                 var userDto = _mapper.Map<UserDto>(user);
                 return new SuccessDataResult<UserDto>(userDto);
             }

@@ -29,7 +29,7 @@ namespace Business.Handlers.GroupClaims.Queries
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<GroupClaim>(
-                    await _groupClaimRepository.GetAsync(x => x.ObjectId == request.Id));
+                    await _groupClaimRepository.GetAsync(x => x.ObjectId == request.Id && x.Status == true));
             }
         }
     }

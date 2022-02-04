@@ -14,21 +14,18 @@ namespace Business.Internals.Handlers.OperationClaims
         public class GetOperationClaimsByIdInternalQueryHandler : IRequestHandler<GetOperationClaimsByIdInternalQuery,
             IDataResult<OperationClaim>>
         {
-            private readonly IMediator _mediator;
             private readonly IOperationClaimRepository _operationClaimRepository;
 
-            public GetOperationClaimsByIdInternalQueryHandler(IOperationClaimRepository operationClaimRepository,
-                IMediator mediator)
+            public GetOperationClaimsByIdInternalQueryHandler(IOperationClaimRepository operationClaimRepository)
             {
                 _operationClaimRepository = operationClaimRepository;
-                _mediator = mediator;
             }
 
             public async Task<IDataResult<OperationClaim>> Handle(GetOperationClaimsByIdInternalQuery request,
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<OperationClaim>(
-                    await _operationClaimRepository.GetAsync(x => x.ObjectId == request.Id));
+                    await _operationClaimRepository.GetAsync(x => x.ObjectId == request.Id && x.Status == true));
             }
         }
     }

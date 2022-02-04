@@ -30,7 +30,7 @@ namespace Business.Handlers.OperationClaims.Queries
             public async Task<IDataResult<IEnumerable<SelectionItem>>> Handle(GetOperationClaimLookupQuery request,
                 CancellationToken cancellationToken)
             {
-                var list = await _operationClaimRepository.GetListAsync();
+                var list = await _operationClaimRepository.GetListAsync(x=> x.Status == true);
                 if (list == null)
                     return new ErrorDataResult
                         <IEnumerable<SelectionItem>>(Messages.OperationClaimNotFound);

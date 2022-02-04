@@ -34,7 +34,7 @@ namespace Business.Handlers.Languages.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(CreateLanguageCommand request, CancellationToken cancellationToken)
             {
-                var isThereLanguageRecord = await _languageRepository.AnyAsync(u => u.Name == request.Name);
+                var isThereLanguageRecord = await _languageRepository.AnyAsync(u => u.Name == request.Name && u.Status == true);
 
                 if (isThereLanguageRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);

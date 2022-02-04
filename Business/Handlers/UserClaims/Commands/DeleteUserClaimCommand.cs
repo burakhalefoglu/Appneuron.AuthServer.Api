@@ -29,7 +29,7 @@ namespace Business.Handlers.UserClaims.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(DeleteUserClaimCommand request, CancellationToken cancellationToken)
             {
-                var entityToDelete = await _userClaimRepository.GetAsync(x => x.UsersId == request.Id);
+                var entityToDelete = await _userClaimRepository.GetAsync(x => x.UsersId == request.Id && x.Status == true);
                 if (entityToDelete == null) return new ErrorResult(Messages.UserClaimNotFound);
                 entityToDelete.Status = false;
                 await _userClaimRepository.UpdateAsync(entityToDelete, x => x.UsersId == entityToDelete.UsersId);
