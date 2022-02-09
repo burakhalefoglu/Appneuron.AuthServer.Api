@@ -14,8 +14,8 @@ namespace Business.Internals.Handlers.UserGroups.Commands
 {
     public class CreateUserGroupInternalCommand : IRequest<IResult>
     {
-        public string GroupId { get; set; }
-        public string UserId { get; set; }
+        public long GroupId { get; set; }
+        public long UserId { get; set; }
 
         public class CreateUserGroupInternalCommandHandler : IRequestHandler<CreateUserGroupInternalCommand, IResult>
         {
@@ -28,14 +28,14 @@ namespace Business.Internals.Handlers.UserGroups.Commands
             
             public async Task<IResult> Handle(CreateUserGroupInternalCommand request, CancellationToken cancellationToken)
             {
-                var userGroupIsExist = await _userGroupRepository.AnyAsync(x => x.UserId == request.UserId && x.Status == true);
+                var userGroupIsExist = await _userGroupRepository.AnyAsync(x => x.UsersId == request.UserId && x.Status == true);
                 if (userGroupIsExist)
                     return new ErrorResult(Messages.UserGroupNotFound);
                 
                 var userGroup = new UserGroup
                 {
                     GroupId = request.GroupId,
-                    UserId = request.UserId
+                    UsersId = request.UserId
                 };
 
                 await _userGroupRepository.AddAsync(userGroup);

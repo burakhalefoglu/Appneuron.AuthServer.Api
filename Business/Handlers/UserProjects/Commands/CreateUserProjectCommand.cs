@@ -18,8 +18,8 @@ namespace Business.Handlers.UserProjects.Commands
     /// </summary>
     public class CreateUserProjectCommand : IRequest<IResult>
     {
-        public string UserId { get; set; }
-        public string ProjectKey { get; set; }
+        public long UserId { get; set; }
+        public long ProjectId { get; set; }
 
         public class CreateUserProjectCommandHandler : IRequestHandler<CreateUserProjectCommand, IResult>
         {
@@ -37,7 +37,7 @@ namespace Business.Handlers.UserProjects.Commands
             public async Task<IResult> Handle(CreateUserProjectCommand request, CancellationToken cancellationToken)
             {
                 var isThereUserProjectRecord = await _userProjectRepository
-                    .AnyAsync(u => u.ObjectId == request.UserId && u.Status == true);
+                    .AnyAsync(u => u.Id == request.UserId && u.Status == true);
 
                 if (isThereUserProjectRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -45,7 +45,7 @@ namespace Business.Handlers.UserProjects.Commands
                 var addedUserProject = new UserProject
                 {
                     UserId = request.UserId,
-                    ProjectKey = request.ProjectKey
+                    ProjectId = request.ProjectId
                 };
 
                 await _userProjectRepository.AddAsync(addedUserProject);

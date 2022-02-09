@@ -7,7 +7,7 @@ namespace Business.Handlers.Translates.ValidationRules
     {
         public CreateTranslateValidator()
         {
-            RuleFor(x => x.LangId).NotEmpty();
+            RuleFor(x => x.Id).NotEmpty();
             RuleFor(x => x.Value).NotEmpty();
             RuleFor(x => x.Code).NotEmpty();
         }

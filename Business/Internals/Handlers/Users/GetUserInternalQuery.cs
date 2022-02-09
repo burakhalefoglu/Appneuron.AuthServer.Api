@@ -9,7 +9,7 @@ namespace Business.Internals.Handlers.Users
 {
     public class GetUserInternalQuery : IRequest<IDataResult<User>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetUserInternalQueryHandler : IRequestHandler<GetUserInternalQuery, IDataResult<User>>
         {
@@ -23,7 +23,7 @@ namespace Business.Internals.Handlers.Users
             public async Task<IDataResult<User>> Handle(GetUserInternalQuery request,
                 CancellationToken cancellationToken)
             {
-                var user = await _userRepository.GetAsync(x=> x.ObjectId == request.Id && x.Status == true);
+                var user = await _userRepository.GetAsync(x=> x.Id == request.Id && x.Status == true);
                 return new SuccessDataResult<User>(user);
             }
         }

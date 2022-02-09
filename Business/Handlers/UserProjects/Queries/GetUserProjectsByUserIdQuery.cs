@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,14 +22,12 @@ namespace Business.Handlers.UserProjects.Queries
             IDataResult<IEnumerable<UserProject>>>
         {
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMediator _mediator;
             private readonly IUserProjectRepository _userProjectRepository;
 
             public GetUserProjectsByUserIdQueryHandler(IUserProjectRepository userProjectRepository,
-                IMediator mediator, IHttpContextAccessor httpContextAccessor)
+                 IHttpContextAccessor httpContextAccessor)
             {
                 _userProjectRepository = userProjectRepository;
-                _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
             }
 
@@ -43,7 +42,7 @@ namespace Business.Handlers.UserProjects.Queries
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var result = await
-                    _userProjectRepository.GetListAsync(p => p.UserId == userId && p.Status == true);
+                    _userProjectRepository.GetListAsync(p => p.UserId == Convert.ToInt64(userId)  && p.Status == true);
                 return new SuccessDataResult<IEnumerable<UserProject>>(result);
             }
         }

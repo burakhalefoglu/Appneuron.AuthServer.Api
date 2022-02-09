@@ -78,13 +78,13 @@ namespace Business.Handlers.Authorizations.Commands
                 
                 _ = await _mediator.Send(new CreateUserGroupInternalCommand
                 {
-                    UserId = usr.ObjectId,
-                    GroupId = group.Data.ObjectId
+                    UserId = usr.Id,
+                    GroupId = group.Data.Id
                 }, cancellationToken);
                 
                 var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
                 {
-                    GroupId = group.Data.ObjectId
+                    GroupId = group.Data.Id
                 }, cancellationToken);
 
                 var selectionItems = result.Data.ToList();
@@ -92,19 +92,19 @@ namespace Business.Handlers.Authorizations.Commands
 
                 if (selectionItems.ToList().Count > 0)
                     oClaims = selectionItems.Select(item =>
-                        new OperationClaim {Id = new ObjectId(item.Id), Name = item.Label}).ToList();
+                        new OperationClaim {Id = item.Id, Name = item.Label}).ToList();
 
                 await _mediator.Send(new CreateUserClaimsInternalCommand
                 {
-                    UserId = user.ObjectId,
+                    UserId = user.Id,
                     OperationClaims = oClaims
                 }, cancellationToken);
 
                 var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
                 {
-                    UserId = user.ObjectId,
+                    UserId = user.Id,
                     OperationClaims = oClaims.Select(x => x.Name).ToArray()
-                }, new List<string>());
+                }, new List<long>());
 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }

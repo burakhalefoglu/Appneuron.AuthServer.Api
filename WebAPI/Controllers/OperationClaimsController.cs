@@ -45,7 +45,7 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<OperationClaim>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpGet("getbyid")]
-        public async Task<IActionResult> GetByid(string id)
+        public async Task<IActionResult> GetByid(long id)
         {
             var result = await Mediator.Send(new GetOperationClaimQuery {Id = id});
             if (result.Success) return Ok(result);

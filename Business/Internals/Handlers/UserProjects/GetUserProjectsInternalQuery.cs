@@ -10,7 +10,7 @@ namespace Business.Internals.Handlers.UserProjects
 {
     public class GetUserProjectsInternalQuery : IRequest<IDataResult<IEnumerable<UserProject>>>
     {
-        public string UserId { get; set; }
+        public long UserId { get; set; }
 
         public class GetUserProjectsInternalQueryHandler : IRequestHandler<GetUserProjectsInternalQuery,
             IDataResult<IEnumerable<UserProject>>>

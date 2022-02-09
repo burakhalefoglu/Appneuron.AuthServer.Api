@@ -12,7 +12,7 @@ namespace Business.Handlers.GroupClaims.Queries
 {
     public class GetGroupClaimQuery : IRequest<IDataResult<GroupClaim>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetGroupClaimQueryHandler : IRequestHandler<GetGroupClaimQuery, IDataResult<GroupClaim>>
         {
@@ -29,7 +29,7 @@ namespace Business.Handlers.GroupClaims.Queries
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<GroupClaim>(
-                    await _groupClaimRepository.GetAsync(x => x.ObjectId == request.Id && x.Status == true));
+                    await _groupClaimRepository.GetAsync(x => x.Id == request.Id && x.Status == true));
             }
         }
     }

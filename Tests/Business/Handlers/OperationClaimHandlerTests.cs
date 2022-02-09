@@ -11,7 +11,6 @@ using Business.Internals.Handlers.OperationClaims;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using FluentAssertions;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.OperationClaims.Commands.CreateOperationClaimCommand;
@@ -103,7 +102,7 @@ namespace Tests.Business.Handlers
             {
                 Alias = "Test",
                 Description = "Test",
-                Id = "test_ıd"
+                Id = 1
             };
 
             _operationClaimRepository.Setup(x =>
@@ -111,7 +110,7 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult<OperationClaim>(null));
 
             _operationClaimRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<OperationClaim>(), It.IsAny<Expression<Func<OperationClaim, bool>>>()));
+                x.UpdateAsync(It.IsAny<OperationClaim>()));
 
 
             var result = await _updateOperationClaimCommandHandler.Handle(command, new CancellationToken());
@@ -126,7 +125,7 @@ namespace Tests.Business.Handlers
             {
                 Alias = "Test",
                 Description = "Test",
-                Id = "test_ıd"
+                Id = 1
             };
 
             _operationClaimRepository.Setup(x =>
@@ -134,7 +133,7 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult(new OperationClaim()));
 
             _operationClaimRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<OperationClaim>(), It.IsAny<Expression<Func<OperationClaim, bool>>>()));
+                x.UpdateAsync(It.IsAny<OperationClaim>()));
 
 
             var result = await _updateOperationClaimCommandHandler.Handle(command, new CancellationToken());
@@ -148,7 +147,7 @@ namespace Tests.Business.Handlers
         {
             var command = new DeleteOperationClaimCommand
             {
-                Id = "test_ıd"
+                Id = 1
             };
 
             _operationClaimRepository.Setup(x =>
@@ -156,7 +155,7 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult(new OperationClaim()));
 
             _operationClaimRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<OperationClaim>(), It.IsAny<Expression<Func<OperationClaim, bool>>>()));
+                x.UpdateAsync(It.IsAny<OperationClaim>()));
 
 
             var result = await _deleteOperationClaimCommandHandler.Handle(command, new CancellationToken());
@@ -170,7 +169,7 @@ namespace Tests.Business.Handlers
         {
             var command = new DeleteOperationClaimCommand
             {
-                Id = "test_ıd"
+                Id = 1
             };
 
             _operationClaimRepository.Setup(x =>
@@ -178,7 +177,7 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult<OperationClaim>(null));
 
             _operationClaimRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<OperationClaim>(), It.IsAny<Expression<Func<OperationClaim, bool>>>()));
+                x.UpdateAsync(It.IsAny<OperationClaim>()));
 
 
             var result = await _deleteOperationClaimCommandHandler.Handle(command, new CancellationToken());
@@ -260,7 +259,7 @@ namespace Tests.Business.Handlers
         {
             var command = new GetOperationClaimsByIdInternalQuery
             {
-                Id = ObjectId.GenerateNewId().ToString()
+                Id = 1
             };
 
             _operationClaimRepository.Setup(x =>

@@ -17,9 +17,9 @@ namespace Business.Handlers.UserClaims.Commands
 {
     public class UpdateUserClaimCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
-        public string UserId { get; set; }
-        public string[] ClaimId { get; set; }
+        public long Id { get; set; }
+        public long UserId { get; set; }
+        public long[] ClaimId { get; set; }
 
         public class UpdateUserClaimCommandHandler : IRequestHandler<UpdateUserClaimCommand, IResult>
         {
@@ -43,7 +43,11 @@ namespace Business.Handlers.UserClaims.Commands
                 if (user.Data is null)
                     return new ErrorResult(Messages.UserNotFound);
                 var userList = request.ClaimId.Select(x => new UserClaim {ClaimId = x, UsersId = request.UserId});
-                await _userClaimRepository.AddManyAsync(userList);
+                foreach (var userClaim in userList)
+                {
+                    await _userClaimRepository.AddAsync(userClaim);
+
+                }
                 return new SuccessResult(Messages.Updated);
             }
         }

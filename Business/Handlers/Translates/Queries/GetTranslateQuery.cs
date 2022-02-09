@@ -12,7 +12,7 @@ namespace Business.Handlers.Translates.Queries
 {
     public class GetTranslateQuery : IRequest<IDataResult<Translate>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetTranslateQueryHandler : IRequestHandler<GetTranslateQuery, IDataResult<Translate>>
         {
@@ -30,7 +30,7 @@ namespace Business.Handlers.Translates.Queries
             public async Task<IDataResult<Translate>> Handle(GetTranslateQuery request,
                 CancellationToken cancellationToken)
             {
-                var translate = await _translateRepository.GetAsync(p => p.ObjectId == request.Id && p.Status == true);
+                var translate = await _translateRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<Translate>(translate);
             }
         }

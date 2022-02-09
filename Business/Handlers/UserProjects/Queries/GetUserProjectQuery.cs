@@ -12,7 +12,7 @@ namespace Business.Handlers.UserProjects.Queries
 {
     public class GetUserProjectQuery : IRequest<IDataResult<UserProject>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetUserProjectQueryHandler : IRequestHandler<GetUserProjectQuery, IDataResult<UserProject>>
         {
@@ -28,7 +28,7 @@ namespace Business.Handlers.UserProjects.Queries
             public async Task<IDataResult<UserProject>> Handle(GetUserProjectQuery request,
                 CancellationToken cancellationToken)
             {
-                var userProject = await _userProjectRepository.GetAsync(p => p.ObjectId == request.Id && p.Status == true);
+                var userProject = await _userProjectRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<UserProject>(userProject);
             }
         }

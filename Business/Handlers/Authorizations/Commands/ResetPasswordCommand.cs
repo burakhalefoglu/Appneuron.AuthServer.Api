@@ -20,17 +20,14 @@ namespace Business.Handlers.Authorizations.Commands
 
         public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, IResult>
         {
-            public readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMediator _mediator;
+            private readonly IHttpContextAccessor _httpContextAccessor;
             private readonly IUserRepository _userRepository;
 
             public ResetPasswordCommandHandler(IUserRepository userRepository,
-                IMediator mediator,
                 IHttpContextAccessor httpContextAccessor)
             {
                 _httpContextAccessor = httpContextAccessor;
                 _userRepository = userRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -51,7 +48,7 @@ namespace Business.Handlers.Authorizations.Commands
                 resultUser.PasswordSalt = passwordSalt;
                 resultUser.ResetPasswordExpires = DateTime.MinValue;
                 resultUser.ResetPasswordToken = null;
-                await _userRepository.UpdateAsync(resultUser, x => x.Email == resultUser.Email);
+                await _userRepository.UpdateAsync(resultUser);
                 return new SuccessDataResult<User>(Messages.ResetPasswordSuccess);
             }
         }

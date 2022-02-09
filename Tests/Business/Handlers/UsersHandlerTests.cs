@@ -14,7 +14,6 @@ using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using Tests.Helpers;
@@ -121,7 +120,7 @@ namespace Tests.Business.Handlers
                     It.IsAny<Expression<Func<User, bool>>>()))
                 .ReturnsAsync(new User());
 
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
 
             var result = await _deleteUserCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
@@ -141,7 +140,7 @@ namespace Tests.Business.Handlers
                     It.IsAny<Expression<Func<User, bool>>>()))
                 .ReturnsAsync((User) null);
 
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
 
             var result = await _deleteUserCommandHandler.Handle(command, new CancellationToken());
 
@@ -165,7 +164,7 @@ namespace Tests.Business.Handlers
                     It.IsAny<Expression<Func<User, bool>>>()))
                 .Returns(Task.FromResult<User>(null));
 
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
 
             var result = await _updateUserCommandHandler.Handle(command, new CancellationToken());
 
@@ -188,7 +187,7 @@ namespace Tests.Business.Handlers
             _userRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<User, bool>>>()))
                 .Returns(Task.FromResult(new User()));
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
             var result = await _updateUserCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Updated);
@@ -210,7 +209,7 @@ namespace Tests.Business.Handlers
                     It.IsAny<Expression<Func<User, bool>>>()))
                 .Returns(Task.FromResult<User>(null));
 
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
 
             var result = await _updateChangePasswordCommandHandler.Handle(command, new CancellationToken());
 
@@ -242,7 +241,7 @@ namespace Tests.Business.Handlers
                     It.IsAny<Expression<Func<User, bool>>>()))
                 .Returns(Task.FromResult(user));
 
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
 
             var result = await _updateChangePasswordCommandHandler.Handle(command, new CancellationToken());
 
@@ -275,7 +274,7 @@ namespace Tests.Business.Handlers
                     It.IsAny<Expression<Func<User, bool>>>()))
                 .Returns(Task.FromResult(user));
 
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
 
             var result = await _updateChangePasswordCommandHandler.Handle(command, new CancellationToken());
 
@@ -320,7 +319,7 @@ namespace Tests.Business.Handlers
         {
             var query = new GetUserInternalQuery
             {
-                Id = ObjectId.GenerateNewId().ToString()
+                Id = 1
             };
 
             _httpContextAccessor.SetupGet(x =>

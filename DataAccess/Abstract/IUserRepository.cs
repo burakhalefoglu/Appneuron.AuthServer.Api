@@ -3,7 +3,7 @@ using Core.Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface IUserRepository : IDocumentDbRepository<User>
+    public interface IUserRepository : IRepository<User>
     {
     }
 }

@@ -8,7 +8,7 @@ namespace Business.Handlers.UserProjects.ValidationRules
         public CreateUserProjectValidator()
         {
             RuleFor(x => x.UserId).NotEmpty();
-            RuleFor(x => x.ProjectKey).NotEmpty();
+            RuleFor(x => x.ProjectId).NotEmpty();
         }
     }
 
@@ -17,7 +17,7 @@ namespace Business.Handlers.UserProjects.ValidationRules
         public UpdateUserProjectValidator()
         {
             RuleFor(x => x.UserId).NotEmpty();
-            RuleFor(x => x.ProjectKey).NotEmpty();
+            RuleFor(x => x.ProjectId).NotEmpty();
         }
     }
 }

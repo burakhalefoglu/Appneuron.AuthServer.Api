@@ -9,7 +9,7 @@ namespace Business.Internals.Handlers.OperationClaims
 {
     public class GetOperationClaimsByIdInternalQuery : IRequest<IDataResult<OperationClaim>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetOperationClaimsByIdInternalQueryHandler : IRequestHandler<GetOperationClaimsByIdInternalQuery,
             IDataResult<OperationClaim>>
@@ -25,7 +25,7 @@ namespace Business.Internals.Handlers.OperationClaims
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<OperationClaim>(
-                    await _operationClaimRepository.GetAsync(x => x.ObjectId == request.Id && x.Status == true));
+                    await _operationClaimRepository.GetAsync(x => x.Id == request.Id && x.Status == true));
             }
         }
     }

@@ -2,8 +2,8 @@
 {
     public class ClientClaimModel
     {
-        public string ClientId { get; set; }
-        public string ProjectId { get; set; }
+        public long ClientId { get; set; }
+        public long ProjectId { get; set; }
         public string[] OperationClaims { get; set; }
     }
 }

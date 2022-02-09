@@ -50,7 +50,7 @@ namespace Business.Handlers.Users.Commands
                     Status = true
                 };
 
-                _userRepository.Add(user);
+                await _userRepository.AddAsync(user);
                 return new SuccessResult(Messages.Added);
             }
         }

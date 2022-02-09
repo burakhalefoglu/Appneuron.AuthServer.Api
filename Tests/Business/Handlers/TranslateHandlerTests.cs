@@ -55,7 +55,7 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetTranslateQuery
             {
-                Id = "test_ıd"
+                Id = 1
             };
 
             _translateRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Translate, bool>>>()))
@@ -117,7 +117,7 @@ namespace Tests.Business.Handlers
             var command = new UpdateTranslateCommand
             {
                 Code = "test",
-                Id = "test_ıd",
+                Id = 1,
                 Value = "Test"
             };
 
@@ -129,7 +129,7 @@ namespace Tests.Business.Handlers
                 });
 
             _translateRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<Translate>(), It.IsAny<Expression<Func<Translate, bool>>>()));
+                x.UpdateAsync(It.IsAny<Translate>()));
 
             var x = await _updateTranslateCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -145,8 +145,7 @@ namespace Tests.Business.Handlers
             _translateRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Translate, bool>>>()))
                 .ReturnsAsync(new Translate());
 
-            _translateRepository.Setup(x => x.UpdateAsync(It.IsAny<Translate>(),
-                It.IsAny<Expression<Func<Translate, bool>>>()));
+            _translateRepository.Setup(x => x.UpdateAsync(It.IsAny<Translate>()));
 
             var x = await _deleteTranslateCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();

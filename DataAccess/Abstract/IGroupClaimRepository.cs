@@ -3,7 +3,7 @@ using Core.Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface IGroupClaimRepository : IDocumentDbRepository<GroupClaim>
+    public interface IGroupClaimRepository : IRepository<GroupClaim>
     {
     }
 }

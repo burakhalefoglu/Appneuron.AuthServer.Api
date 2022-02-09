@@ -9,7 +9,7 @@ namespace Business.Internals.Handlers.UserProjects
 {
     public class GetUserProjectInternalQuery : IRequest<IDataResult<UserProject>>
     {
-        public string ProjectKey { get; set; }
+        public long ProjectKey { get; set; }
 
         public class GetUserProjectInternalQueryHandler : IRequestHandler<GetUserProjectInternalQuery, IDataResult<UserProject>>
         {
@@ -23,7 +23,7 @@ namespace Business.Internals.Handlers.UserProjects
             public async Task<IDataResult<UserProject>> Handle(GetUserProjectInternalQuery request,
                 CancellationToken cancellationToken)
             {
-                var userProject = await _userProjectRepository.GetAsync(p => p.ProjectKey == request.ProjectKey && p.Status == true);
+                var userProject = await _userProjectRepository.GetAsync(p => p.ProjectId == request.ProjectKey && p.Status == true);
                 return new SuccessDataResult<UserProject>(userProject);
             }
         }

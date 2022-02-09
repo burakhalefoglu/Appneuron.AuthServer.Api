@@ -13,7 +13,7 @@ namespace Business.Internals.Handlers.GroupClaims
 {
     public class GetGroupClaimsLookupByGroupIdInternalQuery : IRequest<IDataResult<IEnumerable<SelectionItem>>>
     {
-        public string GroupId { get; set; }
+        public long GroupId { get; set; }
 
         public class GetGroupClaimsLookupByGroupIdInternalQueryHandler : IRequestHandler<
             GetGroupClaimsLookupByGroupIdInternalQuery, IDataResult<IEnumerable<SelectionItem>>>
@@ -43,7 +43,7 @@ namespace Business.Internals.Handlers.GroupClaims
                         return;
                     oClaims.Add(new SelectionItem
                     {
-                        Id = result.Data.ObjectId,
+                        Id = result.Data.Id,
                         Label = result.Data.Name
                     });
                 }

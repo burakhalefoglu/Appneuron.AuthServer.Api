@@ -13,7 +13,7 @@ namespace Business.Handlers.OperationClaims.Commands
 {
     public class UpdateOperationClaimCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string Alias { get; set; }
         public string Description { get; set; }
 
@@ -31,13 +31,12 @@ namespace Business.Handlers.OperationClaims.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateOperationClaimCommand request, CancellationToken cancellationToken)
             {
-                var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.ObjectId == request.Id && u.Status == true);
+                var isOperationClaimsExits = await _operationClaimRepository.GetAsync(u => u.Id == request.Id && u.Status == true);
                 if (isOperationClaimsExits == null) return new ErrorResult(Messages.OperationClaimNotFound);
 
                 isOperationClaimsExits.Alias = request.Alias;
                 isOperationClaimsExits.Description = request.Description;
-                await _operationClaimRepository.UpdateAsync(isOperationClaimsExits,
-                    x => x.ObjectId == isOperationClaimsExits.ObjectId);
+                await _operationClaimRepository.UpdateAsync(isOperationClaimsExits);
 
                 return new SuccessResult(Messages.Updated);
             }

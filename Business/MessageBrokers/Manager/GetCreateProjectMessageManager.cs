@@ -35,11 +35,11 @@ namespace Business.MessageBrokers.Manager
             _ = await _mediator.Send(new CreateUserProjectInternalCommand
             {
                 UserId = message.UserId,
-                ProjectKey = message.ProjectKey
+                ProjectId = message.ProjectId
             });
 
             var user = await _userRepository.GetAsync(u =>
-                u.ObjectId == message.UserId);
+                u.Id == message.UserId);
 
             if (user == null)
                 return new ErrorResult();
@@ -47,7 +47,7 @@ namespace Business.MessageBrokers.Manager
             //New Token Creation
             var groupClaims = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
             {
-                GroupId = "Test"
+                GroupId = 1
             });
 
             var selectionItems = groupClaims.Data.ToList();
@@ -56,27 +56,27 @@ namespace Business.MessageBrokers.Manager
 
             await _mediator.Send(new CreateUserClaimsInternalCommand
             {
-                UserId = user.ObjectId,
+                UserId = user.Id,
                 OperationClaims = operationClaims
             });
 
             var projectIdResult = await _mediator.Send(new GetUserProjectsInternalQuery
             {
-                UserId = user.ObjectId
+                UserId = user.Id
             });
-            var projectIdList = new List<string>();
-            projectIdResult.Data.ToList().ForEach(x => { projectIdList.Add(x.ProjectKey); });
+            var projectIdList = new List<long>();
+            projectIdResult.Data.ToList().ForEach(x => { projectIdList.Add(x.ProjectId); });
 
             var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
-                UserId = user.ObjectId,
+                UserId = user.Id,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
             }, projectIdList);
 
             var kafkaResult = await _messageBroker.SendMessageAsync(new ProjectCreationResult
             {
                 Accesstoken = accessToken.Token,
-                UserId = user.ObjectId
+                UserId = user.Id
             });
 
             if (kafkaResult.Success)

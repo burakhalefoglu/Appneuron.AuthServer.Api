@@ -14,9 +14,9 @@ namespace Business.Handlers.GroupClaims.Commands
 {
     public class UpdateGroupClaimCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
-        public string GroupId { get; set; }
-        public string ClaimId { get; set; }
+        public long Id { get; set; }
+        public long GroupId { get; set; }
+        public long ClaimId { get; set; }
         public string ClaimName { get; set; }
 
         public class UpdateGroupClaimCommandHandler : IRequestHandler<UpdateGroupClaimCommand, IResult>
@@ -54,7 +54,7 @@ namespace Business.Handlers.GroupClaims.Commands
                     x.Name == claimName && x.Status == true) is null ;
             }
 
-            private async Task<bool> IsGroupClaimNotExist(string claimId, string groupId)
+            private async Task<bool> IsGroupClaimNotExist(long claimId, long groupId)
             {
                 return await _groupClaimRepository.GetAsync(g => g.ClaimId == claimId
                                                                  && g.GroupId == groupId && g.Status == true) is null;

@@ -13,7 +13,7 @@ namespace Business.Handlers.UserGroups.Commands
 {
     public class DeleteUserGroupCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteUserGroupCommandHandler : IRequestHandler<DeleteUserGroupCommand, IResult>
         {
@@ -29,11 +29,11 @@ namespace Business.Handlers.UserGroups.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(DeleteUserGroupCommand request, CancellationToken cancellationToken)
             {
-                var entityToDelete = await _userGroupRepository.GetAsync(x => x.UserId == request.Id && x.Status == true);
+                var entityToDelete = await _userGroupRepository.GetAsync(x => x.UsersId == request.Id && x.Status == true);
                 if (entityToDelete is null)
                     return new ErrorResult(Messages.UserGroupNotFound);
                 entityToDelete.Status = false;
-                await _userGroupRepository.UpdateAsync(entityToDelete, x => x.UserId == entityToDelete.UserId);
+                await _userGroupRepository.UpdateAsync(entityToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

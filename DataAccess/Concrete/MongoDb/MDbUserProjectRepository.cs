@@ -1,13 +1,13 @@
 using Core.DataAccess.MongoDb.Concrete;
-using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using DataAccess.Concrete.MongoDb.Context;
+using Entities.Concrete;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class GroupRepository : MongoDbRepositoryBase<Group>, IGroupRepository
+    public class MDbUserProjectRepository : MongoDbRepositoryBase<UserProject>, IUserProjectRepository
     {
-        public GroupRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbUserProjectRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

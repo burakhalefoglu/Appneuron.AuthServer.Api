@@ -5,9 +5,9 @@ using DataAccess.Concrete.MongoDb.Context;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class OperationClaimRepository : MongoDbRepositoryBase<OperationClaim>, IOperationClaimRepository
+    public class MDbLanguageRepository : MongoDbRepositoryBase<Language>, ILanguageRepository
     {
-        public OperationClaimRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbLanguageRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

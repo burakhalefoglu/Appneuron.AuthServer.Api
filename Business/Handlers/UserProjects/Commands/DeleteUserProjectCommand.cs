@@ -15,7 +15,7 @@ namespace Business.Handlers.UserProjects.Commands
     /// </summary>
     public class DeleteUserProjectCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteUserProjectCommandHandler : IRequestHandler<DeleteUserProjectCommand, IResult>
         {
@@ -31,12 +31,11 @@ namespace Business.Handlers.UserProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteUserProjectCommand request, CancellationToken cancellationToken)
             {
-                var userProjectToDelete = await _userProjectRepository.GetAsync(p => p.ObjectId == request.Id && p.Status == true);
+                var userProjectToDelete = await _userProjectRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
 
                 if (userProjectToDelete == null) return new ErrorResult(Messages.UserProjectNotFound);
                 userProjectToDelete.Status = false;
-                await _userProjectRepository.UpdateAsync(userProjectToDelete,
-                    x => x.UserId == userProjectToDelete.UserId);
+                await _userProjectRepository.UpdateAsync(userProjectToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

@@ -44,7 +44,7 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<Group>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpGet("getbyid")]
-        public async Task<IActionResult> GetById(string groupId)
+        public async Task<IActionResult> GetById(long groupId)
         {
             var result = await Mediator.Send(new GetGroupQuery {GroupId = groupId});
             if (result.Success) return Ok(result);

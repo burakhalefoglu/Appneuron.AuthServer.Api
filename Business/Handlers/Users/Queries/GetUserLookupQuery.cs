@@ -32,7 +32,7 @@ namespace Business.Handlers.Users.Queries
                 CancellationToken cancellationToken)
             {
                 var list = await _userRepository.GetListAsync(x => x.Status == true);
-                var userLookup = list.Select(x => new SelectionItem {Id = x.ObjectId, Label = x.Name});
+                var userLookup = list.Select(x => new SelectionItem {Id = x.Id, Label = x.Name});
                 return new SuccessDataResult<IEnumerable<SelectionItem>>(userLookup);
             }
         }

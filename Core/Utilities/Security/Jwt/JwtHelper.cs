@@ -48,13 +48,13 @@ namespace Core.Utilities.Security.Jwt
             };
         }
 
-        public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel, List<string> ProjectIdList)
+        public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel, List<long> projectIdList)
             where TAccessToken : IAccessToken, new()
         {
             _accessTokenExpiration = DateTime.Now.AddMinutes(Convert.ToDouble(_tokenOptions.AccessTokenExpiration));
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
-            var jwt = CreateCustomerJwtSecurityToken(_tokenOptions, userClaimModel, signingCredentials, ProjectIdList);
+            var jwt = CreateCustomerJwtSecurityToken(_tokenOptions, userClaimModel, signingCredentials, projectIdList);
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwt);
 
@@ -75,20 +75,20 @@ namespace Core.Utilities.Security.Jwt
 
         private JwtSecurityToken CreateCustomerJwtSecurityToken(TokenOptions tokenOptions,
             UserClaimModel userClaimModel,
-            SigningCredentials signingCredentials, List<string> ProjectIdList)
+            SigningCredentials signingCredentials, List<long> projectIdList)
         {
             var jwt = new JwtSecurityToken(
                 tokenOptions.Issuer,
                 _customerOptions.Audience,
                 expires: _accessTokenExpiration,
                 notBefore: DateTime.Now,
-                claims: SetUserClaims(userClaimModel, ProjectIdList),
+                claims: SetUserClaims(userClaimModel, projectIdList),
                 signingCredentials: signingCredentials
             );
             return jwt;
         }
 
-        private IEnumerable<Claim> SetUserClaims(UserClaimModel userClaimModel, List<string> ProjectIdList)
+        private IEnumerable<Claim> SetUserClaims(UserClaimModel userClaimModel, List<long> projectIdList)
         {
             for (var i = 0; i < userClaimModel.OperationClaims.Length; i++)
                 userClaimModel.OperationClaims[i] =
@@ -96,10 +96,10 @@ namespace Core.Utilities.Security.Jwt
                         userClaimModel.OperationClaims[i]);
 
             var claims = new List<Claim>();
-            claims.AddNameIdentifier(userClaimModel.UserId);
+            claims.AddNameIdentifier(userClaimModel.UserId.ToString());
             claims.AddRoles(userClaimModel.OperationClaims);
-            if (ProjectIdList.Count > 0)
-                ProjectIdList.ForEach(x => { claims.AddProjectId(x); });
+            if (projectIdList.Count > 0)
+                projectIdList.ForEach(x => { claims.AddProjectId(x.ToString()); });
             return claims;
         }
 
@@ -126,9 +126,9 @@ namespace Core.Utilities.Security.Jwt
                         clientClaimModel.OperationClaims[i]);
 
             var claims = new List<Claim>();
-            claims.AddNameIdentifier(clientClaimModel.ClientId);
+            claims.AddNameIdentifier(clientClaimModel.ClientId.ToString());
             claims.AddRoles(clientClaimModel.OperationClaims);
-            claims.AddProjectId(clientClaimModel.ProjectId);
+            claims.AddProjectId(clientClaimModel.ProjectId.ToString());
 
             return claims;
         }

@@ -13,7 +13,7 @@ namespace Business.Handlers.OperationClaims.Commands
 {
     public class DeleteOperationClaimCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteOperationClaimCommandHandler : IRequestHandler<DeleteOperationClaimCommand, IResult>
         {
@@ -29,10 +29,10 @@ namespace Business.Handlers.OperationClaims.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(DeleteOperationClaimCommand request, CancellationToken cancellationToken)
             {
-                var claimToDelete = await _operationClaimRepository.GetAsync(x => x.ObjectId == request.Id && x.Status == true);
+                var claimToDelete = await _operationClaimRepository.GetAsync(x => x.Id == request.Id && x.Status == true);
                 if (claimToDelete == null) return new ErrorResult(Messages.OperationClaimNotFound);
                 claimToDelete.Status = false;
-                await _operationClaimRepository.UpdateAsync(claimToDelete, x => x.ObjectId == claimToDelete.ObjectId);
+                await _operationClaimRepository.UpdateAsync(claimToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

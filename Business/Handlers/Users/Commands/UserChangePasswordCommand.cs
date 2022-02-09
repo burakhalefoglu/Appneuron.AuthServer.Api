@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -37,7 +38,7 @@ namespace Business.Handlers.Users.Commands
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var user = await _userRepository.GetAsync(u => u.ObjectId == userId && u.Status == true);
+                var user = await _userRepository.GetAsync(u => u.Id == Convert.ToInt64(userId) && u.Status == true);
                 if (user == null)
                     return new ErrorResult(Messages.UserNotFound);
 
@@ -49,7 +50,7 @@ namespace Business.Handlers.Users.Commands
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
 
-                await _userRepository.UpdateAsync(user, x => x.ObjectId == user.ObjectId);
+                await _userRepository.UpdateAsync(user);
                 return new SuccessResult(Messages.Updated);
             }
         }

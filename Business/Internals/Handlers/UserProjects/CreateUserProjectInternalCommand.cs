@@ -10,8 +10,8 @@ namespace Business.Internals.Handlers.UserProjects
 {
     public class CreateUserProjectInternalCommand : IRequest<IResult>
     {
-        public string UserId { get; set; }
-        public string ProjectKey { get; set; }
+        public long UserId { get; set; }
+        public long ProjectId { get; set; }
 
         public class
             CreateUserProjectInternalCommandHandler : IRequestHandler<CreateUserProjectInternalCommand, IResult>
@@ -27,7 +27,7 @@ namespace Business.Internals.Handlers.UserProjects
                 CancellationToken cancellationToken)
             {
                 var isThereUserProjectRecord =
-                    await _userProjectRepository.AnyAsync(u => u.ProjectKey == request.ProjectKey && u.Status == true);
+                    await _userProjectRepository.AnyAsync(u => u.ProjectId == request.ProjectId && u.Status == true);
 
                 if (isThereUserProjectRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -35,7 +35,7 @@ namespace Business.Internals.Handlers.UserProjects
                 var addedUserProject = new UserProject
                 {
                     UserId = request.UserId,
-                    ProjectKey = request.ProjectKey
+                    ProjectId = request.ProjectId
                 };
 
                 await _userProjectRepository.AddAsync(addedUserProject);

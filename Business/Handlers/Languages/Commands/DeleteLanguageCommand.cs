@@ -13,7 +13,7 @@ namespace Business.Handlers.Languages.Commands
 {
     public class DeleteLanguageCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteLanguageCommandHandler : IRequestHandler<DeleteLanguageCommand, IResult>
         {
@@ -29,10 +29,9 @@ namespace Business.Handlers.Languages.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteLanguageCommand request, CancellationToken cancellationToken)
             {
-                var languageToDelete = await _languageRepository.GetAsync(p => p.ObjectId == request.Id && p.Status == true);
+                var languageToDelete = await _languageRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 languageToDelete.Status = false;
-                await _languageRepository.UpdateAsync(languageToDelete,
-                    x => x.ObjectId == languageToDelete.ObjectId);
+                await _languageRepository.UpdateAsync(languageToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

@@ -5,9 +5,9 @@ using DataAccess.Concrete.MongoDb.Context;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class UserGroupRepository : MongoDbRepositoryBase<UserGroup>, IUserGroupRepository
+    public class MDbGroupClaimRepository : MongoDbRepositoryBase<GroupClaim>, IGroupClaimRepository
     {
-        public UserGroupRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbGroupClaimRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

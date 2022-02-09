@@ -55,7 +55,7 @@ namespace Business.Handlers.Authorizations.Queries
 
                 var usrGroup = await _mediator.Send(new GetUserGroupInternalQuery
                 {
-                    UserId = user.ObjectId
+                    UserId = user.Id
                 }, cancellationToken);
                 
                 var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
@@ -70,26 +70,26 @@ namespace Business.Handlers.Authorizations.Queries
                     var selectionItems = result.Data.ToList();
 
                     operationClaims.AddRange(selectionItems.Select(item => new OperationClaim
-                        {Id = new ObjectId(item.Id), Name = item.Label}));
+                        {Id = item.Id, Name = item.Label}));
                 }
 
 
                 await _mediator.Send(new CreateUserClaimsInternalCommand
                 {
-                    UserId = user.ObjectId,
+                    UserId = user.Id,
                     OperationClaims = operationClaims
                 }, cancellationToken);
 
                 var projectIdResult = await _mediator.Send(new GetUserProjectsInternalQuery
                 {
-                    UserId = user.ObjectId
+                    UserId = user.Id
                 }, cancellationToken);
-                var projectIdList = new List<string>();
-                projectIdResult.Data.ToList().ForEach(x => { projectIdList.Add(x.ProjectKey); });
+                var projectIdList = new List<long>();
+                projectIdResult.Data.ToList().ForEach(x => { projectIdList.Add(x.ProjectId); });
 
                 var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
                 {
-                    UserId = user.ObjectId,
+                    UserId = user.Id,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()
                 }, projectIdList);
 

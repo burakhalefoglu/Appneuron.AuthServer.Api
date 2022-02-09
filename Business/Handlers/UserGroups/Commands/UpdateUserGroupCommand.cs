@@ -16,8 +16,8 @@ namespace Business.Handlers.UserGroups.Commands
 {
     public class UpdateUserGroupCommand : IRequest<IResult>
     {
-        public string UserId { get; set; }
-        public string[] GroupId { get; set; }
+        public long UserId { get; set; }
+        public long[] GroupId { get; set; }
 
         public class UpdateUserGroupCommandHandler : IRequestHandler<UpdateUserGroupCommand, IResult>
         {
@@ -41,8 +41,12 @@ namespace Business.Handlers.UserGroups.Commands
                 if (user.Data is null)
                     return new ErrorResult(Messages.UserNotFound);
                 
-                var userGroupList = request.GroupId.Select(x => new UserGroup {GroupId = x, UserId = request.UserId});
-                await _userGroupRepository.AddManyAsync(userGroupList);
+                var userGroupList = request.GroupId.Select(x => new UserGroup {GroupId = x, UsersId = request.UserId});
+                foreach (var userGroup in userGroupList)
+                {
+                    await _userGroupRepository.AddAsync(userGroup);
+
+                }
                 return new SuccessResult(Messages.Updated);
             }
         }

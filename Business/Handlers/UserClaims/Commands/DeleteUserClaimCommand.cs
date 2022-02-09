@@ -13,7 +13,7 @@ namespace Business.Handlers.UserClaims.Commands
 {
     public class DeleteUserClaimCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteUserClaimCommandHandler : IRequestHandler<DeleteUserClaimCommand, IResult>
         {
@@ -32,7 +32,7 @@ namespace Business.Handlers.UserClaims.Commands
                 var entityToDelete = await _userClaimRepository.GetAsync(x => x.UsersId == request.Id && x.Status == true);
                 if (entityToDelete == null) return new ErrorResult(Messages.UserClaimNotFound);
                 entityToDelete.Status = false;
-                await _userClaimRepository.UpdateAsync(entityToDelete, x => x.UsersId == entityToDelete.UsersId);
+                await _userClaimRepository.UpdateAsync(entityToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

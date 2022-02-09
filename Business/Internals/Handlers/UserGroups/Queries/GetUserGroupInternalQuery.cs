@@ -14,7 +14,7 @@ namespace Business.Internals.Handlers.UserGroups.Queries
 {
     public class GetUserGroupInternalQuery : IRequest<IDataResult<UserGroup>>
     {
-        public string UserId { get; set; }
+        public long UserId { get; set; }
 
         public class GetUserGroupInternalQueryHandler : IRequestHandler<GetUserGroupInternalQuery, IDataResult<UserGroup>>
         {
@@ -27,7 +27,7 @@ namespace Business.Internals.Handlers.UserGroups.Queries
             public async Task<IDataResult<UserGroup>> Handle(GetUserGroupInternalQuery request,
                 CancellationToken cancellationToken)
             {
-                var userGroup = await _userGroupRepository.GetAsync(p => p.UserId == request.UserId && p.Status == true);
+                var userGroup = await _userGroupRepository.GetAsync(p => p.UsersId == request.UserId && p.Status == true);
                 return new SuccessDataResult<UserGroup>(userGroup);
             }
         }

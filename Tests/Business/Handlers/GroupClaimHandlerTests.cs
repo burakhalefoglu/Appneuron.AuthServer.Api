@@ -131,9 +131,9 @@ namespace Tests.Business.Handlers
         {
             var command = new UpdateGroupClaimCommand
             {
-                GroupId = "test_group_ıd",
-                Id = "test_ıd",
-                ClaimId = "claim_ıd",
+                GroupId = 1,
+                Id = 1,
+                ClaimId = 1,
                 ClaimName = "Test"
             };
 
@@ -157,9 +157,9 @@ namespace Tests.Business.Handlers
         {
             var command = new UpdateGroupClaimCommand
             {
-                GroupId = "test_group_ıd",
-                Id = "test_ıd",
-                ClaimId = "claim_ıd",
+                GroupId = 1,
+                Id = 1,
+                ClaimId = 1,
                 ClaimName = "Test"
             };
 
@@ -184,9 +184,9 @@ namespace Tests.Business.Handlers
         {
             var command = new UpdateGroupClaimCommand
             {
-                GroupId = "test_group_ıd",
-                Id = "test_ıd",
-                ClaimId = "claim_ıd",
+                GroupId = 1,
+                Id = 1,
+                ClaimId = 1,
                 ClaimName = "Test"
             };
 
@@ -211,7 +211,7 @@ namespace Tests.Business.Handlers
         {
             var command = new DeleteGroupClaimCommand
             {
-                Id = "test_ıd"
+                Id = 1,
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
@@ -228,19 +228,20 @@ namespace Tests.Business.Handlers
         {
             var command = new DeleteGroupClaimCommand
             {
-                Id = "test_ıd"
+                Id = 1,
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
                 .Returns(Task.FromResult(new GroupClaim
                 {
-                    ClaimId = "test",
-                    GroupId = "test"
+                    GroupId = 1,
+                    Id = 1,
+                    ClaimId = 1,
                 }));
 
             _groupClaimRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<GroupClaim>(), It.IsAny<Expression<Func<GroupClaim, bool>>>()));
+                x.UpdateAsync(It.IsAny<GroupClaim>()));
 
             var result = await _deleteGroupClaimCommandHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
@@ -253,20 +254,21 @@ namespace Tests.Business.Handlers
         {
             var command = new GetGroupClaimQuery
             {
-                Id = "test_ıd"
+                Id = 1,
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
                 .Returns(Task.FromResult(new GroupClaim
                 {
-                    ClaimId = "test",
-                    GroupId = "test"
+                    GroupId = 1,
+                    Id = 1,
+                    ClaimId = 1,
                 }));
 
             var result = await _getGroupClaimQueryHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
-            result.Data.ClaimId.Should().Be("test");
+            result.Data.ClaimId.Should().Be(1);
         }
         
         
@@ -275,15 +277,17 @@ namespace Tests.Business.Handlers
         {
             var command = new GetGroupClaimsLookupByGroupIdInternalQuery
             {
-                GroupId = "107f1f77bcf86cd799439011"
+                GroupId = 1,
+                
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<GroupClaim, bool>>>()))
                 .Returns(Task.FromResult(new GroupClaim
                 {
-                    ClaimId = "507f1f77bcf86cd799439011",
-                    GroupId = "107f1f77bcf86cd799439011"
+                    GroupId = 1,
+                    Id = 1,
+                    ClaimId = 1,
                 }));
 
             var result = await _getGroupClaimsLookupByGroupIdInternalQueryHandler.Handle(command, new CancellationToken());

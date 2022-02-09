@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -37,11 +38,11 @@ namespace Business.Handlers.Users.Commands
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var userToDelete = await _userRepository.GetAsync(p => p.ObjectId == userId && p.Status == true);
+                var userToDelete = await _userRepository.GetAsync(p => p.Id == Convert.ToInt64(userId) && p.Status == true);
                 if (userToDelete == null) return new ErrorResult(Messages.UserNotFound);
                 userToDelete.Status = false;
 
-                await _userRepository.UpdateAsync(userToDelete, x => x.ObjectId == userToDelete.ObjectId);
+                await _userRepository.UpdateAsync(userToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

@@ -5,7 +5,6 @@ using Core.Utilities.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Serilog.Formatting.Elasticsearch;
 using Serilog.Sinks.Http.BatchFormatters;
 
 namespace Core.CrossCuttingConcerns.Logging.Serilog.Loggers
@@ -23,8 +22,7 @@ namespace Core.CrossCuttingConcerns.Logging.Serilog.Loggers
                 .WriteTo
                 .DurableHttpUsingFileSizeRolledBuffers(
                     $"http://{logConfig.Host}:{logConfig.Port}",
-                    batchFormatter: new ArrayBatchFormatter(),
-                    textFormatter: new ElasticsearchJsonFormatter()
+                    batchFormatter: new ArrayBatchFormatter()
                 )
                 .CreateLogger();
             Logger = seriLogConfig;

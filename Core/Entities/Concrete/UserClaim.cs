@@ -1,9 +1,10 @@
 ﻿namespace Core.Entities.Concrete
 {
-    public class UserClaim : DocumentDbEntity
+    public class UserClaim : IEntity
     {
         public bool Status = true;
-        public string UsersId { get; set; }
-        public string ClaimId { get; set; }
+        public long UsersId { get; set; }
+        public long ClaimId { get; set; }
+        public long Id { get; set; }
     }
 }

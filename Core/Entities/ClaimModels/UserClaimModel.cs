@@ -2,7 +2,7 @@
 {
     public class UserClaimModel
     {
-        public string UserId { get; set; }
+        public long UserId { get; set; }
         public string[] OperationClaims { get; set; }
     }
 }

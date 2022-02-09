@@ -5,9 +5,9 @@ using DataAccess.Concrete.MongoDb.Context;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class TranslateRepository : MongoDbRepositoryBase<Translate>, ITranslateRepository
+    public class MDbUserClaimRepository : MongoDbRepositoryBase<UserClaim>, IUserClaimRepository
     {
-        public TranslateRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbUserClaimRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

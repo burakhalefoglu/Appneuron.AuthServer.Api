@@ -54,8 +54,8 @@ namespace Tests.Business.Handlers
         {
             var query = new CreateUserClaimCommand
             {
-                ClaimId = "test_claim_ıd",
-                UserId = "test_user_ıd"
+                ClaimId = 1,
+                UserId = 1
             };
 
             _userClaimRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserClaim, bool>>>()))
@@ -71,7 +71,7 @@ namespace Tests.Business.Handlers
         {
             var query = new CreateUserClaimsInternalCommand()
             {
-                UserId = "test_user_ıd",
+                UserId = 1,
                 OperationClaims = new List<OperationClaim>()
             };
 
@@ -88,8 +88,8 @@ namespace Tests.Business.Handlers
         {
             var query = new CreateUserClaimCommand
             {
-                ClaimId = "test_claim_ıd",
-                UserId = "test_user_ıd"
+                ClaimId = 1,
+                UserId = 1
             };
 
             _userClaimRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<UserClaim, bool>>>()))
@@ -108,7 +108,7 @@ namespace Tests.Business.Handlers
         {
             var query = new DeleteUserClaimCommand
             {
-                Id = "test_user_ıd"
+                Id = 1
             };
 
             _userClaimRepository.Setup(x =>
@@ -125,7 +125,7 @@ namespace Tests.Business.Handlers
         {
             var query = new DeleteUserClaimCommand
             {
-                Id = "test_user_ıd"
+                Id = 1
             };
 
             _userClaimRepository.Setup(x =>
@@ -143,17 +143,19 @@ namespace Tests.Business.Handlers
         {
             var query = new UpdateUserClaimCommand
             {
-                ClaimId = new[]
+                ClaimId = new long[]
                 {
-                    "test_claim_ıd", "test_claim_ıd2", "test_claim_ıd3"
+                    1,2,3
                 },
-                Id = "test_user_ıd"
+                Id = 1
             };
             _mediator.Setup(x => x.Send(It.IsAny<GetUserInternalQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new SuccessDataResult<User>(new User()));
-            _userClaimRepository.Setup(x =>
-                x.AddManyAsync(It.IsAny<IEnumerable<UserClaim>>()));
-
+            foreach (var l in query.ClaimId)
+            {
+                _userClaimRepository.Setup(x =>
+                    x.AddAsync(It.IsAny<UserClaim>()));
+            }
             var result = await _updateUserClaimCommandHandler.Handle(query, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Updated);
@@ -165,17 +167,19 @@ namespace Tests.Business.Handlers
         {
             var query = new UpdateUserClaimCommand
             {
-                ClaimId = new[]
+                ClaimId = new long[]
                 {
-                    "test_claim_ıd", "test_claim_ıd2", "test_claim_ıd3"
+                   1,2,3
                 },
-                Id = "test_user_ıd"
+                Id = 1
             };
             _mediator.Setup(x => x.Send(It.IsAny<GetUserInternalQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new SuccessDataResult<User>((User)null));
-            _userClaimRepository.Setup(x =>
-                x.AddManyAsync(It.IsAny<IEnumerable<UserClaim>>()));
-
+                .ReturnsAsync(new SuccessDataResult<User>(new User()));
+            foreach (var l in query.ClaimId)
+            {
+                _userClaimRepository.Setup(x =>
+                    x.AddAsync(It.IsAny<UserClaim>()));
+            }
             var result = await _updateUserClaimCommandHandler.Handle(query, new CancellationToken());
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.UserNotFound);

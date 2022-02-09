@@ -58,7 +58,7 @@ namespace Tests.Business.Handlers
         [Test]
         public void Handler_GetUserGroups_Success()
         {
-            var userGroup = new UserGroup {GroupId = "test", UserId = "test",Status = true};
+            var userGroup = new UserGroup {GroupId = 1, UsersId = 1, Status = true};
             _userGroupRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<UserGroup,bool>>>()))
                 .ReturnsAsync(new List<UserGroup> {userGroup}.AsQueryable());
 
@@ -72,7 +72,7 @@ namespace Tests.Business.Handlers
         {
             var query = new GetUserGroupQuery
             {
-                UserId = "test_user_ıd"
+                UserId = 1
             };
 
             _userGroupRepository.Setup(x =>
@@ -90,7 +90,7 @@ namespace Tests.Business.Handlers
         {
             var query = new GetUserGroupInternalQuery
             {
-                UserId = "test_user_ıd"
+                UserId = 1
             };
 
             _userGroupRepository.Setup(x =>
@@ -108,8 +108,8 @@ namespace Tests.Business.Handlers
         {
             var createUserCommand = new CreateUserGroupCommand
             {
-                UserId = "test_user_ıd",
-                GroupId = "test_group_ıd"
+                UserId = 1,
+                GroupId = 1
             };
             _userGroupRepository.Setup(x => 
                 x.AnyAsync(It.IsAny<Expression<Func<UserGroup,bool>>>())).ReturnsAsync(false);
@@ -125,8 +125,8 @@ namespace Tests.Business.Handlers
         {
             var createUserCommand = new CreateUserGroupInternalCommand()
             {
-                UserId = "test_user_ıd",
-                GroupId = "test_group_ıd"
+                UserId = 1,
+                GroupId = 1
             };
             _userGroupRepository.Setup(x => 
                 x.AnyAsync(It.IsAny<Expression<Func<UserGroup,bool>>>())).ReturnsAsync(false);
@@ -142,14 +142,14 @@ namespace Tests.Business.Handlers
         {
             var updateUserCommand = new UpdateUserGroupCommand
             {
-                GroupId = new[] {"test_group_ıd"},
-                UserId = "test_user_ıd"
+                GroupId = new long[] {1},
+                UserId = 1
             };
             _mediator.Setup(x => x.Send(It.IsAny<GetUserInternalQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new SuccessDataResult<User>(new User()));
             
             _userGroupRepository.Setup(x => x
-                .AddManyAsync(It.IsAny<IEnumerable<UserGroup>>()));
+                .Add(It.IsAny<UserGroup>()));
 
             var result = _updateUserGroupCommandHandler.Handle(updateUserCommand, new CancellationToken()).Result;
 
@@ -161,14 +161,14 @@ namespace Tests.Business.Handlers
         {
             var updateUserCommand = new UpdateUserGroupCommand
             {
-                GroupId = new[] {"test_group_ıd"},
-                UserId = "test_user_ıd"
+                GroupId = new long[] {1,2,3},
+                UserId = 1
             };
             _mediator.Setup(x => x.Send(It.IsAny<GetUserInternalQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new SuccessDataResult<User>((User)null));
             
             _userGroupRepository.Setup(x => x
-                .AddManyAsync(It.IsAny<IEnumerable<UserGroup>>()));
+                .AddAsync(It.IsAny<UserGroup>()));
 
             var result = _updateUserGroupCommandHandler.Handle(updateUserCommand, new CancellationToken()).Result;
 
@@ -184,7 +184,7 @@ namespace Tests.Business.Handlers
                 x.GetAsync(It.IsAny<Expression<Func<UserGroup, bool>>>())).ReturnsAsync(new UserGroup());
 
             _userGroupRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<UserGroup>(), It.IsAny<Expression<Func<UserGroup, bool>>>()));
+                x.UpdateAsync(It.IsAny<UserGroup>()));
 
             var result = _deleteUserGroupCommandHandler.Handle(deleteUserCommand, new CancellationToken()).Result;
 

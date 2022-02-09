@@ -13,8 +13,8 @@ namespace Core.DataAccess.EntityFramework
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TContext"></typeparam>
     public class EfEntityRepositoryBase<TEntity, TContext>
-        : IEntityRepository<TEntity>
-        where TEntity : class, IEntity
+        : IRepository<TEntity>
+        where TEntity : class, IEntity, new()
         where TContext : DbContext
     {
         protected readonly TContext Context;
@@ -24,15 +24,28 @@ namespace Core.DataAccess.EntityFramework
             Context = context;
         }
 
-        public TEntity Add(TEntity entity)
+        public void Add(TEntity entity)
         {
-            return Context.Add(entity).Entity;
+            Context.Add(entity);
+            Context.SaveChanges();
         }
-
-        public TEntity Update(TEntity entity)
+        
+        public async Task AddAsync(TEntity entity)
+        {
+            await Context.AddAsync(entity);
+            await Context.SaveChangesAsync();
+        }
+        
+        public void Update(TEntity entity)
         {
             Context.Update(entity);
-            return entity;
+            Context.SaveChanges();
+        }
+        
+        public async Task UpdateAsync(TEntity entity)
+        {
+            await Task.Run(() => Context.Update(entity));
+            await Context.SaveChangesAsync();
         }
 
         public TEntity Get(Expression<Func<TEntity, bool>> expression)
@@ -40,23 +53,55 @@ namespace Core.DataAccess.EntityFramework
             return Context.Set<TEntity>().FirstOrDefault(expression);
         }
 
+        public async Task<TEntity> GetByIdAsync(long id)
+        {
+            return await Context.Set<TEntity>().AsQueryable().FirstOrDefaultAsync(x=> x.Id == id);
+        }
+        
+        public TEntity GetById(long id)
+        {
+            return Context.Set<TEntity>().AsQueryable().FirstOrDefault(x=> x.Id == id);
+        }
+        
         public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> expression)
         {
             return await Context.Set<TEntity>().AsQueryable().FirstOrDefaultAsync(expression);
         }
+        
+        public bool Any(Expression<Func<TEntity, bool>> predicate = null)
+        {
+            var data = predicate == null
+                ? Context.Set<TEntity>().FirstOrDefault()
+                : Context.Set<TEntity>().Where(predicate).FirstOrDefault();
+            return data != null;
+        }
 
-        public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> expression = null)
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate = null)
+        {
+            return await Task.Run(() =>
+            {
+                var data = predicate == null
+                    ? Context.Set<TEntity>().FirstOrDefault()
+                    : Context.Set<TEntity>().Where(predicate).FirstOrDefault();
+
+                return data != null;
+            });
+        }
+
+        public IQueryable<TEntity> GetList(Expression<Func<TEntity, bool>> expression = null)
         {
             return expression == null
                 ? Context.Set<TEntity>().AsNoTracking()
                 : Context.Set<TEntity>().Where(expression).AsNoTracking();
         }
 
-        public async Task<IEnumerable<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> expression = null)
+
+
+        public async Task<IQueryable<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> expression = null)
         {
-            return expression == null
-                ? await Context.Set<TEntity>().ToListAsync()
-                : await Context.Set<TEntity>().Where(expression).ToListAsync();
+            return await Task.Run(() => expression == null
+                ? Context.Set<TEntity>()
+                : Context.Set<TEntity>().Where(expression));
         }
 
         public int SaveChanges()
@@ -128,14 +173,14 @@ namespace Core.DataAccess.EntityFramework
             return result;
         }
 
-        public async Task<int> GetCountAsync(Expression<Func<TEntity, bool>> expression = null)
+        public async Task<long> GetCountAsync(Expression<Func<TEntity, bool>> expression = null)
         {
             if (expression == null)
                 return await Context.Set<TEntity>().CountAsync();
             return await Context.Set<TEntity>().CountAsync(expression);
         }
 
-        public int GetCount(Expression<Func<TEntity, bool>> expression = null)
+        public long GetCount(Expression<Func<TEntity, bool>> expression = null)
         {
             if (expression == null)
                 return Context.Set<TEntity>().Count();

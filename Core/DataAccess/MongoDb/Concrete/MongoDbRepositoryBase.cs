@@ -5,19 +5,16 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Core.DataAccess.MongoDb.Concrete.Configurations;
 using Core.Entities;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Core.DataAccess.MongoDb.Concrete
 {
-    public abstract class MongoDbRepositoryBase<T> : IDocumentDbRepository<T> where T : DocumentDbEntity
+    public abstract class MongoDbRepositoryBase<T> : IRepository<T>  where T : class, IEntity
     {
         private readonly IMongoCollection<T> _collection;
-        protected string CollectionName;
 
         protected MongoDbRepositoryBase(MongoConnectionSettings mongoConnectionSetting, string collectionName)
         {
-            CollectionName = collectionName;
             var url =
                 $"mongodb://{mongoConnectionSetting.UserName}:{mongoConnectionSetting.Password}@{mongoConnectionSetting.Host}:{mongoConnectionSetting.Port}/?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
             var client = new MongoClient(url);
@@ -25,12 +22,12 @@ namespace Core.DataAccess.MongoDb.Concrete
             _collection = database.GetCollection<T>(collectionName);
         }
 
-        public virtual T GetById(ObjectId id)
+        public virtual T GetById(long id)
         {
             return _collection.Find(x => x.Id == id).FirstOrDefault();
         }
 
-        public virtual async Task<T> GetByIdAsync(ObjectId id)
+        public virtual async Task<T> GetByIdAsync(long id)
         {
             return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
         }
@@ -42,26 +39,18 @@ namespace Core.DataAccess.MongoDb.Concrete
 
         public virtual void Add(T entity)
         {
+            var id = _collection.AsQueryable().OrderByDescending(x => x.Id).First().Id;
+            entity.Id = id + 1;
             var options = new InsertOneOptions {BypassDocumentValidation = false};
             _collection.InsertOne(entity, options);
         }
 
         public virtual async Task AddAsync(T entity)
         {
+            var id = _collection.AsQueryable().OrderByDescending(x => x.Id).First().Id;
+            entity.Id = id + 1;
             var options = new InsertOneOptions {BypassDocumentValidation = false};
             await _collection.InsertOneAsync(entity, options);
-        }
-
-        public virtual void AddMany(IEnumerable<T> entities)
-        {
-            var options = new BulkWriteOptions {IsOrdered = false, BypassDocumentValidation = false};
-            _collection.BulkWriteAsync((IEnumerable<WriteModel<T>>) entities, options);
-        }
-
-        public virtual async Task AddManyAsync(IEnumerable<T> entities)
-        {
-            var options = new BulkWriteOptions {IsOrdered = false, BypassDocumentValidation = false};
-            await _collection.BulkWriteAsync((IEnumerable<WriteModel<T>>) entities, options);
         }
 
         public virtual IQueryable<T> GetList(Expression<Func<T, bool>> predicate = null)
@@ -81,24 +70,14 @@ namespace Core.DataAccess.MongoDb.Concrete
             });
         }
 
-        public virtual void Update(ObjectId id, T record)
+        public virtual void Update(T record)
         {
-            _collection.FindOneAndReplace(x => x.Id == id, record);
+            _collection.FindOneAndReplace(x => x.Id == record.Id, record);
         }
 
-        public virtual void Update(T record, Expression<Func<T, bool>> predicate)
+        public virtual async Task UpdateAsync(T record)
         {
-            _collection.FindOneAndReplace(predicate, record);
-        }
-
-        public virtual async Task UpdateAsync(ObjectId id, T record)
-        {
-            await _collection.FindOneAndReplaceAsync(x => x.Id == id, record);
-        }
-
-        public virtual async Task UpdateAsync(T record, Expression<Func<T, bool>> predicate)
-        {
-            await _collection.FindOneAndReplaceAsync(predicate, record);
+            await _collection.FindOneAndReplaceAsync(x => x.Id == record.Id, record);
         }
 
         public bool Any(Expression<Func<T, bool>> predicate = null)
@@ -120,6 +99,20 @@ namespace Core.DataAccess.MongoDb.Concrete
 
                 return data.FirstOrDefault() != null;
             });
+        }
+
+        public long GetCount(Expression<Func<T, bool>> predicate = null)
+        {
+            return predicate == null
+                ? _collection.AsQueryable().Count()
+                : _collection.AsQueryable().Where(predicate).Count();
+        }
+
+        public async Task<long> GetCountAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            return await Task.Run(() => predicate == null
+                ? _collection.AsQueryable().Count()
+                : _collection.AsQueryable().Where(predicate).Count());
         }
     }
 }

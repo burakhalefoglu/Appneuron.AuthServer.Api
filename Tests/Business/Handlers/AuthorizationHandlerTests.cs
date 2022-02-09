@@ -23,7 +23,6 @@ using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using Tests.Helpers;
@@ -57,7 +56,6 @@ namespace Tests.Business.Handlers
                 _mailService.Object);
 
             _resetPasswordCommandHandler = new ResetPasswordCommandHandler(_userRepository.Object,
-                _mediator.Object,
                 _httpContextAccessor.Object);
         }
 
@@ -171,7 +169,7 @@ namespace Tests.Business.Handlers
                 m.Send(It.IsAny<GetUserGroupInternalQuery>(),
                     It.IsAny<CancellationToken>())).ReturnsAsync( new SuccessDataResult<UserGroup>(new UserGroup
             {
-                Id = new ObjectId("507f1f77bcf86cd799439011")
+                Id = 1
             }));
 
             _mediator.Setup(m =>
@@ -182,7 +180,7 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            Id = "507f1f77bcf86cd799439011",
+                            Id = 1,
                             Label = "test",
                             IsDisabled = false,
                             ParentId = "test"
@@ -197,7 +195,7 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            ProjectKey = "test_key"
+                            ProjectId = 1
                         }
                     }));
 
@@ -205,7 +203,7 @@ namespace Tests.Business.Handlers
             _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 OperationClaims = null
-            }, new List<string>())).Returns(new AccessToken());
+            }, new List<long>())).Returns(new AccessToken());
 
 
             _loginUserQuery = new LoginUserQuery
@@ -259,9 +257,9 @@ namespace Tests.Business.Handlers
 
             _userRepository.Setup(x =>
                     x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(Task.FromResult<User>(new User()
+                .Returns(Task.FromResult(new User()
                 {
-                    Id = new ObjectId("107f1f77acf86cd799439011"),
+                    Id = 1,
                     Email = registerUser.Email,
                 }));
             
@@ -270,7 +268,7 @@ namespace Tests.Business.Handlers
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new SuccessDataResult<Group>(new Group()
                 {
-                    Id = new ObjectId("507f1f77bcf86cd799439011")
+                    Id = 1
                 }));
             
             _mediator.Setup(m =>
@@ -286,7 +284,7 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            Id = "507f1f77bcf86cd799439011",
+                            Id = 1,
                             Label = "test",
                             IsDisabled = false,
                             ParentId = "test"
@@ -301,15 +299,15 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            ProjectKey = "test_key"
+                            ProjectId = 1
                         }
                     }));
 
             _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
-                UserId = "107f1f77acf86cd799439011",
+                UserId = 1,
                 OperationClaims = null
-            }, new List<string>())).Returns(new AccessToken());
+            }, new List<long>())).Returns(new AccessToken());
 
 
             var result = await _registerUserCommandHandler.Handle(_command, new CancellationToken());
@@ -350,7 +348,7 @@ namespace Tests.Business.Handlers
 
             _mailService.Setup(x => x.Send(It.IsAny<EmailMessage>()));
 
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
 
             var result = await _forgotPasswordCommandHandler.Handle(_forgotPasswordCommand, new CancellationToken());
             result.Success.Should().BeTrue();
@@ -424,7 +422,7 @@ namespace Tests.Business.Handlers
                     x.HttpContext.Request.Query)
                 .Returns(() => new QueryCollection());
 
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<Expression<Func<User, bool>>>()));
+            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
 
             var result = await _resetPasswordCommandHandler.Handle(resetPasswordCommand, new CancellationToken());
             result.Success.Should().BeTrue();

@@ -14,8 +14,8 @@ namespace Business.Handlers.UserClaims.Commands
 {
     public class CreateUserClaimCommand : IRequest<IResult>
     {
-        public string UserId { get; set; }
-        public string ClaimId { get; set; }
+        public long UserId { get; set; }
+        public long ClaimId { get; set; }
 
         public class CreateUserClaimCommandHandler : IRequestHandler<CreateUserClaimCommand, IResult>
         {

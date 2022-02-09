@@ -3,7 +3,7 @@ using Core.Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface ITranslateRepository : IDocumentDbRepository<Translate>
+    public interface ITranslateRepository : IRepository<Translate>
     {
     }
 }

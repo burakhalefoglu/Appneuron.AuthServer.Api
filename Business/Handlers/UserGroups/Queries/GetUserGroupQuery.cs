@@ -13,7 +13,7 @@ namespace Business.Handlers.UserGroups.Queries
 {
     public class GetUserGroupQuery : IRequest<IDataResult<UserGroup>>
     {
-        public string UserId { get; set; }
+        public long UserId { get; set; }
 
         public class GetUserGroupQueryHandler : IRequestHandler<GetUserGroupQuery, IDataResult<UserGroup>>
         {
@@ -30,7 +30,7 @@ namespace Business.Handlers.UserGroups.Queries
             public async Task<IDataResult<UserGroup>> Handle(GetUserGroupQuery request,
                 CancellationToken cancellationToken)
             {
-                var userGroup = await _userGroupRepository.GetAsync(p => p.UserId == request.UserId && p.Status == true);
+                var userGroup = await _userGroupRepository.GetAsync(p => p.UsersId == request.UserId && p.Status == true);
                 return new SuccessDataResult<UserGroup>(userGroup);
             }
         }

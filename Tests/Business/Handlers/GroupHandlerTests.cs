@@ -88,7 +88,7 @@ namespace Tests.Business.Handlers
         {
             var groupCommand = new DeleteGroupCommand
             {
-                Id = "test_ıd"
+                Id = 1
             };
 
             _groupRepository.Setup(x =>
@@ -105,7 +105,7 @@ namespace Tests.Business.Handlers
         {
             var groupCommand = new DeleteGroupCommand
             {
-                Id = "test_ıd"
+                Id = 1
             };
 
             _groupRepository.Setup(x =>
@@ -131,7 +131,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new Group());
 
             _groupRepository.Setup(x =>
-                x.Update(It.IsAny<Group>(), It.IsAny<Expression<Func<Group, bool>>>()));
+                x.Update(It.IsAny<Group>()));
 
             var result = await _updateGroupCommandHandler.Handle(groupCommand, new CancellationToken());
             result.Success.Should().BeTrue();
@@ -150,7 +150,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync((Group) null);
 
             _groupRepository.Setup(x =>
-                x.Update(It.IsAny<Group>(), It.IsAny<Expression<Func<Group, bool>>>()));
+                x.Update(It.IsAny<Group>()));
 
             var result = await _updateGroupCommandHandler.Handle(groupCommand, new CancellationToken());
 

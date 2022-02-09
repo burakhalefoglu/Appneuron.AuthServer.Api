@@ -1,9 +1,10 @@
 ﻿namespace Core.Entities.Concrete
 {
-    public class UserGroup : DocumentDbEntity
+    public class UserGroup : IEntity
     {
         public bool Status = true;
-        public string GroupId { get; set; }
-        public string UserId { get; set; }
+        public long GroupId { get; set; }
+        public long UsersId { get; set; }
+        public long Id { get; set; }
     }
 }

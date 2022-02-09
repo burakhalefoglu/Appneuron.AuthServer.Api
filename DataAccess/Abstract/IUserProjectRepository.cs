@@ -3,7 +3,7 @@ using Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface IUserProjectRepository : IDocumentDbRepository<UserProject>
+    public interface IUserProjectRepository : IRepository<UserProject>
     {
     }
 }

@@ -11,7 +11,6 @@ using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using FluentAssertions;
 using MediatR;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.Languages.Commands.CreateLanguageCommand;
@@ -55,14 +54,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetLanguageQuery
             {
-                Id = "test"
+                Id = 1
             };
 
             _languageRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<Language, bool>>>()))
                 .ReturnsAsync(new Language
                     {
-                        Id = new ObjectId("507f1f77bcf86cd799439011"),
+                        Id = 1,
                         Code = "Test",
                         Name = "Test"
                     }
@@ -73,7 +72,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.ObjectId.Should().Be("507f1f77bcf86cd799439011");
+            x.Data.Id.Should().Be(1);
         }
 
         [Test]
@@ -145,7 +144,7 @@ namespace Tests.Business.Handlers
             var command = new UpdateLanguageCommand
             {
                 Code = "test",
-                Id = "test_ıd",
+                Id = 1,
                 Name = "test"
             };
 
@@ -157,7 +156,7 @@ namespace Tests.Business.Handlers
                 });
 
             _languageRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<Language>(), It.IsAny<Expression<Func<Language, bool>>>()));
+                x.UpdateAsync(It.IsAny<Language>()));
 
             var x = await _updateLanguageCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -170,7 +169,7 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteLanguageCommand
             {
-                Id = "test_ıd"
+                Id = 1
             };
 
             _languageRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Language, bool>>>()))
@@ -181,7 +180,7 @@ namespace Tests.Business.Handlers
                 });
 
             _languageRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<Language>(), It.IsAny<Expression<Func<Language, bool>>>()));
+                x.UpdateAsync(It.IsAny<Language>()));
 
             var x = await _deleteLanguageCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();

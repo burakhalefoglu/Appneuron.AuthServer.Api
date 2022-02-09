@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -38,12 +39,12 @@ namespace Business.Handlers.Users.Commands
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var isUserExits = await _userRepository.GetAsync(u => u.ObjectId == userId && u.Status == true);
+                var isUserExits = await _userRepository.GetAsync(u => u.Id == Convert.ToInt64(userId) && u.Status == true);
                 if (isUserExits == null) return new ErrorResult(Messages.UserNotFound);
                 isUserExits.Name = request.FullName;
                 isUserExits.Email = request.Email;
 
-                await _userRepository.UpdateAsync(isUserExits, x => x.ObjectId == isUserExits.ObjectId);
+                await _userRepository.UpdateAsync(isUserExits);
                 return new SuccessResult(Messages.Updated);
             }
         }

@@ -13,7 +13,7 @@ namespace Business.Handlers.Translates.Commands
 {
     public class DeleteTranslateCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteTranslateCommandHandler : IRequestHandler<DeleteTranslateCommand, IResult>
         {
@@ -31,10 +31,9 @@ namespace Business.Handlers.Translates.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(DeleteTranslateCommand request, CancellationToken cancellationToken)
             {
-                var translateToDelete = await _translateRepository.GetAsync(p => p.ObjectId == request.Id && p.Status == true);
+                var translateToDelete = await _translateRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 translateToDelete.Status = false;
-                await _translateRepository.UpdateAsync(translateToDelete,
-                    x => x.ObjectId == translateToDelete.ObjectId);
+                await _translateRepository.UpdateAsync(translateToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

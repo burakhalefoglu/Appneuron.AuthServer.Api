@@ -15,8 +15,8 @@ namespace Business.Handlers.Translates.Commands
 {
     public class UpdateTranslateCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
-        public string LangId { get; set; }
+        public long Id { get; set; }
+        public long LangId { get; set; }
         public string Value { get; set; }
         public string Code { get; set; }
 
@@ -35,13 +35,12 @@ namespace Business.Handlers.Translates.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateTranslateCommand request, CancellationToken cancellationToken)
             {
-                var isThereTranslateRecord = await _translateRepository.GetAsync(u => u.ObjectId == request.Id && u.Status == true);
+                var isThereTranslateRecord = await _translateRepository.GetAsync(u => u.Id == request.Id && u.Status == true);
 
                 isThereTranslateRecord.Value = request.Value;
                 isThereTranslateRecord.Code = request.Code;
 
-                await _translateRepository.UpdateAsync(isThereTranslateRecord,
-                    x => x.ObjectId == isThereTranslateRecord.ObjectId);
+                await _translateRepository.UpdateAsync(isThereTranslateRecord);
                 return new SuccessResult(Messages.Updated);
             }
         }

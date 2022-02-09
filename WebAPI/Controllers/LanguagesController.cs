@@ -44,7 +44,7 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<Language>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpGet("getbyid")]
-        public async Task<IActionResult> GetById(string languageId)
+        public async Task<IActionResult> GetById(long languageId)
         {
             var result = await Mediator.Send(new GetLanguageQuery {Id = languageId});
             if (result.Success) return Ok(result);

@@ -38,7 +38,7 @@ namespace Business.Handlers.Groups.Commands
                 {
                     GroupName = request.GroupName
                 };
-                await _groupRepository.UpdateAsync(groupToUpdate, x => x.ObjectId == groupToUpdate.ObjectId);
+                await _groupRepository.UpdateAsync(groupToUpdate);
                 return new SuccessResult(Messages.Updated);
             }
         }

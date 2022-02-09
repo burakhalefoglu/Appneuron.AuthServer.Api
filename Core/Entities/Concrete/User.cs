@@ -2,7 +2,7 @@
 
 namespace Core.Entities.Concrete
 {
-    public class User : DocumentDbEntity
+    public class User : IEntity
     {
         public User()
         {
@@ -10,10 +10,11 @@ namespace Core.Entities.Concrete
             ResetPasswordExpires = DateTime.MinValue;
             Status = true;
         }
-
+        public long Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public bool Status { get; set; }
+        
+        public bool Status = true;
         public DateTime RecordDate { get; set; }
         public DateTime UpdateContactDate { get; set; }
         public byte[] PasswordSalt { get; set; }
