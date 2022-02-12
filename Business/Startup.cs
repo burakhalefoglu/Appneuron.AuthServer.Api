@@ -6,8 +6,8 @@ using System.Security.Principal;
 using Autofac;
 using Business.Constants;
 using Business.DependencyResolvers;
+using Business.Fakes.DArch;
 using Business.MessageBrokers;
-using Business.MessageBrokers.Kafka;
 using Business.MessageBrokers.Manager;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
@@ -15,11 +15,13 @@ using Core.DependencyResolvers;
 using Core.Extensions;
 using Core.Utilities.ElasticSearch;
 using Core.Utilities.IoC;
+using Core.Utilities.MessageBrokers.Kafka;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using DataAccess.Concrete.Cassandra;
 using DataAccess.Concrete.Cassandra.Contexts;
 using DataAccess.Concrete.Cassandra.Tables;
+using DataAccess.Concrete.EntityFramework.Contexts;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -86,37 +88,42 @@ namespace Business
             ConfigureServices(services);
             
             services.AddTransient<IClientRepository>(x => new CassClientRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Client));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Client));
             
             services.AddTransient<IUserProjectRepository>(x => new CassUserProjectRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.UserProject));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.UserProject));
             
             services.AddTransient<ILogRepository>(x => new CassLogRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Log));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Log));
             
             services.AddTransient<ITranslateRepository>(x => new CassTranslateRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Translate));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Translate));
             
             services.AddTransient<ILanguageRepository>(x => new CassLanguageRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Language));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Language));
             
             services.AddTransient<IUserRepository>(x => new CassUserRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.User));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.User));
             
             services.AddTransient<IUserClaimRepository>(x => new CassUserClaimRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.UserClaim));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.UserClaim));
             
             services.AddTransient<IOperationClaimRepository>(x => new CassOperationClaimRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.OperationClaim));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.OperationClaim));
             
             services.AddTransient<IGroupRepository>(x => new CassGroupRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Group));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Group));
             
             services.AddTransient<IGroupClaimRepository>(x => new CassGroupClaimRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.GroupClaim));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.GroupClaim));
             
             services.AddTransient<IUserGroupRepository>(x => new CassUserGroupRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.UserGroup));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.UserGroup));
+            
+            services.AddDbContext<ProjectDbContext, DArchInMemory>(ServiceLifetime.Transient);
+
+            services.AddSingleton<CassandraContextBase, CassandraContext>();
+            
         }
 
         /// <summary>
@@ -128,37 +135,41 @@ namespace Business
             ConfigureServices(services);
             
             services.AddTransient<IClientRepository>(x => new CassClientRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Client));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Client));
             
             services.AddTransient<IUserProjectRepository>(x => new CassUserProjectRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.UserProject));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.UserProject));
             
             services.AddTransient<ILogRepository>(x => new CassLogRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Log));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Log));
             
             services.AddTransient<ITranslateRepository>(x => new CassTranslateRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Translate));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Translate));
             
             services.AddTransient<ILanguageRepository>(x => new CassLanguageRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Language));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Language));
             
             services.AddTransient<IUserRepository>(x => new CassUserRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.User));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.User));
             
             services.AddTransient<IUserClaimRepository>(x => new CassUserClaimRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.UserClaim));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.UserClaim));
             
             services.AddTransient<IOperationClaimRepository>(x => new CassOperationClaimRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.OperationClaim));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.OperationClaim));
             
             services.AddTransient<IGroupRepository>(x => new CassGroupRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Group));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Group));
             
             services.AddTransient<IGroupClaimRepository>(x => new CassGroupClaimRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.GroupClaim));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.GroupClaim));
             
             services.AddTransient<IUserGroupRepository>(x => new CassUserGroupRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.UserGroup));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.UserGroup));
+            
+            // services.AddDbContext<ProjectDbContext>();
+
+            services.AddSingleton<CassandraContextBase, CassandraContext>();
         }
 
         /// <summary>
@@ -170,38 +181,41 @@ namespace Business
             ConfigureServices(services);
             
             services.AddTransient<IClientRepository>(x => new CassClientRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Client));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Client));
             
             services.AddTransient<IUserProjectRepository>(x => new CassUserProjectRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.UserProject));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.UserProject));
             
             services.AddTransient<ILogRepository>(x => new CassLogRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Log));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Log));
             
             services.AddTransient<ITranslateRepository>(x => new CassTranslateRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Translate));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Translate));
             
             services.AddTransient<ILanguageRepository>(x => new CassLanguageRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Language));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Language));
             
             services.AddTransient<IUserRepository>(x => new CassUserRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.User));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.User));
             
             services.AddTransient<IUserClaimRepository>(x => new CassUserClaimRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.UserClaim));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.UserClaim));
             
             services.AddTransient<IOperationClaimRepository>(x => new CassOperationClaimRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.OperationClaim));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.OperationClaim));
             
             services.AddTransient<IGroupRepository>(x => new CassGroupRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.Group));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Group));
             
             services.AddTransient<IGroupClaimRepository>(x => new CassGroupClaimRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.GroupClaim));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.GroupClaim));
             
             services.AddTransient<IUserGroupRepository>(x => new CassUserGroupRepository(
-                x.GetRequiredService<CassandraContexts>(), CassandraTableQueries.UserGroup));
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.UserGroup));
 
+            // services.AddDbContext<ProjectDbContext>();
+
+            services.AddSingleton<CassandraContextBase, CassandraContext>();            
         }
 
         /// <summary>

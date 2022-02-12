@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Business.MessageBrokers.Models;
+using Business.MessageBrokers;
 using Confluent.Kafka;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace Business.MessageBrokers.Kafka
+namespace Core.Utilities.MessageBrokers.Kafka
 {
     public class KafkaMessageBroker : IMessageBroker
     {

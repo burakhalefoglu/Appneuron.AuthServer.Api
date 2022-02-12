@@ -7,7 +7,7 @@ namespace DataAccess.Concrete.Cassandra
 {
     public class CassTranslateRepository : CassandraRepositoryBase<Translate>, ITranslateRepository
     {
-        public CassTranslateRepository(CassandraContexts cassandraContexts, string tableQuery) : base(
+        public CassTranslateRepository(CassandraContextBase cassandraContexts, string tableQuery) : base(
             cassandraContexts.CassandraConnectionSettings, tableQuery)
         {
         }

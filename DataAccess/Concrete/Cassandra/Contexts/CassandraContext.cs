@@ -1,7 +1,12 @@
-﻿namespace DataAccess.Concrete.Cassandra.Contexts
+﻿using Microsoft.Extensions.Configuration;
+
+namespace DataAccess.Concrete.Cassandra.Contexts
 {
-    public class CassandracontextBase
+    public class CassandraContext: CassandraContextBase
     {
+        public CassandraContext(IConfiguration configuration) : base(configuration)
+        {
+        }
         
     }
 }

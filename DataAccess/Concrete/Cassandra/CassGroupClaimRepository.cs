@@ -7,7 +7,7 @@ namespace DataAccess.Concrete.Cassandra
 {
     public class CassGroupClaimRepository : CassandraRepositoryBase<GroupClaim>, IGroupClaimRepository
     {
-        public CassGroupClaimRepository(CassandraContexts cassandraContexts, string tableQuery) : base(
+        public CassGroupClaimRepository(CassandraContextBase cassandraContexts, string tableQuery) : base(
             cassandraContexts.CassandraConnectionSettings, tableQuery)
         {
         }

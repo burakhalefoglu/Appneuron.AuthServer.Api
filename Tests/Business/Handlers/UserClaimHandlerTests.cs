@@ -174,7 +174,7 @@ namespace Tests.Business.Handlers
                 Id = 1
             };
             _mediator.Setup(x => x.Send(It.IsAny<GetUserInternalQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new SuccessDataResult<User>(new User()));
+                .ReturnsAsync(new SuccessDataResult<User>((User) null));
             foreach (var l in query.ClaimId)
             {
                 _userClaimRepository.Setup(x =>

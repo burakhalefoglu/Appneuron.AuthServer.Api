@@ -32,4 +32,9 @@
         <ProjectReference Include="..\WebAPI\WebAPI.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Business\Adapters" />
+      <Folder Include="Helpers\Adapter" />
+    </ItemGroup>
+
 </Project>

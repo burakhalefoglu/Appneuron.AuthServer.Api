@@ -13,7 +13,6 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="10.1.1" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-        <PackageReference Include="Confluent.Kafka" Version="1.7.0" />
         <PackageReference Include="FluentValidation" Version="9.5.1" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.5.1" />
         <PackageReference Include="MassTransit" Version="7.2.1" />
@@ -41,6 +40,8 @@
         <WCFMetadata Include="Connected Services" />
     </ItemGroup>
     <ItemGroup>
+        <Folder Include="Adapters" />
         <Folder Include="Handlers\Clients\Queries\" />
+        <Folder Include="Services" />
     </ItemGroup>
 </Project>

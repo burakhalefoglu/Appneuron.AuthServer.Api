@@ -8,57 +8,53 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="Properties\PublishProfiles\**"/>
-        <Content Remove="Properties\PublishProfiles\**"/>
-        <EmbeddedResource Remove="Properties\PublishProfiles\**"/>
-        <None Remove="Properties\PublishProfiles\**"/>
-        <_WebToolingArtifacts Remove="Properties\PublishProfiles\**"/>
+        <Compile Remove="Properties\PublishProfiles\**" />
+        <Content Remove="Properties\PublishProfiles\**" />
+        <EmbeddedResource Remove="Properties\PublishProfiles\**" />
+        <None Remove="Properties\PublishProfiles\**" />
+        <_WebToolingArtifacts Remove="Properties\PublishProfiles\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="SwaggerMessages.cs"/>
+        <Compile Remove="SwaggerMessages.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <Content Remove="log4net.config"/>
-        <Content Remove="nlog.config"/>
-        <Content Remove="nlog.development.config"/>
+        <Content Remove="log4net.config" />
+        <Content Remove="nlog.config" />
+        <Content Remove="nlog.development.config" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="MassTransit" Version="7.2.1"/>
-        <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3"/>
-        <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2"/>
+        <PackageReference Include="MassTransit" Version="7.2.1" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.6">
             <PrivateAssets>all</PrivateAssets>
             <!--<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>-->
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.6">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0"/>
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Business\Business.csproj"/>
-        <ProjectReference Include="..\Core\Core.csproj"/>
-        <ProjectReference Include="..\DataAccess\DataAccess.csproj"/>
-        <ProjectReference Include="..\Entities\Entities.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="logs\"/>
+        <ProjectReference Include="..\Business\Business.csproj" />
+        <ProjectReference Include="..\Core\Core.csproj" />
+        <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+        <ProjectReference Include="..\Entities\Entities.csproj" />
     </ItemGroup>
 
     <ProjectExtensions>
         <VisualStudio>
-            <UserProperties/>
+            <UserProperties />
         </VisualStudio>
     </ProjectExtensions>
 

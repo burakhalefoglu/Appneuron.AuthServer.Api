@@ -1,5 +1,4 @@
 ﻿using Serilog;
-using Serilog.Formatting.Compact;
 using Serilog.Sinks.FastConsole;
 
 namespace Core.CrossCuttingConcerns.Logging.Serilog.Loggers

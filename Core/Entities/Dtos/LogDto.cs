@@ -4,7 +4,7 @@ namespace Core.Entities.Dtos
 {
     public class LogDto : IDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Level { get; set; }
         public string ExceptionMessage { get; set; }
         public DateTimeOffset TimeStamp { get; set; }

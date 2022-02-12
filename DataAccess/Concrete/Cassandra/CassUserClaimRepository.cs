@@ -7,7 +7,7 @@ namespace DataAccess.Concrete.Cassandra
 {
     public class CassUserClaimRepository : CassandraRepositoryBase<UserClaim>, IUserClaimRepository
     {
-        public CassUserClaimRepository(CassandraContexts cassandraContexts, string tableQuery) : base(
+        public CassUserClaimRepository(CassandraContextBase cassandraContexts, string tableQuery) : base(
             cassandraContexts.CassandraConnectionSettings, tableQuery)
         {
         }

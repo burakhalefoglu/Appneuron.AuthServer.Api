@@ -7,7 +7,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using Business.Adapters.PersonService;
 using System;
 using System.Threading.Tasks;
 

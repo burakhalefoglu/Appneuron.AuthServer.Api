@@ -3,11 +3,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Concrete.Cassandra.Contexts
 {
-    public abstract class CassandraContexts
+    public abstract class CassandraContextBase
     {
         public readonly CassandraConnectionSettings CassandraConnectionSettings;
 
-        protected CassandraContexts(IConfiguration configuration)
+        protected CassandraContextBase(IConfiguration configuration)
         {
             CassandraConnectionSettings = configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         }

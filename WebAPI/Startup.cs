@@ -6,7 +6,6 @@ using Business;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
 using Core.Utilities.IoC;
-using Core.Utilities.MessageBrokers.RabbitMq;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -67,10 +66,7 @@ namespace WebAPI
                         .AllowCredentials());
             });
             services.AddControllers();
-
-
-            var rabbitmqOptions = Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
-
+            
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -93,8 +89,12 @@ namespace WebAPI
                 c.IncludeXmlComments(Path.ChangeExtension(typeof(Startup).Assembly.Location, ".xml"));
             });
 
+            services.AddTransient<MongoDbLogger>();
+            services.AddTransient<ConsoleLogger>();
             services.AddTransient<FileLogger>();
+            services.AddTransient<LogstashLogger>();
             services.AddTransient<PostgreSqlLogger>();
+            services.AddTransient<MsTeamsLogger>();
             services.AddTransient<MsSqlLogger>();
 
             base.ConfigureServices(services);

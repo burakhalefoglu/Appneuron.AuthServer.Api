@@ -36,7 +36,7 @@ namespace Business.Handlers.OperationClaims.Queries
                         <IEnumerable<SelectionItem>>(Messages.OperationClaimNotFound);
                 var operationClaim = list.Select(x => new SelectionItem
                 {
-                    Id = x.Id.ToString(),
+                    Id = x.Id,
                     Label = x.Alias ?? x.Name
                 });
                 return new SuccessDataResult<IEnumerable<SelectionItem>>

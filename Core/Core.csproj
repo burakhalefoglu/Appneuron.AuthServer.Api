@@ -8,6 +8,7 @@
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
         <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.0" />
         <PackageReference Include="CassandraCSharpDriver" Version="3.17.1" />
+        <PackageReference Include="Confluent.Kafka" Version="1.8.2" />
         <PackageReference Include="FluentValidation" Version="9.5.1" />
         <PackageReference Include="HaemmerElectronics.SeppPenner.SerilogSinkForPostgreSQL" Version="3.2.3" />
         <PackageReference Include="MailKit" Version="2.10.1" />
@@ -42,5 +43,8 @@
         <PackageReference Include="ServiceStack.Redis.Core" Version="5.10.4" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Utilities\MessageBrokers\RabbitMq" />
     </ItemGroup>
 </Project>

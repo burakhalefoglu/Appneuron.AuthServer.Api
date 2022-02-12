@@ -52,7 +52,7 @@ namespace Business.MessageBrokers.Manager
 
             var selectionItems = groupClaims.Data.ToList();
             var operationClaims = selectionItems
-                .Select(item => new OperationClaim {Id = int.Parse(item.Id), Name = item.Label}).ToList();
+                .Select(item => new OperationClaim {Id = item.Id, Name = item.Label}).ToList();
 
             await _mediator.Send(new CreateUserClaimsInternalCommand
             {

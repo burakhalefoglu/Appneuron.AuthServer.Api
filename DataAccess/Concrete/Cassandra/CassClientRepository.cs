@@ -7,7 +7,7 @@ namespace DataAccess.Concrete.Cassandra
 {
     public class CassClientRepository : CassandraRepositoryBase<Client>, IClientRepository
     {
-        public CassClientRepository(CassandraContexts cassandraContexts, string tableQuery) : base(
+        public CassClientRepository(CassandraContextBase cassandraContexts, string tableQuery) : base(
             cassandraContexts.CassandraConnectionSettings, tableQuery)
         {
         }
