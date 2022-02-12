@@ -2,10 +2,13 @@
 using System.Threading.Tasks;
 using Business.MessageBrokers;
 using Confluent.Kafka;
+using Core.Aspects.Autofac.Exception;
+using Core.Aspects.Autofac.Logging;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Newtonsoft.Json;
 
 namespace Core.Utilities.MessageBrokers.Kafka
@@ -22,6 +25,8 @@ namespace Core.Utilities.MessageBrokers.Kafka
                     .GetSection("MessageBrokerOptions").Get<MessageBrokerOption>();
         }
 
+        [LogAspect(typeof(ConsoleLogger))]
+        [ExceptionLogAspect(typeof(ConsoleLogger))]
         public async Task GetMessageAsync<T>(string topic, string consumerGroup,
             Func<T, Task<IResult>> callback)
         {
@@ -46,59 +51,42 @@ namespace Core.Utilities.MessageBrokers.Kafka
                     .Build();
                 consumer.Subscribe(topic);
 
-                try
+                while (true)
                 {
-                    while (true)
-                        try
+                    var consumeResult = consumer.Consume();
+
+                    if (consumeResult.IsPartitionEOF)
+                    {
+                        Console.WriteLine(
+                            $"Reached end of topic {consumeResult.Topic}, partition {consumeResult.Partition}, offset {consumeResult.Offset}.");
+
+                        continue;
+                    }
+
+                    Console.WriteLine(
+                        $"Received message at {consumeResult.TopicPartitionOffset}: {consumeResult.Message.Value}");
+
+
+                    var message = JsonConvert.DeserializeObject<T>(
+                        consumeResult.Message.Value,
+                        new JsonSerializerSettings
                         {
-                            var consumeResult = consumer.Consume();
+                            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                        });
 
-                            if (consumeResult.IsPartitionEOF)
-                            {
-                                Console.WriteLine(
-                                    $"Reached end of topic {consumeResult.Topic}, partition {consumeResult.Partition}, offset {consumeResult.Offset}.");
+                    var result = await callback(message);
 
-                                continue;
-                            }
+                    Console.WriteLine(result);
 
-                            Console.WriteLine(
-                                $"Received message at {consumeResult.TopicPartitionOffset}: {consumeResult.Message.Value}");
+                    if (result.Success) ;
+                    consumer.Commit(consumeResult);
 
-
-                            var message = JsonConvert.DeserializeObject<T>(
-                                consumeResult.Message.Value,
-                                new JsonSerializerSettings
-                                {
-                                    PreserveReferencesHandling = PreserveReferencesHandling.Objects
-                                });
-
-                            var result = await callback(message);
-
-                            Console.WriteLine(result);
-
-                            if (!result.Success) continue;
-                            try
-                            {
-                                consumer.Commit(consumeResult);
-                            }
-                            catch (KafkaException e)
-                            {
-                                Console.WriteLine($"Commit error: {e.Error.Reason}");
-                            }
-                        }
-                        catch (ConsumeException e)
-                        {
-                            Console.WriteLine($"Consume error: {e.Error.Reason}");
-                        }
-                }
-                catch (OperationCanceledException)
-                {
-                    Console.WriteLine("Closing consumer.");
-                    consumer.Close();
                 }
             });
         }
 
+        [LogAspect(typeof(ConsoleLogger))]
+        [ExceptionLogAspect(typeof(ConsoleLogger))]
         public async Task<IResult> SendMessageAsync<T>(T messageModel) where T :
             class, new()
         {
