@@ -33,7 +33,7 @@ spec:
         app: auth-server 
     spec:
       nodeSelector:
-        dedicated: spot
+        dedicated: app
       volumes:
         - name: appconfig
           secret:
@@ -73,27 +73,5 @@ spec:
             privileged: false
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
-
----
-
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: webapi-auth-ingress
-  namespace: service-app-dev
-spec:
-  tls:
-    - hosts:
-        - webapi.appneuron.net
-      secretName: webapi-tls
-  rules:
-    - host: webapi.appneuron.net
-      http:
-        paths:
-          - path: /auth
-            pathType: Prefix
-            backend: 
-              serviceName: auth-server-service
-              servicePort: 8000
 
 

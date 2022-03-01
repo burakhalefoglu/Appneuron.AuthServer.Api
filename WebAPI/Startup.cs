@@ -60,7 +60,8 @@ namespace WebAPI
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins(corsPolicies)
+                        //builder.WithOrigins(corsPolicies)
+                    builder => builder.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());

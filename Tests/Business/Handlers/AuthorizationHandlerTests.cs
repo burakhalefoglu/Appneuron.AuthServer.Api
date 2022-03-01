@@ -11,6 +11,7 @@ using Business.Internals.Handlers.Groups.Queries;
 using Business.Internals.Handlers.UserGroups.Commands;
 using Business.Internals.Handlers.UserGroups.Queries;
 using Business.Internals.Handlers.UserProjects;
+using Business.MessageBrokers;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
@@ -44,13 +45,14 @@ namespace Tests.Business.Handlers
             _mediator = new Mock<IMediator>();
             _mailService = new Mock<IMailService>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
-
+            _messageBroker = new Mock<IMessageBroker>();
+            
             _loginUserQueryHandler = new LoginUserQueryHandler(_userRepository.Object,
                 _tokenHelper.Object,
                 _mediator.Object);
 
             _registerUserCommandHandler = new RegisterUserCommandHandler(_userRepository.Object,
-                _mediator.Object, _tokenHelper.Object);
+                _mediator.Object, _tokenHelper.Object, _messageBroker.Object);
 
             _forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(_userRepository.Object,
                 _mailService.Object);
@@ -63,6 +65,7 @@ namespace Tests.Business.Handlers
         private Mock<ITokenHelper> _tokenHelper;
         private Mock<IMediator> _mediator;
         private Mock<IMailService> _mailService;
+        private Mock<IMessageBroker> _messageBroker;
         private Mock<IHttpContextAccessor> _httpContextAccessor;
         private LoginUserQueryHandler _loginUserQueryHandler;
         private LoginUserQuery _loginUserQuery;
@@ -71,7 +74,7 @@ namespace Tests.Business.Handlers
         private ForgotPasswordCommandHandler _forgotPasswordCommandHandler;
         private ForgotPasswordCommand _forgotPasswordCommand;
         private ResetPasswordCommandHandler _resetPasswordCommandHandler;
-
+        
         [Test]
         public async Task Authorization_Login_UserNotFount()
         {
