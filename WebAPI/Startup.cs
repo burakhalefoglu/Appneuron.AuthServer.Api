@@ -64,7 +64,8 @@ namespace WebAPI
                     builder => builder.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowCredentials());
+                        // .AllowCredentials()
+                        );
             });
             services.AddControllers();
             
