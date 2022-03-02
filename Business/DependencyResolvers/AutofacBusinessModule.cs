@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Extras.DynamicProxy;
+using Business.Abstract;
 using Castle.DynamicProxy;
 using Core.Utilities.Interceptors;
 using FluentValidation;

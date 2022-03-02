@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Business.Abstract;
 using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
 using Business.Handlers.Users.Commands;
+using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authorization;
@@ -18,15 +20,12 @@ namespace WebAPI.Controllers
     [ApiController]
     public class AuthController : BaseApiController
     {
-        private readonly IConfiguration _configuration;
 
-        /// <summary>
-        ///     Dependency injection is provided by constructor injection.
-        /// </summary>
-        /// <param name="configuration"></param>
-        public AuthController(IConfiguration configuration)
+        private readonly IAuthService _authService;
+
+        public AuthController(IAuthService authService)
         {
-            _configuration = configuration;
+            _authService = authService;
         }
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace WebAPI.Controllers
         /// <summary>
         ///     Make it User Register operations
         /// </summary>
-        /// <param name="createUser"></param>
+        /// <param name="user"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [Consumes("application/json")]
@@ -60,12 +59,12 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterUserCommand createUser)
+        public async Task<IActionResult> Register(User user)
         {
-            var result = await Mediator.Send(createUser);
-
+            var result = await new AuthManager().Register(user);
+            
             if (result.Success) return Ok(result);
-            return Unauthorized(result);
+            return Unauthorized("result");
         }
 
 

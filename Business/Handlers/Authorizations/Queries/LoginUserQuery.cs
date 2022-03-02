@@ -16,7 +16,6 @@ using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using MediatR;
-using MongoDB.Bson;
 
 namespace Business.Handlers.Authorizations.Queries
 {

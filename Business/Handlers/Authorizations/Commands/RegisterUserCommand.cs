@@ -9,6 +9,8 @@ using Business.Internals.Handlers.GroupClaims;
 using Business.Internals.Handlers.Groups.Queries;
 using Business.Internals.Handlers.UserClaims;
 using Business.Internals.Handlers.UserGroups.Commands;
+using Business.MessageBrokers;
+using Business.MessageBrokers.Models;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -35,16 +37,17 @@ namespace Business.Handlers.Authorizations.Commands
             private readonly IMediator _mediator;
             private readonly ITokenHelper _tokenHelper;
             private readonly IUserRepository _userRepository;
-            // private readonly IMessageBroker _messageBroker;
+            private readonly IMessageBroker _messageBroker;
 
             public RegisterUserCommandHandler(IUserRepository userRepository,
                 IMediator mediator,
-                ITokenHelper tokenHelper)
+                ITokenHelper tokenHelper,
+                IMessageBroker messageBroker)
             {
                 _userRepository = userRepository;
                 _mediator = mediator;
                 _tokenHelper = tokenHelper;
-                // _messageBroker = messageBroker;
+                _messageBroker = messageBroker;
             }
 
             [PerformanceAspect(5)]
@@ -109,12 +112,12 @@ namespace Business.Handlers.Authorizations.Commands
                 }, new List<long>());
 
                 // create customer with kafka 
-                // await _messageBroker.SendMessageAsync(new CreateCustomerMessageCommand
-                // {
-                //  Id =  user.Id,
-                //  DemographicId = 0,
-                //  IndustryId = 1
-                // });
+                await _messageBroker.SendMessageAsync(new CreateCustomerMessageCommand
+                {
+                 Id =  user.Id,
+                 DemographicId = 0,
+                 IndustryId = 1
+                });
                 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }

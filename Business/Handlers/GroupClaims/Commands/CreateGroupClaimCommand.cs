@@ -30,7 +30,7 @@ namespace Business.Handlers.GroupClaims.Commands
                 _operationClaimRepository = operationClaimRepository;
             }
 
-            [SecuredOperation(Priority = 1)]
+            // [SecuredOperation(Priority = 1)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(CreateGroupClaimCommand request, CancellationToken cancellationToken)
