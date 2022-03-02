@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,16 +24,15 @@ using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using MediatR;
-using MongoDB.Bson;
 
 namespace Business.Handlers.Authorizations.Commands
 {
-    public class RegisterUserCommand : IRequest<IResult>
+    public class RegisterUserCommand : IRequest<IDataResult<AccessToken>>
     {
         public string Email { get; set; }
         public string Password { get; set; }
 
-        public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, IResult>
+        public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, IDataResult<AccessToken>>
         {
             private readonly IMediator _mediator;
             private readonly ITokenHelper _tokenHelper;
@@ -56,14 +54,15 @@ namespace Business.Handlers.Authorizations.Commands
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(ConsoleLogger))]
             [TransactionScopeAspect]
-            public async Task<IResult> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+            public async Task<IDataResult<AccessToken>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
             {
                 var userExits = await _userRepository.AnyAsync(u => u.Email == request.Email && u.Status == true);
 
                 if (userExits)
-                    return new ErrorResult(Messages.DefaultError);
+                    return new ErrorDataResult<AccessToken>(Messages.DefaultError);
 
-                HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
+                HashingHelper.CreatePasswordHash(request.Password, 
+                    out var passwordSalt, out var passwordHash);
                 var user = new User
                 {
                     Email = request.Email,
