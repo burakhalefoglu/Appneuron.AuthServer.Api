@@ -17,13 +17,14 @@ namespace Business.DependencyResolvers
         {
 
             builder.RegisterType<AuthManager>().As<IAuthService>();
-            builder.RegisterType<CassClientRepository>().As<IClientRepository>();
+            builder.RegisterType<CassUserRepository>().As<IUserRepository>().SingleInstance();
+
             
+            builder.RegisterType<CassClientRepository>().As<IClientRepository>();
             builder.RegisterType<CassUserProjectRepository>().As<IUserProjectRepository>().SingleInstance();
             builder.RegisterType<CassLogRepository>().As<ILogRepository>().SingleInstance();
             builder.RegisterType<CassTranslateRepository>().As<ITranslateRepository>().SingleInstance();
             builder.RegisterType<CassLanguageRepository>().As<ILanguageRepository>().SingleInstance();
-            builder.RegisterType<CassUserRepository>().As<IUserRepository>().SingleInstance();
             builder.RegisterType<CassUserClaimRepository>().As<IUserClaimRepository>().SingleInstance();
             builder.RegisterType<CassOperationClaimRepository>().As<IOperationClaimRepository>().SingleInstance();
             builder.RegisterType<CassGroupRepository>().As<IGroupRepository>().SingleInstance();

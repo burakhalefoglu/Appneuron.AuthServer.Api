@@ -48,7 +48,7 @@ namespace Core.Extensions
             else
                // message = ExceptionMessage.InternalServerError;
 
-            await httpContext.Response.WriteAsync(message);
+            await httpContext.Response.WriteAsync(e.ToString());
         }
     }
 }

@@ -6,20 +6,12 @@ using System.Security.Principal;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Microsoft.AspNetCore.Http;
 using Business.Constants;
-using Core.Utilities.ElasticSearch;
-using Core.Utilities.MessageBrokers.Kafka;
-using Core.Utilities.Security.Jwt;
-using Core.CrossCuttingConcerns.Caching.Microsoft;
-using Core.CrossCuttingConcerns.Caching;
 using Business.MessageBrokers.Manager;
 using FluentValidation;
 using System.ComponentModel.DataAnnotations;
-using Business.Abstract;
 using Business.MessageBrokers.Models;
 using Confluent.Kafka;
 using Core.Utilities.MessageBrokers;
-using DataAccess.Abstract;
-using DataAccess.Concrete.Cassandra;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 
@@ -32,9 +24,6 @@ namespace Business.DependencyResolvers
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<ConsoleLogger>();
             
-            services.AddSingleton<IClientRepository, CassClientRepository>();
-            services.AddSingleton<IAuthService, AuthManager>();
-
             Func<IServiceProvider, ClaimsPrincipal> getPrincipal = (sp) =>
                 sp.GetService<IHttpContextAccessor>().HttpContext?.User ??
                 new ClaimsPrincipal(new ClaimsIdentity(Messages.Unknown));
