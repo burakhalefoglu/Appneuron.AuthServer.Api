@@ -1,8 +1,8 @@
-FROM  mcr.microsoft.com/dotnet/aspnet:6.0-buster-slim AS base
+FROM  mcr.microsoft.com/dotnet/aspnet:6.0.200-bullseye-slimm AS base
 WORKDIR /app
 EXPOSE 8000
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0-buster-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0.200-bullseye-slim AS build
 WORKDIR /src
 COPY ["WebAPI/WebAPI.csproj", "WebAPI/"]
 COPY ["Business/Business.csproj", "Business/"]
