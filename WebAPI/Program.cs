@@ -21,9 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
     var configuration = builder.Configuration;
     
     // Add services to the container.
-    // services.AddSingleton<IConfiguration>(x => configuration);
+    services.AddSingleton<IConfiguration>(x => configuration);
     // services.AddMediatRApi();
-    services.AddMemoryCache();
     services.AddMediatR(Assembly.GetExecutingAssembly());
 
     services.AddControllers().AddNewtonsoftJson(options =>
