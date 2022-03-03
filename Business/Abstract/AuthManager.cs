@@ -31,7 +31,7 @@ public class AuthManager: IAuthService
     private readonly IMessageBroker _messageBroker;
 
     public AuthManager(
-        IUserRepository userRepository,
+        // IUserRepository userRepository,
         ITokenHelper tokenHelper,
         IMessageBroker messageBroker
     )
