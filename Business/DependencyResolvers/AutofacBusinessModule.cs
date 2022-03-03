@@ -15,8 +15,8 @@ namespace Business.DependencyResolvers
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<CassClientRepository>().As<IClientRepository>().SingleInstance();
-            builder.RegisterType<AuthManager>().As<IAuthService>().SingleInstance();
+            // builder.RegisterType<CassClientRepository>().As<IClientRepository>().SingleInstance();
+            // builder.RegisterType<AuthManager>().As<IAuthService>().SingleInstance();
             
             builder.RegisterType<CassUserProjectRepository>().As<IUserProjectRepository>().SingleInstance();
             builder.RegisterType<CassLogRepository>().As<ILogRepository>().SingleInstance();

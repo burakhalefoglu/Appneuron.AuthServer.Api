@@ -14,9 +14,12 @@ using Core.CrossCuttingConcerns.Caching;
 using Business.MessageBrokers.Manager;
 using FluentValidation;
 using System.ComponentModel.DataAnnotations;
+using Business.Abstract;
 using Business.MessageBrokers.Models;
 using Confluent.Kafka;
 using Core.Utilities.MessageBrokers;
+using DataAccess.Abstract;
+using DataAccess.Concrete.Cassandra;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 
@@ -29,6 +32,9 @@ namespace Business.DependencyResolvers
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<ConsoleLogger>();
             
+            services.AddSingleton<IClientRepository, CassClientRepository>();
+            services.AddSingleton<IAuthService, AuthManager>();
+
             Func<IServiceProvider, ClaimsPrincipal> getPrincipal = (sp) =>
                 sp.GetService<IHttpContextAccessor>().HttpContext?.User ??
                 new ClaimsPrincipal(new ClaimsIdentity(Messages.Unknown));
