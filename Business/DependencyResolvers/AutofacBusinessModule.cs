@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Extras.DynamicProxy;
+using Business.Abstract;
 using Castle.DynamicProxy;
 using Core.Utilities.Interceptors;
 using DataAccess.Abstract;
@@ -14,8 +15,9 @@ namespace Business.DependencyResolvers
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<CassandraContext>().As<CassandraContextBase>().SingleInstance();
             builder.RegisterType<CassClientRepository>().As<IClientRepository>().SingleInstance();
+            builder.RegisterType<AuthManager>().As<IAuthService>().SingleInstance();
+            
             builder.RegisterType<CassUserProjectRepository>().As<IUserProjectRepository>().SingleInstance();
             builder.RegisterType<CassLogRepository>().As<ILogRepository>().SingleInstance();
             builder.RegisterType<CassTranslateRepository>().As<ITranslateRepository>().SingleInstance();

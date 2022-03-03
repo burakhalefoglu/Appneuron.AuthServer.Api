@@ -1,6 +1,11 @@
-﻿namespace Business.Abstract;
+﻿using Core.Entities.ApiModel;
+using Core.Entities.Concrete;
+using Core.Utilities.Results;
+using Core.Utilities.Security.Jwt;
 
-public class IAuthService
+namespace Business.Abstract;
+
+public interface IAuthService
 {
-    
+     Task<IDataResult<AccessToken>> Register(Register client);
 }

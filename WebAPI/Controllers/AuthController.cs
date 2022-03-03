@@ -1,6 +1,8 @@
-﻿using Business.Handlers.Authorizations.Commands;
+﻿using Business.Abstract;
+using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
 using Business.Handlers.Users.Commands;
+using Core.Entities.ApiModel;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authorization;
@@ -17,9 +19,10 @@ namespace WebAPI.Controllers
     public class AuthController : BaseApiController
     {
 
-
-        public AuthController()
+        private readonly IAuthService _authService;
+        public AuthController(IAuthService authService)
         {
+            _authService = authService;
         }
 
         /// <summary>
@@ -53,9 +56,9 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterUserCommand registerUserCommand)
+        public async Task<IActionResult> Register(Register register)
         {
-            var result = await Mediator.Send(registerUserCommand);
+            var result = await _authService.Register(register);
 
             if (result.Success) return Ok(result);
             return Unauthorized("result");
