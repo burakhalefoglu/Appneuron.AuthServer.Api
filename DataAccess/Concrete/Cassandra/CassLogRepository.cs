@@ -8,8 +8,7 @@ namespace DataAccess.Concrete.Cassandra
 {
     public class CassLogRepository : CassandraRepositoryBase<Log>, ILogRepository
     {
-        public CassLogRepository(CassandraContextBase cassandraContexts) : base(
-            cassandraContexts.CassandraConnectionSettings, CassandraTableQueries.Log)
+        public CassLogRepository() : base(CassandraTableQueries.Log)
         {
         }
     }

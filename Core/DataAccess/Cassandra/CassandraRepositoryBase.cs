@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 using Cassandra;
 using Cassandra.Data.Linq;
 using Core.DataAccess.Cassandra.Configurations;
 using Core.Entities;
+using Core.Utilities.IoC;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.DataAccess.Cassandra
 {
@@ -16,8 +16,11 @@ namespace Core.DataAccess.Cassandra
     {
         private readonly Table<T> _table;
 
-        protected CassandraRepositoryBase(CassandraConnectionSettings cassandraConnectionSettings, string tableCreateQuery)
+        protected CassandraRepositoryBase(string tableCreateQuery)
         {
+            var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
+            var cassandraConnectionSettings = 
+                    configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
             var cluster = Cluster.Builder()
                 .AddContactPoints(cassandraConnectionSettings.Host)
                 .WithCredentials(cassandraConnectionSettings.UserName, cassandraConnectionSettings.Password)

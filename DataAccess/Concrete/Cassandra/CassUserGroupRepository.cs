@@ -8,8 +8,7 @@ namespace DataAccess.Concrete.Cassandra
 {
     public class CassUserGroupRepository : CassandraRepositoryBase<UserGroup>, IUserGroupRepository
     {
-        public CassUserGroupRepository(CassandraContextBase cassandraContexts) : base(
-            cassandraContexts.CassandraConnectionSettings, CassandraTableQueries.UserGroup)
+        public CassUserGroupRepository() : base(CassandraTableQueries.UserGroup)
         {
         }
     }

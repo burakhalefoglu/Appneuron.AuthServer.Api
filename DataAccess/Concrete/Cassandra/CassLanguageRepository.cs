@@ -8,8 +8,7 @@ namespace DataAccess.Concrete.Cassandra
 {
     public class CassLanguageRepository : CassandraRepositoryBase<Language>, ILanguageRepository
     {
-        public CassLanguageRepository(CassandraContextBase cassandraContexts) : base(
-            cassandraContexts.CassandraConnectionSettings, CassandraTableQueries.Language)
+        public CassLanguageRepository() : base(CassandraTableQueries.Language)
         {
         }
     }
