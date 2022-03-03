@@ -20,13 +20,14 @@ using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
+using DataAccess.Concrete.Cassandra;
 
 namespace Business.Abstract;
 
 public class AuthManager: IAuthService
 {
     private readonly ITokenHelper _tokenHelper;
-    private readonly IUserRepository _userRepository;
+    // private readonly IUserRepository _userRepository;
     private readonly IMessageBroker _messageBroker;
 
     public AuthManager(
@@ -35,7 +36,7 @@ public class AuthManager: IAuthService
         IMessageBroker messageBroker
     )
     {
-        _userRepository = userRepository;
+        // _userRepository = userRepository;
         _tokenHelper = tokenHelper;
         _messageBroker = messageBroker;
     }
@@ -47,10 +48,10 @@ public class AuthManager: IAuthService
     [TransactionScopeAspect]
     public async Task<IDataResult<AccessToken>> Register(Register register)
     {
-        var userExits = await _userRepository.AnyAsync(u => u.Email == register.Email && u.Status == true);
+        var userExits = await new CassUserRepository().AnyAsync(u => u.Email == register.Email && u.Status == true);
                 
-                if (userExits)
-                    return new ErrorDataResult<AccessToken>(Messages.DefaultError);
+            if (userExits)
+                return new ErrorDataResult<AccessToken>(Messages.DefaultError);
                 
                 HashingHelper.CreatePasswordHash(register.Password, 
                     out var passwordSalt, out var passwordHash);
@@ -63,7 +64,7 @@ public class AuthManager: IAuthService
                     Status = true
                 };
                 
-                await _userRepository.AddAsync(user);
+                await new CassUserRepository().AddAsync(user);
                 
                 // var usr = await _userRepository.GetAsync(x => x.Email == user.Email);
                 // var group = await _mediator.Send(new GetGroupByNameInternalQuery
