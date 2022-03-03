@@ -10,7 +10,6 @@ using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace Business.Handlers.Users.Commands
 {
@@ -21,18 +20,18 @@ namespace Business.Handlers.Users.Commands
 
         public class UserChangePasswordCommandHandler : IRequestHandler<UserChangePasswordCommand, IResult>
         {
-            private readonly IHttpContextAccessor _httpContextAccessor;
+            private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
             private readonly IUserRepository _userRepository;
 
             public UserChangePasswordCommandHandler(IUserRepository userRepository,
-                IHttpContextAccessor httpContextAccessor)
+                Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
             {
                 _userRepository = userRepository;
                 _httpContextAccessor = httpContextAccessor;
             }
 
             [SecuredOperation(Priority = 1)]
-            [LogAspect(typeof(LogstashLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UserChangePasswordCommand request, CancellationToken cancellationToken)
             {
                 var userId = _httpContextAccessor.HttpContext?.User.Claims

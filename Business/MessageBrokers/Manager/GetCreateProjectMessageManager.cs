@@ -1,27 +1,31 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Business.Internals.Handlers.GroupClaims;
+﻿using Business.Internals.Handlers.GroupClaims;
 using Business.Internals.Handlers.UserClaims;
 using Business.Internals.Handlers.UserProjects;
 using Business.MessageBrokers.Models;
+using Core.Aspects.Autofac.Exception;
+using Core.Aspects.Autofac.Logging;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
-using Core.Utilities.Results;
+using Core.Utilities.MessageBrokers;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
+using MassTransit;
 using MediatR;
 
 namespace Business.MessageBrokers.Manager
 {
-    public class GetCreateProjectMessageManager : IGetCreateProjectMessageService
+    [LogAspect(typeof(ConsoleLogger))]
+    [ExceptionLogAspect(typeof(ConsoleLogger))]
+    public class GetCreateProjectMessageConsumer :
+    IConsumer<ProjectMessageCommand>
     {
         private readonly IMediator _mediator;
         private readonly IMessageBroker _messageBroker;
         private readonly ITokenHelper _tokenHelper;
         private readonly IUserRepository _userRepository;
 
-        public GetCreateProjectMessageManager(IMediator mediator, IUserRepository userRepository,
+        public GetCreateProjectMessageConsumer(IMediator mediator, IUserRepository userRepository,
             ITokenHelper tokenHelper, IMessageBroker messageBroker)
         {
             _mediator = mediator;
@@ -29,20 +33,16 @@ namespace Business.MessageBrokers.Manager
             _tokenHelper = tokenHelper;
             _messageBroker = messageBroker;
         }
-
-        public async Task<IResult> GetProjectCreationMessageQuery(ProjectMessageCommand message)
+        public async Task Consume(ConsumeContext<ProjectMessageCommand> context)
         {
             _ = await _mediator.Send(new CreateUserProjectInternalCommand
             {
-                UserId = message.UserId,
-                ProjectId = message.ProjectId
+                UserId = context.Message.UserId,
+                ProjectId = context.Message.ProjectId
             });
 
             var user = await _userRepository.GetAsync(u =>
-                u.Id == message.UserId);
-
-            if (user == null)
-                return new ErrorResult();
+                u.Id == context.Message.UserId);
 
             //New Token Creation
             var groupClaims = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
@@ -80,9 +80,9 @@ namespace Business.MessageBrokers.Manager
             });
 
             if (kafkaResult.Success)
-                return new SuccessResult();
-
-            return new ErrorResult();
+            { 
+                await context.ConsumeCompleted;
+            }
         }
     }
 }

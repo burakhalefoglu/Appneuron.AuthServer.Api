@@ -1,71 +1,123 @@
-using System;
-using System.Threading.Tasks;
+using Business.DependencyResolvers;
+using Core.DependencyResolvers;
+using Core.Extensions;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Business.MessageBrokers;
-using Business.MessageBrokers.Manager;
-using Business.MessageBrokers.Models;
+using System.Text.Json.Serialization;
+using Core.Utilities.Security.Encyption;
+using Core.Utilities.Security.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+using Business.Extensions;
 using Core.Utilities.IoC;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace WebAPI
-{
-    /// <summary>
-    /// </summary>
-    public static class Program
+var builder = WebApplication.CreateBuilder(args);
+    var services = builder.Services;
+    var configuration = builder.Configuration;
+    
+    // Add services to the container.
+    // services.AddSingleton<IConfiguration>(x => configuration);
+    services.AddMediatRApi();
+    services.AddMemoryCache();
+    services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
+    services.AddDependencyResolvers(new IDIModule[]
     {
-        /// <summary>
-        /// </summary>
-        /// <param name="args"></param>
-        public static Task Main(string[] args)
+        new CoreModule(),
+        new BusinessModule()
+    });
+
+    builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+    builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacBusinessModule()));
+    
+    services.AddControllers().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+    
+    var corsPolicies = configuration.GetSection("CorsPolicies").Get<string[]>();
+    services.AddCors(options =>
+    {
+        options.AddPolicy("CorsPolicy",
+            //builder.WithOrigins(corsPolicies)
+            builder => builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                // .AllowCredentials()
+                );
+    });
+
+    var tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
+    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
         {
-            var result = CreateHostBuilder(args).Build().RunAsync();
-            var consumer = ConsumerAdapter();
-            result.Wait();
-            consumer.Wait();
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseKestrel(options =>
-                    {
-                        options.AllowSynchronousIO = true;
-                        options.AddServerHeader = true;
-                    });
-
-                    webBuilder.ConfigureKestrel(options => options.AddServerHeader = false);
-                    webBuilder.UseStartup<Startup>();
-                })
-                .ConfigureLogging(logging =>
-                {
-                    logging.ClearProviders();
-                    logging.SetMinimumLevel(LogLevel.Trace);
-                });
-        }
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidIssuer = tokenOptions.Issuer,
+                ValidAudiences = tokenOptions.Audience,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
+                ClockSkew = TimeSpan.Zero
+            };
+        });
 
 
-        private static async Task ConsumerAdapter()
-        {
-            Console.WriteLine("Kafka Listening");
-            var messageBroker = ServiceTool.ServiceProvider.GetService<IMessageBroker>();
-            var createProjectMessageService = ServiceTool.ServiceProvider.GetService<IGetCreateProjectMessageService>();
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
+    var app = builder.Build();
+    ServiceTool.ServiceProvider = ((IApplicationBuilder) app).ApplicationServices;
 
-            if (messageBroker != null)
-                if (createProjectMessageService != null)
-                    await messageBroker.GetMessageAsync<ProjectMessageCommand>("ProjectMessageCommand",
-                        "ProjectCreationConsumerGroup",
-                        createProjectMessageService.GetProjectCreationMessageQuery);
-        }
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
-}
+
+    //güvenlik için gerekli...
+    app.UseHsts();
+    //güvenlik için gerekli...
+    app.UseSecurityHeaders();
+
+    app.ConfigureCustomExceptionMiddleware();
+
+    app.UseHttpsRedirection();
+
+    app.UseCors("CorsPolicy");
+
+    app.UseRouting();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    // Make Turkish your default language. It shouldn't change according to the server.
+    app.UseRequestLocalization(new RequestLocalizationOptions
+    {
+        DefaultRequestCulture = new RequestCulture("tr-TR")
+    });
+
+    var cultureInfo = new CultureInfo("tr-TR")
+    {
+        DateTimeFormat =
+        {
+            ShortTimePattern = "HH:mm"
+        }
+    };
+
+    CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+    CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+    //app.UseHttpsRedirection();
+
+    app.MapControllers();
+
+    app.Run();

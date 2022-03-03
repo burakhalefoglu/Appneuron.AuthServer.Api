@@ -2,13 +2,14 @@ using Core.DataAccess.Cassandra;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using DataAccess.Concrete.Cassandra.Contexts;
+using DataAccess.Concrete.Cassandra.Tables;
 
 namespace DataAccess.Concrete.Cassandra
 {
     public class CassClientRepository : CassandraRepositoryBase<Client>, IClientRepository
     {
-        public CassClientRepository(CassandraContextBase cassandraContexts, string tableQuery) : base(
-            cassandraContexts.CassandraConnectionSettings, tableQuery)
+        public CassClientRepository(CassandraContextBase cassandraContexts) : base(
+            cassandraContexts.CassandraConnectionSettings, CassandraTableQueries.Client)
         {
         }
     }

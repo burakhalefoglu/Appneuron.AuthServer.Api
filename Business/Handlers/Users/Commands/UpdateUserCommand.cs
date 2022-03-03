@@ -10,7 +10,6 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace Business.Handlers.Users.Commands
 {
@@ -21,11 +20,11 @@ namespace Business.Handlers.Users.Commands
 
         public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, IResult>
         {
-            private readonly IHttpContextAccessor _httpContextAccessor;
+            private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
             private readonly IUserRepository _userRepository;
 
             public UpdateUserCommandHandler(IUserRepository userRepository,
-                IHttpContextAccessor httpContextAccessor)
+                Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
             {
                 _userRepository = userRepository;
                 _httpContextAccessor = httpContextAccessor;

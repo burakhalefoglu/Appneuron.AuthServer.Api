@@ -16,6 +16,7 @@ using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
 using Core.Utilities.Mail;
+using Core.Utilities.MessageBrokers;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;

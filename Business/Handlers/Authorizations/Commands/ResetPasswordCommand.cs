@@ -10,7 +10,6 @@ using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace Business.Handlers.Authorizations.Commands
 {
@@ -20,11 +19,11 @@ namespace Business.Handlers.Authorizations.Commands
 
         public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, IResult>
         {
-            private readonly IHttpContextAccessor _httpContextAccessor;
+            private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
             private readonly IUserRepository _userRepository;
 
             public ResetPasswordCommandHandler(IUserRepository userRepository,
-                IHttpContextAccessor httpContextAccessor)
+                Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
             {
                 _httpContextAccessor = httpContextAccessor;
                 _userRepository = userRepository;

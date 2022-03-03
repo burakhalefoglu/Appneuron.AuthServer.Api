@@ -1,14 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Core.Utilities.Results;
+﻿using Core.Utilities.Results;
 
-namespace Business.MessageBrokers
+namespace Core.Utilities.MessageBrokers
 {
     public interface IMessageBroker
     {
         Task<IResult> SendMessageAsync<T>(T messageModel) where T :
             class, new();
-
-        Task GetMessageAsync<T>(string topic, string consumerGroup, Func<T, Task<IResult>> callback);
     }
 }

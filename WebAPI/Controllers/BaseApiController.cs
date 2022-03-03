@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
+using IResult = Core.Utilities.Results.IResult;
 
 namespace WebAPI.Controllers
 {

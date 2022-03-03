@@ -46,7 +46,6 @@ namespace Core.Extensions
             else if (e.GetType() == typeof(SecurityException))
                 httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
             else
-                Console.WriteLine(message);
                 message = ExceptionMessage.InternalServerError;
 
             await httpContext.Response.WriteAsync(message);

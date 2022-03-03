@@ -3,8 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Utilities.IoC
 {
-    public interface ICoreModule
+    public interface IDIModule
     {
-        void Load(IServiceCollection services, IConfiguration configuration);
+        void Load(IServiceCollection services);
     }
 }

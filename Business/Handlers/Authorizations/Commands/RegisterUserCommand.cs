@@ -19,6 +19,7 @@ using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
+using Core.Utilities.MessageBrokers;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
@@ -39,10 +40,12 @@ namespace Business.Handlers.Authorizations.Commands
             private readonly IUserRepository _userRepository;
             private readonly IMessageBroker _messageBroker;
 
-            public RegisterUserCommandHandler(IUserRepository userRepository,
+            public RegisterUserCommandHandler(
+                IUserRepository userRepository,
                 IMediator mediator,
                 ITokenHelper tokenHelper,
-                IMessageBroker messageBroker)
+                IMessageBroker messageBroker
+                )
             {
                 _userRepository = userRepository;
                 _mediator = mediator;
@@ -58,10 +61,10 @@ namespace Business.Handlers.Authorizations.Commands
             public async Task<IDataResult<AccessToken>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
             {
                 var userExits = await _userRepository.AnyAsync(u => u.Email == request.Email && u.Status == true);
-
+                
                 if (userExits)
                     return new ErrorDataResult<AccessToken>(Messages.DefaultError);
-
+                
                 HashingHelper.CreatePasswordHash(request.Password, 
                     out var passwordSalt, out var passwordHash);
                 var user = new User
@@ -72,7 +75,7 @@ namespace Business.Handlers.Authorizations.Commands
                     PasswordSalt = passwordSalt,
                     Status = true
                 };
-
+                
                 await _userRepository.AddAsync(user);
                 
                 var usr = await _userRepository.GetAsync(x => x.Email == user.Email);
@@ -91,26 +94,26 @@ namespace Business.Handlers.Authorizations.Commands
                 {
                     GroupId = group.Data.Id
                 }, cancellationToken);
-
+                
                 var selectionItems = result.Data.ToList();
                 var oClaims = new List<OperationClaim>();
-
+                
                 if (selectionItems.ToList().Count > 0)
                     oClaims = selectionItems.Select(item =>
                         new OperationClaim {Id = item.Id, Name = item.Label}).ToList();
-
+                
                 await _mediator.Send(new CreateUserClaimsInternalCommand
                 {
                     UserId = user.Id,
                     OperationClaims = oClaims
                 }, cancellationToken);
-
+                
                 var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
                 {
                     UserId = user.Id,
                     OperationClaims = oClaims.Select(x => x.Name).ToArray()
                 }, new List<long>());
-
+                
                 // create customer with kafka 
                 await _messageBroker.SendMessageAsync(new CreateCustomerMessageCommand
                 {
@@ -119,7 +122,7 @@ namespace Business.Handlers.Authorizations.Commands
                  IndustryId = 1
                 });
                 
-                return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
+                return new SuccessDataResult<AccessToken>(new AccessToken(), Messages.SuccessfulLogin);
             }
         }
     }
