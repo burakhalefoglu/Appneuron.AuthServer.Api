@@ -29,8 +29,8 @@ namespace Core.DataAccess.Cassandra
                 .Build();
             var session = cluster.Connect();
             session.CreateKeyspaceIfNotExists("AuthDatabase");
-            session.ChangeKeyspace("AuthDatabase");
             session.ExecuteAsync(new SimpleStatement(tableCreateQuery)).ConfigureAwait(false);
+            session.ExecuteAsync(new SimpleStatement("USE AuthDatabase;")).ConfigureAwait(false);
             _table = new Table<T>(session);
         }
 
