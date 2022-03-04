@@ -23,7 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
     // Add services to the container.
     services.AddSingleton<IConfiguration>(x => configuration);
     // services.AddMediatRApi();
-    services.AddMediatR(Assembly.GetExecutingAssembly());
+    // services.AddMediatR(Assembly.GetExecutingAssembly());
 
     services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
