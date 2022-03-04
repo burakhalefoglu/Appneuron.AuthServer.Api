@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Core.Entities.ClaimModels;
 using Core.Extensions;
+using Core.Utilities.IoC;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Core.Utilities.Security.Jwt
@@ -20,17 +20,15 @@ namespace Core.Utilities.Security.Jwt
 
         private DateTime _accessTokenExpiration;
 
-        public JwtHelper(IConfiguration configuration)
+        public JwtHelper()
         {
-            Configuration = configuration;
-            _tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
-            _customerOptions = Configuration.GetSection("CustomerOptions").Get<CustomerOptions>();
-            _clientOptions = Configuration.GetSection("ClientOptions").Get<ClientOptions>();
-            _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
+            var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
+         _tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
+            _customerOptions = configuration.GetSection("CustomerOptions").Get<CustomerOptions>();
+            _clientOptions = configuration.GetSection("ClientOptions").Get<ClientOptions>();
+            _operationClaimCrypto = configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
         }
-
-        public IConfiguration Configuration { get; }
-
+        
         public TAccessToken CreateClientToken<TAccessToken>(ClientClaimModel clientClaimModel)
             where TAccessToken : IAccessToken, new()
         {

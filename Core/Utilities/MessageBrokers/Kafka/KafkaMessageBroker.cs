@@ -16,9 +16,8 @@ namespace Core.Utilities.MessageBrokers.Kafka
     {
         private readonly MessageBrokerOption _kafkaOptions;
 
-        public KafkaMessageBroker(MessageBrokerOption kafkaOptions)
+        public KafkaMessageBroker()
         {
-            _kafkaOptions = kafkaOptions;
             var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
             if (configuration != null)
                 _kafkaOptions = configuration
