@@ -109,7 +109,7 @@ namespace Core.DataAccess.Cassandra
 
         public void Add(T entity)
         {
-            var id = _table.AsQueryable().OrderByDescending(x => x.Id).First().Id;
+            var id = _table.OrderByDescending(x => x.Id).First().Execute().Id;
             entity.Id = id + 1;
             _table.Insert(entity);
         }
@@ -118,7 +118,7 @@ namespace Core.DataAccess.Cassandra
         {
             await Task.Run(() =>
             {
-                // var id = _table.AsQueryable().OrderByDescending(x => x.Id).First().Id;
+                var id = _table.OrderByDescending(x => x.Id).First().Execute().Id;
                 entity.Id = /*id*/ 1 + 1;
                 _table.Insert(entity);
             });

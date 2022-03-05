@@ -13,8 +13,6 @@ namespace Core.Utilities.Security.Jwt
 {
     public class JwtHelper : ITokenHelper
     {
-        private readonly ClientOptions _clientOptions;
-        private readonly CustomerOptions _customerOptions;
         private readonly OperationClaimCrypto _operationClaimCrypto;
         private readonly TokenOptions _tokenOptions;
 
@@ -24,15 +22,13 @@ namespace Core.Utilities.Security.Jwt
         {
             var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
          _tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
-            _customerOptions = configuration.GetSection("CustomerOptions").Get<CustomerOptions>();
-            _clientOptions = configuration.GetSection("ClientOptions").Get<ClientOptions>();
             _operationClaimCrypto = configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
         }
         
         public TAccessToken CreateClientToken<TAccessToken>(ClientClaimModel clientClaimModel)
             where TAccessToken : IAccessToken, new()
         {
-            _accessTokenExpiration = DateTime.Now.AddMinutes(_clientOptions.AccessTokenExpiration);
+            _accessTokenExpiration = DateTime.Now.AddDays(365);
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
             var jwt = CreateClientJwtSecurityToken(_tokenOptions, clientClaimModel, signingCredentials);
@@ -77,7 +73,7 @@ namespace Core.Utilities.Security.Jwt
         {
             var jwt = new JwtSecurityToken(
                 tokenOptions.Issuer,
-                _customerOptions.Audience,
+                "Appneuron",
                 expires: _accessTokenExpiration,
                 notBefore: DateTime.Now,
                 claims: SetUserClaims(userClaimModel, projectIdList),
@@ -107,7 +103,7 @@ namespace Core.Utilities.Security.Jwt
         {
             var jwt = new JwtSecurityToken(
                 tokenOptions.Issuer,
-                _clientOptions.Audience,
+                "Appneuron",
                 expires: _accessTokenExpiration,
                 notBefore: DateTime.Now,
                 claims: SetClaimsforClient(clientClaimModel),
