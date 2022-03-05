@@ -5,7 +5,7 @@ using Core.Utilities.IoC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DataAccess.Concrete.Cassandra.Tables.TableMappers;
+namespace DataAccess.Concrete.Cassandra.TableMappers;
 
 public class UserGroupMapper: Mappings
 {
@@ -15,11 +15,13 @@ public class UserGroupMapper: Mappings
         var cassandraConnectionSettings = 
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<UserGroup>()
-            .TableName(CassandraTables.UserGroup)
+            .TableName("user_groups")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
-            .Column(u => u.Id, cm => cm.WithName("id"))
-            .Column(u => u.GroupId, cm => cm.WithName("group_id"))
-            .Column(u => u.UsersId, cm => cm.WithName("user_id"))
-            .Column(u => u.Status, cm => cm.WithName("status"));
+            .PartitionKey("id", "status")
+            .ClusteringKey(new Tuple<string, SortOrder>("id", SortOrder.Descending))
+            .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
+            .Column(u => u.GroupId, cm => cm.WithName("group_id").WithDbType(typeof(long)))
+            .Column(u => u.UsersId, cm => cm.WithName("user_id").WithDbType(typeof(long)))
+            .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }

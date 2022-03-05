@@ -5,7 +5,7 @@ using Core.Utilities.IoC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DataAccess.Concrete.Cassandra.Tables.TableMappers;
+namespace DataAccess.Concrete.Cassandra.TableMappers;
 
 public class ClientMapper: Mappings
 {
@@ -15,10 +15,12 @@ public class ClientMapper: Mappings
         var cassandraConnectionSettings = 
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<Client>()
-            .TableName(CassandraTables.Client)
+            .TableName("clients")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
-            .Column(u => u.Id, cm => cm.WithName("id"))
-            .Column(u => u.ProjectId, cm => cm.WithName("project_id"))
-            .Column(u => u.Status, cm => cm.WithName("status"));
+            .PartitionKey("id", "status")
+            .ClusteringKey(new Tuple<string, SortOrder>("id", SortOrder.Descending))
+            .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
+            .Column(u => u.ProjectId, cm => cm.WithName("project_id").WithDbType(typeof(long)))
+            .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }

@@ -17,7 +17,7 @@ namespace Core.DataAccess.Cassandra
     {
         private readonly Table<T> _table;
 
-        protected CassandraRepositoryBase(string tableCreateQuery, MappingConfiguration mappingConfiguration)
+        protected CassandraRepositoryBase(MappingConfiguration mappingConfiguration)
         {
             var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
             var cassandraConnectionSettings = 
@@ -30,8 +30,8 @@ namespace Core.DataAccess.Cassandra
                 .Build();
             var session = cluster.Connect();
             session.CreateKeyspaceIfNotExists(cassandraConnectionSettings.Keyspace);
-            session.ExecuteAsync(new SimpleStatement(tableCreateQuery)).ConfigureAwait(false);
             _table = new Table<T>(session, mappingConfiguration);
+            _table.CreateIfNotExists();
         }
 
         public IQueryable<T> GetList(Expression<Func<T, bool>> predicate = null)

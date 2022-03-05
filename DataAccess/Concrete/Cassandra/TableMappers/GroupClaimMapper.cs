@@ -5,7 +5,7 @@ using Core.Utilities.IoC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DataAccess.Concrete.Cassandra.Tables.TableMappers;
+namespace DataAccess.Concrete.Cassandra.TableMappers;
 
 public class GroupClaimMapper: Mappings
 {
@@ -15,12 +15,14 @@ public class GroupClaimMapper: Mappings
         var cassandraConnectionSettings = 
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<GroupClaim>()
-            .TableName(CassandraTables.GroupClaim)
+            .TableName("group_claims")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
-            .Column(u => u.Id, cm => cm.WithName("id"))
-            .Column(u => u.ClaimId, cm => cm.WithName("claim_id"))
-            .Column(u => u.GroupId, cm => cm.WithName("group_id"))
-            .Column(u => u.Status, cm => cm.WithName("status"));
+            .PartitionKey("id", "status")
+            .ClusteringKey(new Tuple<string, SortOrder>("id", SortOrder.Descending))
+            .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
+            .Column(u => u.ClaimId, cm => cm.WithName("claim_id").WithDbType(typeof(long)))
+            .Column(u => u.GroupId, cm => cm.WithName("group_id").WithDbType(typeof(long)))
+            .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }
 

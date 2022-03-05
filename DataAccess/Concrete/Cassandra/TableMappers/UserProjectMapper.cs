@@ -5,7 +5,7 @@ using Entities.Concrete;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DataAccess.Concrete.Cassandra.Tables.TableMappers;
+namespace DataAccess.Concrete.Cassandra.TableMappers;
 
 public class UserProjectMapper: Mappings
 {
@@ -15,11 +15,13 @@ public class UserProjectMapper: Mappings
         var cassandraConnectionSettings = 
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<UserProject>()
-            .TableName(CassandraTables.UserProject)
+            .TableName("user_projects")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
-            .Column(u => u.Id, cm => cm.WithName("id"))
-            .Column(u => u.ProjectId, cm => cm.WithName("project_id"))
-            .Column(u => u.UserId, cm => cm.WithName("user_id"))
-            .Column(u => u.Status, cm => cm.WithName("status"));
+            .PartitionKey("id", "status")
+            .ClusteringKey(new Tuple<string, SortOrder>("id", SortOrder.Descending))
+            .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
+            .Column(u => u.ProjectId, cm => cm.WithName("project_id").WithDbType(typeof(long)))
+            .Column(u => u.UserId, cm => cm.WithName("user_id").WithDbType(typeof(long)))
+            .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }

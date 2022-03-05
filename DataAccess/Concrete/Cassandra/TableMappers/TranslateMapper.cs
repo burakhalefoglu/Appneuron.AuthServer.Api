@@ -5,7 +5,7 @@ using Core.Utilities.IoC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DataAccess.Concrete.Cassandra.Tables.TableMappers;
+namespace DataAccess.Concrete.Cassandra.TableMappers;
 
 public class TranslateMapper: Mappings
 {
@@ -15,11 +15,13 @@ public class TranslateMapper: Mappings
         var cassandraConnectionSettings = 
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<Translate>()
-            .TableName(CassandraTables.Translate)
+            .TableName("translates")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
-            .Column(u => u.Id, cm => cm.WithName("id"))
-            .Column(u => u.Value, cm => cm.WithName("value"))
-            .Column(u => u.Code, cm => cm.WithName("code"))
-            .Column(u => u.Status, cm => cm.WithName("status"));
+            .PartitionKey("id", "status")
+            .ClusteringKey(new Tuple<string, SortOrder>("id", SortOrder.Descending))
+            .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
+            .Column(u => u.Value, cm => cm.WithName("value").WithDbType(typeof(string)))
+            .Column(u => u.Code, cm => cm.WithName("code").WithDbType(typeof(string)))
+            .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }
