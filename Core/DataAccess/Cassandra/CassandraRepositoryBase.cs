@@ -109,8 +109,8 @@ namespace Core.DataAccess.Cassandra
 
         public void Add(T entity)
         {
-            var id = _table.FirstOrDefault().Execute().Id;
-            entity.Id = id + 1;
+            var filter = _table.FirstOrDefault().Execute();
+            var id = filter?.Id ?? 0;
             _table.Insert(entity);
         }
 
@@ -118,7 +118,8 @@ namespace Core.DataAccess.Cassandra
         {
             await Task.Run(() =>
             {
-                var id = _table.FirstOrDefault().Execute().Id;
+                var filter = _table.FirstOrDefault().Execute();
+                var id = filter?.Id ?? 0;
                 entity.Id = id + 1;
                 _table.Insert(entity);
             });
