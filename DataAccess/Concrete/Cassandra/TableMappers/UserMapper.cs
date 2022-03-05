@@ -19,7 +19,7 @@ public class UserMapper: Mappings
             .TableName("users") 
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
             .PartitionKey("email", "status")
-            .ClusteringKey(new Tuple<string, SortOrder>("id", SortOrder.Descending))
+            .ClusteringKey(new Tuple<string, SortOrder>("id", SortOrder.Ascending))
             .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
             .Column(u => u.Name, cm => cm.WithName("name").WithDbType(typeof(string)))
             .Column(u => u.Email, cm => cm.WithName("email").WithDbType(typeof(string)))
