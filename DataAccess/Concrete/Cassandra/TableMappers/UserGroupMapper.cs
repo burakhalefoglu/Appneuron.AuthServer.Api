@@ -18,10 +18,11 @@ public class UserGroupMapper: Mappings
             .TableName("user_groups")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
             .PartitionKey("id", "status")
-            .ClusteringKey(new Tuple<string, SortOrder>("id", SortOrder.Descending))
+            .ClusteringKey(new Tuple<string, SortOrder>("created_at", SortOrder.Ascending))
             .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
             .Column(u => u.GroupId, cm => cm.WithName("group_id").WithDbType(typeof(long)))
             .Column(u => u.UsersId, cm => cm.WithName("user_id").WithDbType(typeof(long)))
+            .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTime)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }

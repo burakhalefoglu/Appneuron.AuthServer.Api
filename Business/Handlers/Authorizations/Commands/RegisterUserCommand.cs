@@ -2,7 +2,6 @@
 using Business.Handlers.Authorizations.ValidationRules;
 using Business.Helpers;
 using Business.Internals.Handlers.GroupClaims;
-using Business.Internals.Handlers.Groups.Queries;
 using Business.Internals.Handlers.UserClaims;
 using Business.Internals.Handlers.UserGroups.Commands;
 using Business.MessageBrokers.Models;
@@ -74,20 +73,16 @@ namespace Business.Handlers.Authorizations.Commands
                 await _userRepository.AddAsync(user);
                 
                 var usr = await _userRepository.GetAsync(x => x.Email == user.Email);
-                var group = await _mediator.Send(new GetGroupByNameInternalQuery
-                {
-                    GroupName = "customer_group"
-                }, cancellationToken);
-                
+                // if user type is more than one will use group ıd after query
                 _ = await _mediator.Send(new CreateUserGroupInternalCommand
                 {
                     UserId = usr.Id,
-                    GroupId = group.Data.Id
+                    GroupId = 1
                 }, cancellationToken);
                 
                 var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
                 {
-                    GroupId = group.Data.Id
+                    GroupId = 1
                 }, cancellationToken);
                 
                 var selectionItems = result.Data.ToList();

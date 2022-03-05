@@ -13,8 +13,7 @@ namespace Core.Entities.Concrete
         public long Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        
-        public bool Status = true;
+        public bool Status { get; set; }
         public DateTime RecordDate { get; set; }
         public DateTime UpdateContactDate { get; set; }
         public byte[] PasswordSalt { get; set; }

@@ -18,9 +18,10 @@ public class GroupMapper:Mappings
             .TableName("groups")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
             .PartitionKey("id", "status")
-            .ClusteringKey(new Tuple<string, SortOrder>("id", SortOrder.Descending))
+            .ClusteringKey(new Tuple<string, SortOrder>("created_at", SortOrder.Descending))
             .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
             .Column(u => u.GroupName, cm => cm.WithName("group_name").WithDbType(typeof(string)))
+            .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTime)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }

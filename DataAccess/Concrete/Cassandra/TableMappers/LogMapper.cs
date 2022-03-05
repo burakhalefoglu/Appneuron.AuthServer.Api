@@ -18,7 +18,7 @@ public class LogMapper: Mappings
             .TableName("logs")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
             .PartitionKey("id")
-            .ClusteringKey(new Tuple<string, SortOrder>("id", SortOrder.Descending))
+            .ClusteringKey(new Tuple<string, SortOrder>("time_stamp", SortOrder.Descending))
             .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
             .Column(u => u.Level, cm => cm.WithName("level").WithDbType(typeof(string)))
             .Column(u => u.MessageTemplate, cm => cm.WithName("message_template").WithDbType(typeof(string)))
