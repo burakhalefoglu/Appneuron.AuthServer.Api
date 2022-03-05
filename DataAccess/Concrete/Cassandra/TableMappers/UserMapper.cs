@@ -25,8 +25,8 @@ public class UserMapper: Mappings
             .Column(u => u.Email, cm => cm.WithName("email").WithDbType(typeof(string)))
             .Column(u => u.RecordDate, cm => cm.WithName("record_date").WithDbType(typeof(DateTime)))
             .Column(u => u.UpdateContactDate, cm => cm.WithName("update_contact_date").WithDbType(typeof(DateTime)))
-            .Column(u => u.PasswordSalt, cm => cm.WithName("password_salt").WithDbType(typeof(Blob)))
-            .Column(u => u.PasswordHash, cm => cm.WithName("password_hash").WithDbType(typeof(Blob)))
+            .Column(u => u.PasswordSalt, cm => cm.WithName("password_salt").WithDbType(typeof(byte[])))
+            .Column(u => u.PasswordHash, cm => cm.WithName("password_hash").WithDbType(typeof(byte[])))
             .Column(u => u.ResetPasswordToken, cm => cm.WithName("reset_password_token").WithDbType(typeof(string)))
             .Column(u => u.ResetPasswordExpires, cm => cm.WithName("reset_password_expires").WithDbType(typeof(DateTime)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
