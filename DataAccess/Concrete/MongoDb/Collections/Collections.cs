@@ -1,6 +1,6 @@
 ﻿namespace DataAccess.Concrete.MongoDb.Collections
 {
-    public static class Collections
+    public class Collections
     {
         public static string UserProject => "userProjects";
         public static string Client => "clients";

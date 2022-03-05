@@ -1,14 +1,12 @@
-using Core.DataAccess.MongoDb.Concrete;
+using Core.DataAccess.MongoDb;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
-using DataAccess.Concrete.MongoDb.Context;
 
 namespace DataAccess.Concrete.MongoDb
 {
     public class MDbTranslateRepository : MongoDbRepositoryBase<Translate>, ITranslateRepository
     {
-        public MDbTranslateRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
-            mongoDbContext.MongoConnectionSettings, collectionName)
+        public MDbTranslateRepository() : base(Collections.Collections.Translate)
         {
         }
     }

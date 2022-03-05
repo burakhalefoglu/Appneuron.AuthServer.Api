@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Core.DataAccess.MongoDb.Concrete.Configurations;
+﻿using System.Linq.Expressions;
+using Core.DataAccess.MongoDb.Configurations;
 using Core.Entities;
+using Core.Utilities.IoC;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 
-namespace Core.DataAccess.MongoDb.Concrete
+namespace Core.DataAccess.MongoDb
 {
     public abstract class MongoDbRepositoryBase<T> : IRepository<T>  where T : class, IEntity
     {
         private readonly IMongoCollection<T> _collection;
 
-        protected MongoDbRepositoryBase(MongoConnectionSettings mongoConnectionSetting, string collectionName)
+        protected MongoDbRepositoryBase(string collectionName)
         {
+            var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
+            var mongoConnectionSetting = 
+                configuration.GetSection("MongoDbSettings").Get<MongoConnectionSettings>();
             var url =
                 $"mongodb://{mongoConnectionSetting.UserName}:{mongoConnectionSetting.Password}@{mongoConnectionSetting.Host}:{mongoConnectionSetting.Port}/?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
             var client = new MongoClient(url);
