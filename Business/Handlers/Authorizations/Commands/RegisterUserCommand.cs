@@ -54,7 +54,7 @@ namespace Business.Handlers.Authorizations.Commands
             }
 
             [PerformanceAspect(5)]
-            [ValidationAspect(typeof(RegisterUserValidator), Priority = 2)]
+            [ValidationAspect(typeof(RegisterUserValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(ConsoleLogger))]
             [TransactionScopeAspect]
