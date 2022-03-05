@@ -1,8 +1,6 @@
-﻿using Business.Abstract;
-using Business.Handlers.Authorizations.Commands;
+﻿using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
 using Business.Handlers.Users.Commands;
-using Core.Entities.ApiModel;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authorization;
@@ -18,13 +16,6 @@ namespace WebAPI.Controllers
     [ApiController]
     public class AuthController : BaseApiController
     {
-
-        private readonly IAuthService _authService;
-        public AuthController(IAuthService authService)
-        {
-            _authService = authService;
-        }
-
         /// <summary>
         ///     Make it User Login operations
         /// </summary>
@@ -34,7 +25,7 @@ namespace WebAPI.Controllers
         [Consumes("application/json")]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Core.Utilities.Results.IResult))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(IResult))]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserQuery loginModel)
         {
@@ -48,7 +39,7 @@ namespace WebAPI.Controllers
         /// <summary>
         ///     Make it User Register operations
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="registerUserCommand"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [Consumes("application/json")]
@@ -56,9 +47,9 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpPost("register")]
-        public async Task<IActionResult> Register(Register register)
+        public async Task<IActionResult> Register([FromBody] RegisterUserCommand registerUserCommand)
         {
-            var result = await _authService.Register(register);
+            var result = await Mediator.Send(registerUserCommand);
 
             if (result.Success) return Ok(result);
             return Unauthorized("result");

@@ -78,49 +78,49 @@ namespace Business.Handlers.Authorizations.Commands
                 
                 await _userRepository.AddAsync(user);
                 
-                var usr = await _userRepository.GetAsync(x => x.Email == user.Email);
-                var group = await _mediator.Send(new GetGroupByNameInternalQuery
-                {
-                    GroupName = "customer_group"
-                }, cancellationToken);
-                
-                _ = await _mediator.Send(new CreateUserGroupInternalCommand
-                {
-                    UserId = usr.Id,
-                    GroupId = group.Data.Id
-                }, cancellationToken);
-                
-                var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
-                {
-                    GroupId = group.Data.Id
-                }, cancellationToken);
-                
-                var selectionItems = result.Data.ToList();
-                var oClaims = new List<OperationClaim>();
-                
-                if (selectionItems.ToList().Count > 0)
-                    oClaims = selectionItems.Select(item =>
-                        new OperationClaim {Id = item.Id, Name = item.Label}).ToList();
-                
-                await _mediator.Send(new CreateUserClaimsInternalCommand
-                {
-                    UserId = user.Id,
-                    OperationClaims = oClaims
-                }, cancellationToken);
-                
-                var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
-                {
-                    UserId = user.Id,
-                    OperationClaims = oClaims.Select(x => x.Name).ToArray()
-                }, new List<long>());
-                
-                // create customer with kafka 
-                await _messageBroker.SendMessageAsync(new CreateCustomerMessageCommand
-                {
-                 Id =  user.Id,
-                 DemographicId = 0,
-                 IndustryId = 1
-                });
+                // var usr = await _userRepository.GetAsync(x => x.Email == user.Email);
+                // var group = await _mediator.Send(new GetGroupByNameInternalQuery
+                // {
+                //     GroupName = "customer_group"
+                // }, cancellationToken);
+                //
+                // _ = await _mediator.Send(new CreateUserGroupInternalCommand
+                // {
+                //     UserId = usr.Id,
+                //     GroupId = group.Data.Id
+                // }, cancellationToken);
+                //
+                // var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
+                // {
+                //     GroupId = group.Data.Id
+                // }, cancellationToken);
+                //
+                // var selectionItems = result.Data.ToList();
+                // var oClaims = new List<OperationClaim>();
+                //
+                // if (selectionItems.ToList().Count > 0)
+                //     oClaims = selectionItems.Select(item =>
+                //         new OperationClaim {Id = item.Id, Name = item.Label}).ToList();
+                //
+                // await _mediator.Send(new CreateUserClaimsInternalCommand
+                // {
+                //     UserId = user.Id,
+                //     OperationClaims = oClaims
+                // }, cancellationToken);
+                //
+                // var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
+                // {
+                //     UserId = user.Id,
+                //     OperationClaims = oClaims.Select(x => x.Name).ToArray()
+                // }, new List<long>());
+                //
+                // // create customer with kafka 
+                // await _messageBroker.SendMessageAsync(new CreateCustomerMessageCommand
+                // {
+                //  Id =  user.Id,
+                //  DemographicId = 0,
+                //  IndustryId = 1
+                // });
                 
                 return new SuccessDataResult<AccessToken>(new AccessToken(), Messages.SuccessfulLogin);
             }

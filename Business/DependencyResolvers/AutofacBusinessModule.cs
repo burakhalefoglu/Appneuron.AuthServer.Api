@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Extras.DynamicProxy;
-using Business.Abstract;
 using Castle.DynamicProxy;
 using Core.Utilities.Interceptors;
 using DataAccess.Abstract;
@@ -15,10 +14,7 @@ namespace Business.DependencyResolvers
         protected override void Load(ContainerBuilder builder)
         {
 
-            builder.RegisterType<AuthManager>().As<IAuthService>();
             builder.RegisterType<CassUserRepository>().As<IUserRepository>().SingleInstance();
-
-            
             builder.RegisterType<CassClientRepository>().As<IClientRepository>();
             builder.RegisterType<CassUserProjectRepository>().As<IUserProjectRepository>().SingleInstance();
             builder.RegisterType<CassLogRepository>().As<ILogRepository>().SingleInstance();
