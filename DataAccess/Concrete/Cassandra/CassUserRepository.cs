@@ -1,19 +1,16 @@
+using Cassandra.Mapping;
 using Core.DataAccess.Cassandra;
-using Core.DataAccess.Cassandra.Configurations;
-using Core.DataAccess.MongoDb.Concrete;
 using Core.Entities.Concrete;
-using Core.Utilities.IoC;
 using DataAccess.Abstract;
-using DataAccess.Concrete.Cassandra.Contexts;
 using DataAccess.Concrete.Cassandra.Tables;
-using DataAccess.Concrete.MongoDb.Context;
+using DataAccess.Concrete.Cassandra.Tables.TableMappers;
 
 namespace DataAccess.Concrete.Cassandra
 {
     public class CassUserRepository : CassandraRepositoryBase<User>, IUserRepository
     {
-        // connection string
-        public CassUserRepository() : base(CassandraTableQueries.User)
+        public CassUserRepository() : base(CassandraTableQueries.User,
+            MappingConfiguration.Global.Define<UserMapper>())
         {
         }
     }

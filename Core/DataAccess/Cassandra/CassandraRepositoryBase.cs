@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Cassandra;
 using Cassandra.Data.Linq;
+using Cassandra.Mapping;
 using Core.DataAccess.Cassandra.Configurations;
 using Core.Entities;
 using Core.Utilities.IoC;
@@ -16,7 +17,7 @@ namespace Core.DataAccess.Cassandra
     {
         private readonly Table<T> _table;
 
-        protected CassandraRepositoryBase(string tableCreateQuery)
+        protected CassandraRepositoryBase(string tableCreateQuery, MappingConfiguration mappingConfiguration)
         {
             var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
             var cassandraConnectionSettings = 
@@ -28,10 +29,9 @@ namespace Core.DataAccess.Cassandra
                 .WithCompression(CompressionType.Snappy)
                 .Build();
             var session = cluster.Connect();
-            session.CreateKeyspaceIfNotExists("AuthDatabase");
+            session.CreateKeyspaceIfNotExists(cassandraConnectionSettings.Keyspace);
             session.ExecuteAsync(new SimpleStatement(tableCreateQuery)).ConfigureAwait(false);
-            session.ExecuteAsync(new SimpleStatement("USE AuthDatabase;")).ConfigureAwait(false);
-            _table = new Table<T>(session);
+            _table = new Table<T>(session, mappingConfiguration);
         }
 
         public IQueryable<T> GetList(Expression<Func<T, bool>> predicate = null)

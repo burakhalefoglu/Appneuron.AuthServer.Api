@@ -6,7 +6,6 @@ using Castle.DynamicProxy;
 using Core.Utilities.Interceptors;
 using DataAccess.Abstract;
 using DataAccess.Concrete.Cassandra;
-using DataAccess.Concrete.Cassandra.Contexts;
 using Module = Autofac.Module;
 
 namespace Business.DependencyResolvers
