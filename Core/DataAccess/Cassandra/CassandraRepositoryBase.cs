@@ -83,8 +83,7 @@ namespace Core.DataAccess.Cassandra
 
         public async Task<T> GetAsync(Expression<Func<T, bool>> predicate)
         {
-            return await Task.Run(() => _table.Where(predicate)
-                .FirstOrDefault().Execute());
+            return (await Task.Run(() => _table.Where(predicate).Execute().FirstOrDefault()))!;
         }
 
         public bool Any(Expression<Func<T, bool>> predicate = null)
