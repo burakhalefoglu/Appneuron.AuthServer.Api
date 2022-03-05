@@ -25,7 +25,7 @@ namespace WebAPI.Controllers
         [Consumes("application/json")]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(IResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserQuery loginModel)
         {
@@ -33,7 +33,7 @@ namespace WebAPI.Controllers
 
             if (result.Success) return Ok(result);
 
-            return Unauthorized(result);
+            return BadRequest(result);
         }
 
         /// <summary>
@@ -52,7 +52,8 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(registerUserCommand);
 
             if (result.Success) return Ok(result);
-            return Unauthorized("result");
+            
+            return BadRequest(result);
         }
 
 

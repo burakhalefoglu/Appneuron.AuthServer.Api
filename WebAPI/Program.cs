@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using System.Reflection;
-using Business.Extensions;
 using Core.Utilities.IoC;
 using MediatR;
 
