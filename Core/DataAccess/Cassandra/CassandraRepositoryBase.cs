@@ -83,7 +83,7 @@ namespace Core.DataAccess.Cassandra
 
         public async Task<T> GetAsync(Expression<Func<T, bool>> predicate)
         {
-            return (await Task.Run(() => _table.Where(predicate).Execute().FirstOrDefault()))!;
+            return (await Task.Run(() => _table.Where(predicate).FirstOrDefault().Execute()))!;
         }
 
         public bool Any(Expression<Func<T, bool>> predicate = null)
@@ -118,8 +118,8 @@ namespace Core.DataAccess.Cassandra
         {
             await Task.Run(() =>
             {
-                var id = _table.AsQueryable().OrderByDescending(x => x.Id).First().Id;
-                entity.Id = id + 1;
+                // var id = _table.AsQueryable().OrderByDescending(x => x.Id).First().Id;
+                entity.Id = /*id*/ 1 + 1;
                 _table.Insert(entity);
             });
         }
