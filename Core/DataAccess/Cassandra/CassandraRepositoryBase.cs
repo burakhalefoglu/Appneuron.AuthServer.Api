@@ -119,7 +119,7 @@ namespace Core.DataAccess.Cassandra
             await Task.Run(() =>
             {
                 var id = _table.FirstOrDefault().Execute().Id;
-                entity.Id = /*id*/ 1 + 1;
+                entity.Id = id + 1;
                 _table.Insert(entity);
             });
         }
