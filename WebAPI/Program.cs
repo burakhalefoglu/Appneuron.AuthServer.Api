@@ -64,11 +64,12 @@ var builder = WebApplication.CreateBuilder(args);
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters()
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
+            // ValidateIssuer = true,
+            // ValidateAudience = true,
             ValidAudiences = tokenOptions.Audience,
             ValidIssuer = tokenOptions.Issuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecurityKey))
+            IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
+
         };
     });
 
