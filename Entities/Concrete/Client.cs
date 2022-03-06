@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using System.Globalization;
+using Core.Entities;
 
 namespace Entities.Concrete
 {
@@ -7,11 +8,11 @@ namespace Entities.Concrete
 
         public Client()
         {
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTimeOffset.Now;
             Status = true;
         }
         public bool Status  { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
         public long ProjectId { get; set; }
         public long Id { get; set; }
     }

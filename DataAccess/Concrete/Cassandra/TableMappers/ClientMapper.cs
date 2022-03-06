@@ -22,7 +22,7 @@ public class ClientMapper: Mappings
             .ClusteringKey(new Tuple<string, SortOrder>("created_at", SortOrder.Ascending))
             .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
             .Column(u => u.ProjectId, cm => cm.WithName("project_id").WithDbType(typeof(long)))
-            .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTime)))
+            .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTimeOffset)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }

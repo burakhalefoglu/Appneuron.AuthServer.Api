@@ -23,7 +23,7 @@ public class GroupClaimMapper: Mappings
             .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
             .Column(u => u.ClaimId, cm => cm.WithName("claim_id").WithDbType(typeof(long)))
             .Column(u => u.GroupId, cm => cm.WithName("group_id").WithDbType(typeof(long)))
-            .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTime)))
+            .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTimeOffset)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }

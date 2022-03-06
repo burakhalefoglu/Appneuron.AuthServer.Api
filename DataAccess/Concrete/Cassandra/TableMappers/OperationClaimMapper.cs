@@ -24,7 +24,7 @@ public class OperationClaimMapper: Mappings
             .Column(u => u.Name, cm => cm.WithName("name").WithDbType(typeof(string)))
             .Column(u => u.Alias, cm => cm.WithName("alias").WithDbType(typeof(string)))
             .Column(u => u.Description, cm => cm.WithName("description").WithDbType(typeof(string)))
-            .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTime)))
+            .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTimeOffset)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }

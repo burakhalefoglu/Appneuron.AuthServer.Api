@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using System.Globalization;
+using Core.Entities;
 
 namespace Entities.Concrete
 {
@@ -6,11 +7,11 @@ namespace Entities.Concrete
     {
         public OperationClaim()
         {
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTimeOffset.Now;
             Status = true;
         }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
         public bool Status { get; set; }
         public string Name { get; set; }
         public string Alias { get; set; }

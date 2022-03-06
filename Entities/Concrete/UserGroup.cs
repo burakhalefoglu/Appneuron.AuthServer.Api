@@ -6,11 +6,11 @@ namespace Entities.Concrete
     {
         public UserGroup()
         {
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTimeOffset.Now;
             Status = true;
         }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
         public bool Status { get; set; }
         public long GroupId { get; set; }
         public long UserId { get; set; }

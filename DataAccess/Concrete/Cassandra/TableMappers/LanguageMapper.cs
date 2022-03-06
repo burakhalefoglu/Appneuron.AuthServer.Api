@@ -23,7 +23,7 @@ public class LanguageMapper: Mappings
             .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
             .Column(u => u.Code, cm => cm.WithName("code").WithDbType(typeof(string)))
             .Column(u => u.Name, cm => cm.WithName("name").WithDbType(typeof(string)))
-            .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTime)))
+            .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTimeOffset)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
     }
 }

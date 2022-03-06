@@ -6,11 +6,11 @@ namespace Entities.Concrete
     {
         public UserClaim()
         {
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTimeOffset.Now;
             Status = true;
         }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
         public bool Status { get; set; }
         public long UsersId { get; set; }
         public long ClaimId { get; set; }
