@@ -1,8 +1,6 @@
-﻿using Core.Utilities.IoC;
-using Core.Utilities.Security.Encyption;
+﻿using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
@@ -10,10 +8,8 @@ namespace Core.Extensions;
 
 public static class JwtAuthenticationExtensions
 {
-    public static void ConfigureAuthentication(this IServiceCollection services)
+    public static void ConfigureAuthentication(this IServiceCollection services, TokenOptions tokenOptions)
     {
-        var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-        var tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
         string issuer = tokenOptions.Issuer;
         services.AddAuthentication(opt=>
             {

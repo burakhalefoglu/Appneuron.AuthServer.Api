@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using Business.Extensions;
 using Core.Utilities.IoC;
+using Core.Utilities.Security.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
     var services = builder.Services;
@@ -17,6 +18,10 @@ var builder = WebApplication.CreateBuilder(args);
     // Add services to the container.
     services.AddSingleton<IConfiguration>(x => configuration);
     services.AddMediatRApi();
+
+    var tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
+    services.ConfigureAuthentication(tokenOptions);
+
     services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
@@ -51,7 +56,6 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddSwaggerGen();
     var app = builder.Build();
     ServiceTool.ServiceProvider = ((IApplicationBuilder) app).ApplicationServices;
-    services.ConfigureAuthentication();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
