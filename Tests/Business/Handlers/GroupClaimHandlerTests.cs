@@ -6,8 +6,8 @@ using Business.Constants;
 using Business.Handlers.GroupClaims.Commands;
 using Business.Handlers.GroupClaims.Queries;
 using Business.Internals.Handlers.GroupClaims;
-using Core.Entities.Concrete;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
 using Moq;
@@ -211,7 +211,8 @@ namespace Tests.Business.Handlers
         {
             var command = new DeleteGroupClaimCommand
             {
-                Id = 1,
+                ClaimId = 1,
+                GroupId = 1,
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
@@ -228,7 +229,8 @@ namespace Tests.Business.Handlers
         {
             var command = new DeleteGroupClaimCommand
             {
-                Id = 1,
+                ClaimId = 1,
+                GroupId = 1,
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(
@@ -254,7 +256,8 @@ namespace Tests.Business.Handlers
         {
             var command = new GetGroupClaimQuery
             {
-                Id = 1,
+                ClaimId = 1,
+                GroupId = 1,
             };
 
             _groupClaimRepository.Setup(x => x.GetAsync(

@@ -98,22 +98,5 @@ namespace WebAPI.Controllers
             if (result.Success) return Ok(result);
             return BadRequest(result);
         }
-
-        /// <summary>
-        ///     It brings the details according to its id.
-        /// </summary>
-        /// <remarks>UserProjects</remarks>
-        /// <return>UserProjects List</return>
-        /// <response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<UserProject>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getByUserId")]
-        public async Task<IActionResult> GetById()
-        {
-            var result = await Mediator.Send(new GetUserProjectsByUserIdQuery());
-            if (result.Success) return Ok(result);
-            return BadRequest(result);
-        }
     }
 }

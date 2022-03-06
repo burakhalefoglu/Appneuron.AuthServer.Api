@@ -47,7 +47,6 @@ public static class MediatrExtension
         services.AddMediatR(typeof(UpdateGroupCommand));
         services.AddMediatR(typeof(GetGroupQuery));
         services.AddMediatR(typeof(GetGroupsQuery));
-        services.AddMediatR(typeof(SearchGroupsByNameQuery));
         
         services.AddMediatR(typeof(CreateLanguageCommand));
         services.AddMediatR(typeof(DeleteLanguageCommand));
@@ -60,7 +59,6 @@ public static class MediatrExtension
         services.AddMediatR(typeof(CreateOperationClaimCommand));
         services.AddMediatR(typeof(DeleteOperationClaimCommand));
         services.AddMediatR(typeof(UpdateOperationClaimCommand));
-        services.AddMediatR(typeof(GetOperationClaimLookupQuery));
         services.AddMediatR(typeof(GetOperationClaimQuery));
         services.AddMediatR(typeof(GetOperationClaimsQuery));
                 
@@ -85,14 +83,12 @@ public static class MediatrExtension
         services.AddMediatR(typeof(DeleteUserProjectCommand));
         services.AddMediatR(typeof(UpdateUserProjectCommand));
         services.AddMediatR(typeof(GetUserProjectQuery));
-        services.AddMediatR(typeof(GetUserProjectsByUserIdQuery));
         services.AddMediatR(typeof(GetUserProjectsQuery));
         
         services.AddMediatR(typeof(CreateUserCommand));
         services.AddMediatR(typeof(DeleteUserCommand));
         services.AddMediatR(typeof(UpdateUserCommand));
         services.AddMediatR(typeof(UserChangePasswordCommand));
-        services.AddMediatR(typeof(GetUserLookupQuery));
         services.AddMediatR(typeof(GetUserQuery));
         services.AddMediatR(typeof(GetUsersQuery));
         

@@ -1,4 +1,6 @@
-﻿namespace Core.Entities.Concrete
+﻿using Core.Entities;
+
+namespace Entities.Concrete
 {
     public class Group : IEntity
     {
@@ -8,7 +10,7 @@
             Status = true;
         }
 
-        public DateTime CreatedAt { get; }
+        public DateTime CreatedAt { get; set; }
         public bool Status { get; set; }
         public string GroupName { get; set; }
         public long Id { get; set; }

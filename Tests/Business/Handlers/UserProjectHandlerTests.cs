@@ -19,7 +19,6 @@ using static Business.Handlers.UserProjects.Commands.DeleteUserProjectCommand;
 using static Business.Handlers.UserProjects.Commands.UpdateUserProjectCommand;
 using static Business.Handlers.UserProjects.Queries.GetUserProjectQuery;
 using static Business.Handlers.UserProjects.Queries.GetUserProjectsQuery;
-using static Business.Handlers.UserProjects.Queries.GetUserProjectsByUserIdQuery;
 using static Business.Internals.Handlers.UserProjects.CreateUserProjectInternalCommand;
 using static Business.Internals.Handlers.UserProjects.GetUserProjectInternalQuery;
 using static Business.Internals.Handlers.UserProjects.GetUserProjectsInternalQuery;
@@ -39,8 +38,6 @@ namespace Tests.Business.Handlers
                 new GetUserProjectQueryHandler(_userProjectRepository.Object);
             _getUserProjectsQueryHandler =
                 new GetUserProjectsQueryHandler(_userProjectRepository.Object);
-            _getUserProjectsByUserIdQueryHandler = new GetUserProjectsByUserIdQueryHandler(
-                _userProjectRepository.Object, _httpContextAccessor.Object);
 
             _createUserProjectCommandHandler =
                 new CreateUserProjectCommandHandler(_userProjectRepository.Object);
@@ -62,7 +59,6 @@ namespace Tests.Business.Handlers
 
         private GetUserProjectQueryHandler _getUserProjectQueryHandler;
         private GetUserProjectsQueryHandler _getUserProjectsQueryHandler;
-        private GetUserProjectsByUserIdQueryHandler _getUserProjectsByUserIdQueryHandler;
 
         private CreateUserProjectCommandHandler _createUserProjectCommandHandler;
         private UpdateUserProjectCommandHandler _updateUserProjectCommandHandler;
@@ -172,41 +168,6 @@ namespace Tests.Business.Handlers
 
             //Act
             var x = await _getUserProjectsInternalQueryHandler.Handle(query, new CancellationToken());
-
-            //Asset
-            x.Success.Should().BeTrue();
-            x.Data.ToList().Count.Should().BeGreaterThan(1);
-        }
-
-        [Test]
-        public async Task UserProject_GetUserProjectsByUserId_Success()
-        {
-            //Arrange
-            var query = new GetUserProjectsByUserIdQuery();
-
-            _userProjectRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<UserProject, bool>>>()))
-                .ReturnsAsync(new List<UserProject>
-                {
-                    new()
-                    {
-                        ProjectId = 1,
-                        UserId = 1
-                    },
-
-                    new()
-                    {
-                        ProjectId = 2,
-                        UserId = 1
-                    }
-                }.AsQueryable());
-
-
-            _httpContextAccessor.SetupGet(x =>
-                x.HttpContext).Returns(new DefaultHttpContext());
-
-
-            //Act
-            var x = await _getUserProjectsByUserIdQueryHandler.Handle(query, new CancellationToken());
 
             //Asset
             x.Success.Should().BeTrue();

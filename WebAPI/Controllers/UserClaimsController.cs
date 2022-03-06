@@ -4,6 +4,7 @@ using Business.Handlers.UserClaims.Commands;
 using Business.Handlers.UserClaims.Queries;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
+using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using IResult = Core.Utilities.Results.IResult;

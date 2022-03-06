@@ -36,24 +36,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///     User Lookup
-        /// </summary>
-        /// <remarks>bla bla bla Users</remarks>
-        /// <return>Users List</return>
-        /// <response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<SelectionItem>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getuserlookup")]
-        public async Task<IActionResult> GetUserLookup()
-        {
-            var result = await Mediator.Send(new GetUserLookupQuery());
-            if (result.Success) return Ok(result);
-
-            return BadRequest(result);
-        }
-
-        /// <summary>
         ///     It brings the details according to its id.
         /// </summary>
         /// <remarks>bla bla bla </remarks>

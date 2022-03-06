@@ -17,6 +17,7 @@ using Core.Utilities.MessageBrokers;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using MediatR;
 
 namespace Business.Handlers.Clients.Commands
@@ -76,7 +77,7 @@ namespace Business.Handlers.Clients.Commands
                     });
                 }
 
-                var resultGroupClaim = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
+                var resultGroupClaim = await _mediator.Send(new GetGroupClaimInternalQuery
                 {
                     GroupId = 2
                 }, cancellationToken);

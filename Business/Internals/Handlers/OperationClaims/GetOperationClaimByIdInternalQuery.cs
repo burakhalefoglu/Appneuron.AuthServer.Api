@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using MediatR;
 
 namespace Business.Internals.Handlers.OperationClaims

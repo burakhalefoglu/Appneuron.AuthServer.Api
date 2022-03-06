@@ -18,6 +18,7 @@ using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using MediatR;
 
 namespace Business.Handlers.Authorizations.Commands
@@ -73,14 +74,14 @@ namespace Business.Handlers.Authorizations.Commands
                 await _userRepository.AddAsync(user);
                 
                 var usr = await _userRepository.GetAsync(x => x.Email == user.Email);
-                // if user type is more than one will use group ıd after query
+                // if user type is more than one, we will use group ıd with query
                 _ = await _mediator.Send(new CreateUserGroupInternalCommand
                 {
                     UserId = usr.Id,
-                    GroupId = 1
+                    GroupId = 1 // is default for game customer
                 }, cancellationToken);
                 
-                var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
+                var result = await _mediator.Send(new GetGroupClaimInternalQuery
                 {
                     GroupId = 1
                 }, cancellationToken);

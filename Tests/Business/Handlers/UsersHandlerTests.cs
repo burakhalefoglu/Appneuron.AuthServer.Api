@@ -9,9 +9,9 @@ using Business.Constants;
 using Business.Handlers.Users.Commands;
 using Business.Handlers.Users.Queries;
 using Business.Internals.Handlers.Users;
-using Core.Entities.Concrete;
 using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -21,7 +21,6 @@ using static Business.Handlers.Users.Commands.CreateUserCommand;
 using static Business.Handlers.Users.Commands.DeleteUserCommand;
 using static Business.Handlers.Users.Commands.UpdateUserCommand;
 using static Business.Handlers.Users.Commands.UserChangePasswordCommand;
-using static Business.Handlers.Users.Queries.GetUserLookupQuery;
 using static Business.Handlers.Users.Queries.GetUserQuery;
 using static Business.Handlers.Users.Queries.GetUsersQuery;
 using static Business.Internals.Handlers.Users.GetUserInternalQuery;
@@ -45,7 +44,6 @@ namespace Tests.Business.Handlers
                 _httpContextAccessor.Object);
             _updateChangePasswordCommandHandler = new UserChangePasswordCommandHandler(_userRepository.Object,
                 _httpContextAccessor.Object);
-            _getUserLookupQueryHandler = new GetUserLookupQueryHandler(_userRepository.Object);
             _getUserQueryHandler = new GetUserQueryHandler(_userRepository.Object, _mapper.Object,
                 _httpContextAccessor.Object);
             _getUsersQueryHandler = new GetUsersQueryHandler(_userRepository.Object, _mapper.Object);
@@ -60,7 +58,6 @@ namespace Tests.Business.Handlers
         private DeleteUserCommandHandler _deleteUserCommandHandler;
         private UpdateUserCommandHandler _updateUserCommandHandler;
         private UserChangePasswordCommandHandler _updateChangePasswordCommandHandler;
-        private GetUserLookupQueryHandler _getUserLookupQueryHandler;
         private GetUserQueryHandler _getUserQueryHandler;
         private GetUsersQueryHandler _getUsersQueryHandler;
 
@@ -280,23 +277,6 @@ namespace Tests.Business.Handlers
 
             result.Success.Should().BeTrue();
             result.Message.Should().Be(Messages.Updated);
-        }
-
-        [Test]
-        public async Task User_GetUserLookup_Success()
-        {
-            var query = new GetUserLookupQuery();
-
-            _userRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .ReturnsAsync(new List<User>
-                {
-                    new(),
-                    new()
-                }.AsQueryable());
-
-            var result = await _getUserLookupQueryHandler.Handle(query, new CancellationToken());
-            result.Success.Should().BeTrue();
-            result.Data.Count().Should().BeGreaterThan(1);
         }
 
         [Test]

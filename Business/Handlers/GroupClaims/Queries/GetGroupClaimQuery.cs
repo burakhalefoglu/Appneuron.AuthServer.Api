@@ -6,14 +6,15 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using MediatR;
 
 namespace Business.Handlers.GroupClaims.Queries
 {
     public class GetGroupClaimQuery : IRequest<IDataResult<GroupClaim>>
     {
-        public long Id { get; set; }
-
+        public long GroupId { get; set; }
+        
         public class GetGroupClaimQueryHandler : IRequestHandler<GetGroupClaimQuery, IDataResult<GroupClaim>>
         {
             private readonly IGroupClaimRepository _groupClaimRepository;
@@ -29,7 +30,8 @@ namespace Business.Handlers.GroupClaims.Queries
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<GroupClaim>(
-                    await _groupClaimRepository.GetAsync(x => x.Id == request.Id && x.Status == true));
+                    await _groupClaimRepository.GetAsync(x => x.GroupId == request.GroupId &&
+                                                              x.Status == true));
             }
         }
     }

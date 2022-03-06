@@ -15,6 +15,7 @@ using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using MediatR;
 
 namespace Business.Handlers.Authorizations.Queries
@@ -57,7 +58,7 @@ namespace Business.Handlers.Authorizations.Queries
                     UserId = user.Id
                 }, cancellationToken);
                 
-                var result = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
+                var result = await _mediator.Send(new GetGroupClaimInternalQuery
                 {
                     GroupId = usrGroup.Data.GroupId
                 }, cancellationToken);

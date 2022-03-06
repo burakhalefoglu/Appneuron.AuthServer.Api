@@ -8,15 +8,14 @@ using Business.Constants;
 using Business.Handlers.OperationClaims.Commands;
 using Business.Handlers.OperationClaims.Queries;
 using Business.Internals.Handlers.OperationClaims;
-using Core.Entities.Concrete;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.OperationClaims.Commands.CreateOperationClaimCommand;
 using static Business.Handlers.OperationClaims.Commands.DeleteOperationClaimCommand;
 using static Business.Handlers.OperationClaims.Commands.UpdateOperationClaimCommand;
-using static Business.Handlers.OperationClaims.Queries.GetOperationClaimLookupQuery;
 using static Business.Handlers.OperationClaims.Queries.GetOperationClaimQuery;
 using static Business.Handlers.OperationClaims.Queries.GetOperationClaimsQuery;
 using static Business.Internals.Handlers.OperationClaims.GetOperationClaimsByIdInternalQuery;
@@ -37,8 +36,6 @@ namespace Tests.Business.Handlers
                 new UpdateOperationClaimCommandHandler(_operationClaimRepository.Object);
             _deleteOperationClaimCommandHandler =
                 new DeleteOperationClaimCommandHandler(_operationClaimRepository.Object);
-            _getOperationClaimLookupQueryHandler =
-                new GetOperationClaimLookupQueryHandler(_operationClaimRepository.Object);
             _getOperationClaimQueryHandler = new GetOperationClaimQueryHandler(_operationClaimRepository.Object);
             _getOperationClaimsQueryHandler = new GetOperationClaimsQueryHandler(_operationClaimRepository.Object);
             _getOperationClaimsByIdInternalQueryHandler =
@@ -51,7 +48,6 @@ namespace Tests.Business.Handlers
         private UpdateOperationClaimCommandHandler _updateOperationClaimCommandHandler;
         private DeleteOperationClaimCommandHandler _deleteOperationClaimCommandHandler;
 
-        private GetOperationClaimLookupQueryHandler _getOperationClaimLookupQueryHandler;
         private GetOperationClaimQueryHandler _getOperationClaimQueryHandler;
         private GetOperationClaimsQueryHandler _getOperationClaimsQueryHandler;
 
@@ -184,53 +180,7 @@ namespace Tests.Business.Handlers
             result.Success.Should().BeFalse();
             result.Message.Should().Be(Messages.OperationClaimNotFound);
         }
-
-
-        [Test]
-        public async Task OperationClaim_GetOperationClaimLookup_OperationClaimNotFound()
-        {
-            var command = new GetOperationClaimLookupQuery();
-
-            _operationClaimRepository.Setup(x =>
-                    x.GetListAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
-                .ReturnsAsync((IQueryable<OperationClaim>) null);
-
-
-            var result = await _getOperationClaimLookupQueryHandler.Handle(command, new CancellationToken());
-            result.Success.Should().BeFalse();
-            result.Message.Should().Be(Messages.OperationClaimNotFound);
-        }
-
-
-        [Test]
-        public async Task OperationClaim_GetOperationClaimLookup_Success()
-        {
-            var command = new GetOperationClaimLookupQuery();
-
-            _operationClaimRepository.Setup(x =>
-                    x.GetListAsync(It.IsAny<Expression<Func<OperationClaim, bool>>>()))
-                .ReturnsAsync(
-                    new List<OperationClaim>
-                    {
-                        new()
-                        {
-                            Alias = "Test",
-                            Description = "Test",
-                            Name = "Test"
-                        },
-
-                        new()
-                        {
-                            Alias = "Test1",
-                            Description = "Test1",
-                            Name = "Test1"
-                        }
-                    }.AsQueryable());
-
-            var result = await _getOperationClaimLookupQueryHandler.Handle(command, new CancellationToken());
-            result.Success.Should().BeTrue();
-            result.Data.Count().Should().BeGreaterThan(1);
-        }
+        
 
         [Test]
         public async Task OperationClaim_GetOperationClaim_Success()

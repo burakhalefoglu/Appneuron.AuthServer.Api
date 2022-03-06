@@ -10,6 +10,7 @@ using Core.Entities.Concrete;
 using Core.Utilities.MessageBrokers;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using MassTransit;
 using MediatR;
 
@@ -45,7 +46,7 @@ namespace Business.MessageBrokers.Manager
                 u.Id == context.Message.UserId);
 
             //New Token Creation
-            var groupClaims = await _mediator.Send(new GetGroupClaimsLookupByGroupIdInternalQuery
+            var groupClaims = await _mediator.Send(new GetGroupClaimInternalQuery
             {
                 GroupId = 1
             });

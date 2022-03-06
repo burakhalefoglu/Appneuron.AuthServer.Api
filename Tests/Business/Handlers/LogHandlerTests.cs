@@ -52,8 +52,7 @@ namespace Tests.Business.Handlers
                                           "'TimeStamp':'0001-01-01T00:00:00+00:00'," +
                                           "'User':'Test'," +
                                           "'Value':'Test'," +
-                                          "'Type':'Test'}",
-                        TimeStamp = new DateTimeOffset()
+                                          "'Type':'Test'}"
                     },
                     new()
                     {
@@ -65,8 +64,7 @@ namespace Tests.Business.Handlers
                                           "'TimeStamp':'0001-01-01T00:00:00+00:00'," +
                                           "'User':'Test'," +
                                           "'Value':'Test'," +
-                                          "'Type':'Test'}",
-                        TimeStamp = new DateTimeOffset()
+                                          "'Type':'Test'}"
                     }
                 }.AsQueryable());
 

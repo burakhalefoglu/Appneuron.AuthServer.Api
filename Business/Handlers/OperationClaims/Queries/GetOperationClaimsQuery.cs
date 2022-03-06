@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -8,6 +9,7 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using MediatR;
 
 namespace Business.Handlers.OperationClaims.Queries
@@ -31,8 +33,13 @@ namespace Business.Handlers.OperationClaims.Queries
             public async Task<IDataResult<IEnumerable<OperationClaim>>> Handle(GetOperationClaimsQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<OperationClaim>>(
-                    await _operationClaimRepository.GetListAsync(x=> x.Status == true));
+                var ocs = await _operationClaimRepository.GetListAsync();
+                var filterOCs = new List<OperationClaim>();
+                if (ocs.Any())
+                {
+                    filterOCs = ocs.Where(x => x.Status).ToList();
+                }
+                return new SuccessDataResult<IEnumerable<OperationClaim>>(filterOCs);
             }
         }
     }

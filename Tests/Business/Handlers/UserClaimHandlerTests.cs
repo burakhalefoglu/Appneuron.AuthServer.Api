@@ -12,6 +12,7 @@ using Business.Internals.Handlers.Users;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
 using Moq;

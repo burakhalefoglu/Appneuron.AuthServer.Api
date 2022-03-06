@@ -14,7 +14,7 @@ namespace Entities.Concrete
         public long Id { get; set; }
         public long UserId { get; set; }
         public long ProjectId { get; set; }
-        public DateTime CreatedAt { get; }
+        public DateTime CreatedAt { get; set; }
         public bool Status { get; set; }
 
     }

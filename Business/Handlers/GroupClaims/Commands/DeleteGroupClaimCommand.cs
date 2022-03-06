@@ -13,7 +13,8 @@ namespace Business.Handlers.GroupClaims.Commands
 {
     public class DeleteGroupClaimCommand : IRequest<IResult>
     {
-        public long Id { get; set; }
+        public long GroupId { get; set; }
+        public long ClaimId { get; set; }
 
         public class DeleteGroupClaimCommandHandler : IRequestHandler<DeleteGroupClaimCommand, IResult>
         {
@@ -29,7 +30,10 @@ namespace Business.Handlers.GroupClaims.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(DeleteGroupClaimCommand request, CancellationToken cancellationToken)
             {
-                var groupClaimToDelete = await _groupClaimRepository.GetAsync(x => x.GroupId == request.Id && x.Status == true);
+                var groupClaimToDelete = await _groupClaimRepository
+                    .GetAsync(x => x.GroupId == request.GroupId &&
+                                   x.ClaimId == request.ClaimId &&
+                                   x.Status == true);
                 if (groupClaimToDelete == null) return new ErrorResult(Messages.GroupClaimNotFound);
                 groupClaimToDelete.Status = false;
                 await _groupClaimRepository.UpdateAsync(groupClaimToDelete);

@@ -30,7 +30,7 @@ namespace Business.Handlers.OperationClaims.Commands
             public async Task<IResult> Handle(DeleteOperationClaimCommand request, CancellationToken cancellationToken)
             {
                 var claimToDelete = await _operationClaimRepository.GetAsync(x => x.Id == request.Id && x.Status == true);
-                if (claimToDelete == null) return new ErrorResult(Messages.OperationClaimNotFound);
+                if (claimToDelete is null) return new ErrorResult(Messages.OperationClaimNotFound);
                 claimToDelete.Status = false;
                 await _operationClaimRepository.UpdateAsync(claimToDelete);
                 return new SuccessResult(Messages.Deleted);

@@ -1,4 +1,6 @@
-﻿namespace Core.Entities.Concrete
+﻿using Core.Entities;
+
+namespace Entities.Concrete
 {
     public class Client : IEntity
     {
@@ -9,7 +11,7 @@
             Status = true;
         }
         public bool Status  { get; set; }
-        public DateTime CreatedAt { get; }
+        public DateTime CreatedAt { get; set; }
         public long ProjectId { get; set; }
         public long Id { get; set; }
     }

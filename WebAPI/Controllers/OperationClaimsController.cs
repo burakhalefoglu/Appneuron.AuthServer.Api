@@ -5,6 +5,7 @@ using Business.Handlers.OperationClaims.Queries;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
 using Core.Utilities.Results;
+using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using IResult = Core.Utilities.Results.IResult;
@@ -49,24 +50,6 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetByid(long id)
         {
             var result = await Mediator.Send(new GetOperationClaimQuery {Id = id});
-            if (result.Success) return Ok(result);
-
-            return BadRequest(result);
-        }
-
-        /// <summary>
-        ///     List OperationClaims
-        /// </summary>
-        /// <remarks>bla bla bla OperationClaims</remarks>
-        /// <return>OperationClaims List</return>
-        /// <response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<SelectionItem>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getoperationclaimlookup")]
-        public async Task<IActionResult> GetOperationClaimLookup()
-        {
-            var result = await Mediator.Send(new GetOperationClaimLookupQuery());
             if (result.Success) return Ok(result);
 
             return BadRequest(result);

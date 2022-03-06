@@ -9,6 +9,7 @@ using Business.Handlers.Translates.Commands;
 using Business.Handlers.Translates.Queries;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
 using Moq;

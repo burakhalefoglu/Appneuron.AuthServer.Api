@@ -10,7 +10,7 @@ namespace Core.Entities.Concrete
         }
         public string MessageTemplate { get; set; }
         public string Level { get; set; }
-        public DateTimeOffset TimeStamp { get; }
+        public DateTimeOffset TimeStamp { get; set; }
         public string Exception { get; set; }
         public long Id { get; set; }
     }

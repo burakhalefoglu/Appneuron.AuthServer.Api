@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Business.Handlers.Logs.Queries;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
+using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using IResult = Core.Utilities.Results.IResult;

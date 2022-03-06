@@ -7,11 +7,9 @@ using Business.Constants;
 using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
 using Business.Internals.Handlers.GroupClaims;
-using Business.Internals.Handlers.Groups.Queries;
 using Business.Internals.Handlers.UserGroups.Commands;
 using Business.Internals.Handlers.UserGroups.Queries;
 using Business.Internals.Handlers.UserProjects;
-using Business.MessageBrokers;
 using Core.Entities.ClaimModels;
 using Core.Entities.Concrete;
 using Core.Entities.Dtos;
@@ -266,15 +264,7 @@ namespace Tests.Business.Handlers
                     Id = 1,
                     Email = registerUser.Email,
                 }));
-            
-            _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetGroupByNameInternalQuery>(),
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new SuccessDataResult<Group>(new Group()
-                {
-                    Id = 1
-                }));
-            
+
             _mediator.Setup(m =>
                     m.Send(It.IsAny<CreateUserGroupInternalCommand>(),
                         It.IsAny<CancellationToken>()))
