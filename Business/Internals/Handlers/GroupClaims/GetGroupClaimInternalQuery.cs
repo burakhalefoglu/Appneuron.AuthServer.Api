@@ -33,8 +33,9 @@ namespace Business.Internals.Handlers.GroupClaims
                 GetGroupClaimInternalQuery request, CancellationToken cancellationToken)
             {
                 var oClaims = new List<SelectionItem>();
-                _groupClaimRepository.GetListAsync(x => x.GroupId == request.GroupId && x.Status == true)
-                    .Result.ToList().ForEach(Action);
+                _groupClaimRepository.GetListAsync().WaitAsync(cancellationToken)
+                    .Result.ToList().Where(x => x.GroupId == request.GroupId && x.Status)
+                    .ToList().ForEach(Action);
 
                 async void Action(GroupClaim x)
                 {
