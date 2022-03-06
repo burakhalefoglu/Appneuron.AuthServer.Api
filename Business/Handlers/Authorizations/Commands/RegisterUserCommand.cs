@@ -73,7 +73,8 @@ namespace Business.Handlers.Authorizations.Commands
                 
                 await _userRepository.AddAsync(user);
                 
-                var usr = await _userRepository.GetAsync(x => x.Email == user.Email);
+                var usr = await _userRepository.GetAsync(x => x.Email == user.Email &&
+                                                              x.Status);
                 // if user type is more than one, we will use group ıd with query
                 _ = await _mediator.Send(new CreateUserGroupInternalCommand
                 {
