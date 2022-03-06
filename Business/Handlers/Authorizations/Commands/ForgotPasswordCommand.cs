@@ -51,7 +51,8 @@ namespace Business.Handlers.Authorizations.Commands
                     return new SuccessResult(Messages.SendPassword);
 
                 var token = SecurityKeyHelper.GetRandomHexNumber(64);
-                var url = "https://webapi.appneuron.net/auth/api/Auth/resetpassword?token=" + token;
+                var url = "https://webapi.appneuron.net/auth/api/Auth/resetpassword?email=" +
+                          user.Email + "&token=" + token.ToLower();
                 await _mailService.Send(new EmailMessage
                 {
                     Content = new TextPart(TextFormat.Html)

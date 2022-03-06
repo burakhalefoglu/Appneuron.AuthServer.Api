@@ -36,8 +36,8 @@ namespace Business.Handlers.Authorizations.Commands
             {
                 var queryString = _httpContextAccessor.HttpContext.Request.Query;
                 var token = queryString["token"];
-                var resultUser = await _userRepository.GetAsync(p => p.ResetPasswordToken == token.ToString());
-                if (resultUser == null) return new ErrorDataResult<User>(Messages.InvalidCode);
+                var resultUser = _userRepository.GetAsync(u=> u.Email ==queryString["email"] && u.Status).Result;
+                if (resultUser.ResetPasswordToken != token.ToString()) return new ErrorDataResult<User>(Messages.DefaultError);
 
                 var resultDate = DateTimeOffset.Compare(DateTimeOffset.Now, resultUser.ResetPasswordExpires);
                 if (resultDate > 0) return new ErrorDataResult<User>(Messages.InvalidCode);
