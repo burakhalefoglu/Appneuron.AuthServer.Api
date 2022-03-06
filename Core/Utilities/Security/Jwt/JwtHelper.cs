@@ -5,6 +5,7 @@ using Core.Extensions;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -64,6 +65,17 @@ namespace Core.Utilities.Security.Jwt
             };
         }
 
+        public string GetTokenClaim( IHttpContextAccessor _httpContextAccessor, string type)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            string authHeader = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
+            authHeader = authHeader.Replace("Bearer ", "");
+            var jsonToken = handler.ReadToken(authHeader);
+            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+            var result = tokenS.Claims.First(claim => claim.Type == type).Value;
+            return result;
+        }   
+        
         public string DecodeToken(string input)
         {
             var handler = new JwtSecurityTokenHandler();
