@@ -7,7 +7,6 @@ using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
-using Business.Extensions;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Jwt;
 using MediatR;
@@ -16,9 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
     var services = builder.Services;
     var configuration = builder.Configuration;
     
-    // Add services to the container.
     services.AddSingleton<IConfiguration>(x => configuration);
-    // services.AddMediatRApi();
     services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
