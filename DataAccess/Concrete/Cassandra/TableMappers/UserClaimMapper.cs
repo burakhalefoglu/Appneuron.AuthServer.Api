@@ -18,7 +18,7 @@ public class UserClaimMapper: Mappings
         For<UserClaim>()
             .TableName("user_claims")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
-            .PartitionKey("id", "status")
+            .PartitionKey("user_id", "status")
             .ClusteringKey(new Tuple<string, SortOrder>("created_at", SortOrder.Descending))
             .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
             .Column(u => u.ClaimId, cm => cm.WithName("claim_id").WithDbType(typeof(long)))

@@ -35,8 +35,8 @@ namespace Business.Internals.Handlers.UserClaims
                 foreach (var claim in operationClaims)
                 {
                     var result =
-                        await _userClaimsRepository.AnyAsync(x =>
-                            x.UsersId == request.UserId && x.ClaimId == claim.Id && x.Status == true);
+                        _userClaimsRepository.GetListAsync(x =>
+                            x.UsersId == request.UserId && x.Status == true).Result.Any(x => x.ClaimId == claim.Id);
 
                     if (!result)
                         await _userClaimsRepository.AddAsync(new UserClaim
