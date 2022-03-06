@@ -90,7 +90,7 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult<Client>(null));
 
             _clientRepository.Setup(x => x.Add(It.IsAny<Client>()));
-            _mediator.Setup(x => x.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
+            _mediator.Setup(x => x.Send(It.IsAny<GetGroupClaimInternalQuery>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult<IDataResult<IEnumerable<SelectionItem>>>
                 (new SuccessDataResult<IEnumerable<SelectionItem>>(
@@ -136,7 +136,7 @@ namespace Tests.Business.Handlers
                     ProjectId = 1
                 }));
 
-            _mediator.Setup(x => x.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
+            _mediator.Setup(x => x.Send(It.IsAny<GetGroupClaimInternalQuery>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult<IDataResult<IEnumerable<SelectionItem>>>
                 (new SuccessDataResult<IEnumerable<SelectionItem>>(

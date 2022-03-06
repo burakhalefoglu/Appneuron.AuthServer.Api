@@ -1,6 +1,5 @@
 ﻿using Cassandra.Mapping;
 using Core.DataAccess.Cassandra.Configurations;
-using Core.Entities.Concrete;
 using Core.Utilities.IoC;
 using Entities.Concrete;
 using Microsoft.Extensions.Configuration;

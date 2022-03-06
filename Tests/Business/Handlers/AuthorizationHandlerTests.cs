@@ -87,7 +87,7 @@ namespace Tests.Business.Handlers
                 x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(Task.FromResult<User>(null));
 
             _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
+                    m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(
                     new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
@@ -127,7 +127,7 @@ namespace Tests.Business.Handlers
                 x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(() => Task.FromResult(user));
 
             _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
+                    m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(
                     new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
@@ -175,7 +175,7 @@ namespace Tests.Business.Handlers
             }));
 
             _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
+                    m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(
                     new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
@@ -271,7 +271,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new SuccessResult());
             
             _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetGroupClaimsLookupByGroupIdInternalQuery>(),
+                    m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(
                     new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>

@@ -39,14 +39,14 @@ namespace Business.Handlers.Authorizations.Commands
                 var resultUser = await _userRepository.GetAsync(p => p.ResetPasswordToken == token.ToString());
                 if (resultUser == null) return new ErrorDataResult<User>(Messages.InvalidCode);
 
-                var resultDate = DateTime.Compare(DateTime.Now, resultUser.ResetPasswordExpires);
+                var resultDate = DateTimeOffset.Compare(DateTimeOffset.Now, resultUser.ResetPasswordExpires);
                 if (resultDate > 0) return new ErrorDataResult<User>(Messages.InvalidCode);
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
 
                 resultUser.PasswordHash = passwordHash;
                 resultUser.PasswordSalt = passwordSalt;
-                resultUser.ResetPasswordExpires = DateTime.MinValue;
+                resultUser.ResetPasswordExpires = DateTimeOffset.MinValue;
                 resultUser.ResetPasswordToken = null;
                 await _userRepository.UpdateAsync(resultUser);
                 return new SuccessDataResult<User>(Messages.ResetPasswordSuccess);

@@ -16,7 +16,6 @@ using static Business.Handlers.GroupClaims.Commands.CreateGroupClaimCommand;
 using static Business.Handlers.GroupClaims.Commands.DeleteGroupClaimCommand;
 using static Business.Handlers.GroupClaims.Commands.UpdateGroupClaimCommand;
 using static Business.Handlers.GroupClaims.Queries.GetGroupClaimQuery;
-using static Business.Internals.Handlers.GroupClaims.GetGroupClaimsLookupByGroupIdInternalQuery;
 
 namespace Tests.Business.Handlers
 {
@@ -37,8 +36,6 @@ namespace Tests.Business.Handlers
                 new UpdateGroupClaimCommandHandler(_groupClaimRepository.Object, _operationClaimRepository.Object);
 
             _getGroupClaimQueryHandler = new GetGroupClaimQueryHandler(_groupClaimRepository.Object);
-            _getGroupClaimsLookupByGroupIdInternalQueryHandler =
-                new GetGroupClaimsLookupByGroupIdInternalQueryHandler(_groupClaimRepository.Object, _mediator.Object);
         }
 
         private Mock<IMediator> _mediator;
@@ -51,7 +48,7 @@ namespace Tests.Business.Handlers
         private UpdateGroupClaimCommandHandler _updateGroupClaimCommandHandler;
 
         private GetGroupClaimQueryHandler _getGroupClaimQueryHandler;
-        private GetGroupClaimsLookupByGroupIdInternalQueryHandler _getGroupClaimsLookupByGroupIdInternalQueryHandler;
+ 
         [Test]
         public async Task GroupClaim_CreateGroupClaim_OperationClaimNotFound()
         {
@@ -256,7 +253,6 @@ namespace Tests.Business.Handlers
         {
             var command = new GetGroupClaimQuery
             {
-                ClaimId = 1,
                 GroupId = 1,
             };
 
@@ -272,29 +268,6 @@ namespace Tests.Business.Handlers
             var result = await _getGroupClaimQueryHandler.Handle(command, new CancellationToken());
             result.Success.Should().BeTrue();
             result.Data.ClaimId.Should().Be(1);
-        }
-        
-        
-        [Test]
-        public async Task GroupClaim_GetGroupClaimsLookupByGroupIdInternal_Success()
-        {
-            var command = new GetGroupClaimsLookupByGroupIdInternalQuery
-            {
-                GroupId = 1,
-                
-            };
-
-            _groupClaimRepository.Setup(x => x.GetAsync(
-                    It.IsAny<Expression<Func<GroupClaim, bool>>>()))
-                .Returns(Task.FromResult(new GroupClaim
-                {
-                    GroupId = 1,
-                    Id = 1,
-                    ClaimId = 1,
-                }));
-
-            var result = await _getGroupClaimsLookupByGroupIdInternalQueryHandler.Handle(command, new CancellationToken());
-            result.Success.Should().BeTrue();
         }
     }
 }
