@@ -65,17 +65,6 @@ namespace Core.Utilities.Security.Jwt
             };
         }
 
-        public string GetTokenClaim( IHttpContextAccessor _httpContextAccessor, string type)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            string authHeader = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
-            authHeader = authHeader.Replace("Bearer ", "");
-            var jsonToken = handler.ReadToken(authHeader);
-            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            var result = tokenS.Claims.First(claim => claim.Type == type).Value;
-            return result;
-        }   
-        
         public string DecodeToken(string input)
         {
             var handler = new JwtSecurityTokenHandler();
