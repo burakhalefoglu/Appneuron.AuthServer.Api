@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using IResult = Core.Utilities.Results.IResult;
 
-namespace WebAPI.Controllers
-{
+namespace WebAPI.Controllers;
+
     /// <summary>
     ///     Make it Authorization operations
     /// </summary>
@@ -116,4 +116,3 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
     }
-}

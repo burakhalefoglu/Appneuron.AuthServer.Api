@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
+using System.Text;
 using Business.Extensions;
 using Core.Utilities.IoC;
 
@@ -52,24 +53,26 @@ var builder = WebApplication.CreateBuilder(args);
     });
 
     var tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
-    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
+    services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters()
         {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidIssuer = tokenOptions.Issuer,
-                ValidAudiences = tokenOptions.Audience,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
-                ClockSkew = TimeSpan.Zero
-            };
-        });
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudiences = tokenOptions.Audience,
+            ValidIssuer = tokenOptions.Issuer,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecurityKey))
+        };
+    });
 
-
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen();
     var app = builder.Build();
