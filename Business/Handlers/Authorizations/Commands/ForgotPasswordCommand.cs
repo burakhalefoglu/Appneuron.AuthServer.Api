@@ -44,9 +44,9 @@ namespace Business.Handlers.Authorizations.Commands
             [TransactionScopeAspect]
             public async Task<IResult> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
             {
-                var user = await _userRepository.GetAsync(u => u.Email == request.Email);
+                var user = await _userRepository.GetAsync(u => u.Email == request.Email && u.Status);
 
-                if (user == null || user.Status == false)
+                if (user == null)
                     // if is not email do noting. But return success result to not give database information !!!
                     return new SuccessResult(Messages.SendPassword);
 
