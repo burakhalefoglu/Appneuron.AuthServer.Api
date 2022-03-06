@@ -4,14 +4,9 @@ using Core.Extensions;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using System.Text.Json.Serialization;
-using Core.Utilities.Security.Encyption;
-using Core.Utilities.Security.Jwt;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
-using System.Text;
 using Business.Extensions;
 using Core.Utilities.IoC;
 
@@ -22,8 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
     // Add services to the container.
     services.AddSingleton<IConfiguration>(x => configuration);
     services.AddMediatRApi();
-    services.ConfigureAuthentication();
-
     services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
@@ -58,6 +51,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddSwaggerGen();
     var app = builder.Build();
     ServiceTool.ServiceProvider = ((IApplicationBuilder) app).ApplicationServices;
+    services.ConfigureAuthentication();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
