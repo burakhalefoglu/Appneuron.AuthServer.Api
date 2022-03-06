@@ -42,7 +42,7 @@ namespace Business.Handlers.UserGroups.Commands
                 if (user.Data is null)
                     return new ErrorResult(Messages.UserNotFound);
                 
-                var userGroupList = request.GroupId.Select(x => new UserGroup {GroupId = x, UsersId = request.UserId});
+                var userGroupList = request.GroupId.Select(x => new UserGroup {GroupId = x, UserId = request.UserId});
                 foreach (var userGroup in userGroupList)
                 {
                     await _userGroupRepository.AddAsync(userGroup);

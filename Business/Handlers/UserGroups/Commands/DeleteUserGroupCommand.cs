@@ -29,7 +29,7 @@ namespace Business.Handlers.UserGroups.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(DeleteUserGroupCommand request, CancellationToken cancellationToken)
             {
-                var entityToDelete = await _userGroupRepository.GetAsync(x => x.UsersId == request.Id && x.Status == true);
+                var entityToDelete = await _userGroupRepository.GetAsync(x => x.UserId == request.Id && x.Status == true);
                 if (entityToDelete is null)
                     return new ErrorResult(Messages.UserGroupNotFound);
                 entityToDelete.Status = false;

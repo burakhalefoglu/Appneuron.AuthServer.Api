@@ -13,7 +13,7 @@ namespace Entities.Concrete
         public DateTime CreatedAt { get; set; }
         public bool Status { get; set; }
         public long GroupId { get; set; }
-        public long UsersId { get; set; }
+        public long UserId { get; set; }
         public long Id { get; set; }
     }
 }

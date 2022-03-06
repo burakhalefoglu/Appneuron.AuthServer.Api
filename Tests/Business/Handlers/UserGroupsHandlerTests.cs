@@ -59,7 +59,7 @@ namespace Tests.Business.Handlers
         [Test]
         public void Handler_GetUserGroups_Success()
         {
-            var userGroup = new UserGroup {GroupId = 1, UsersId = 1, Status = true};
+            var userGroup = new UserGroup {GroupId = 1, UserId = 1, Status = true};
             _userGroupRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<UserGroup,bool>>>()))
                 .ReturnsAsync(new List<UserGroup> {userGroup}.AsQueryable());
 
