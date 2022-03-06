@@ -35,9 +35,11 @@ namespace Business.Handlers.Authorizations.Commands
             public async Task<IResult> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
             {
                 var queryString = _httpContextAccessor.HttpContext.Request.Query;
-                var token = queryString["token"];
-                var resultUser = _userRepository.GetAsync(u=> u.Email ==queryString["email"] && u.Status).Result;
-                if (resultUser.ResetPasswordToken != token.ToString()) return new ErrorDataResult<User>(Messages.DefaultError);
+                var token = queryString["token"].ToString();
+                var email = queryString["email"].ToString();
+                var resultUser = _userRepository.GetAsync(u=> u.Email == email && u.Status).Result;
+                if (resultUser is null) return new ErrorDataResult<User>(Messages.DefaultError);
+                if (resultUser.ResetPasswordToken != token) return new ErrorDataResult<User>(Messages.DefaultError);
 
                 var resultDate = DateTimeOffset.Compare(DateTimeOffset.Now, resultUser.ResetPasswordExpires);
                 if (resultDate > 0) return new ErrorDataResult<User>(Messages.InvalidCode);
