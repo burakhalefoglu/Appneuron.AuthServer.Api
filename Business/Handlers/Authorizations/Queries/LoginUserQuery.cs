@@ -44,9 +44,9 @@ namespace Business.Handlers.Authorizations.Queries
             public async Task<IDataResult<AccessToken>> Handle(LoginUserQuery request,
                 CancellationToken cancellationToken)
             {
-                var user = await _userRepository.GetAsync(u => u.Email == request.Email);
+                var user = await _userRepository.GetAsync(u => u.Email == request.Email && u.Status);
                 // Please return just default error to not give database information !!!
-                if (user is null || user.Status == false)
+                if (user is null)
                     return new ErrorDataResult<AccessToken>(Messages.DefaultError);
 
                 // Please return just default error to not give database information !!!
