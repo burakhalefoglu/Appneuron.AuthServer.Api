@@ -10,6 +10,7 @@ using System.Globalization;
 using Business.Extensions;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Jwt;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
     var services = builder.Services;
@@ -17,7 +18,9 @@ var builder = WebApplication.CreateBuilder(args);
     
     // Add services to the container.
     services.AddSingleton<IConfiguration>(x => configuration);
-    services.AddMediatRApi();
+    // services.AddMediatRApi();
+    services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+    services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
     var tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
     services.ConfigureAuthentication(tokenOptions);

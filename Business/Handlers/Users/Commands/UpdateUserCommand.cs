@@ -36,7 +36,7 @@ namespace Business.Handlers.Users.Commands
             public async Task<IResult> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
             {
                 var email = _httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("email"))?.Value;
+                    .FirstOrDefault(x => x.Type.EndsWith("emailaddress"))?.Value;
 
                 var isUserExits = await _userRepository.GetAsync(u => u.Email == email && u.Status == true);
                 if (isUserExits == null) return new ErrorResult(Messages.UserNotFound);

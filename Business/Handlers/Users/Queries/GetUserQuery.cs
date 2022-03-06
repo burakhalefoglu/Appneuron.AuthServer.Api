@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
@@ -35,7 +31,7 @@ namespace Business.Handlers.Users.Queries
             public async Task<IDataResult<UserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
             {
                 var email = _httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("email"))?.Value;
+                    .FirstOrDefault(x => x.Type.EndsWith("emailaddress"))?.Value;
 
                 var user = await _userRepository.GetAsync(p => p.Email == email && p.Status == true);
                 var userDto = _mapper.Map<UserDto>(user);
