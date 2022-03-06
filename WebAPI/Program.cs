@@ -22,6 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
     // Add services to the container.
     services.AddSingleton<IConfiguration>(x => configuration);
     services.AddMediatRApi();
+    services.ConfigureAuthentication();
 
     services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
@@ -52,27 +53,6 @@ var builder = WebApplication.CreateBuilder(args);
                 );
     });
 
-    var tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
-    services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(options =>
-    {
-        options.SaveToken = true;
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidAudiences = tokenOptions.Audience,
-            ValidIssuer = tokenOptions.Issuer,
-            IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
-
-        };
-    });
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen();
@@ -93,8 +73,6 @@ var builder = WebApplication.CreateBuilder(args);
 
     app.ConfigureCustomExceptionMiddleware();
 
-    app.UseHttpsRedirection();
-
     app.UseCors("CorsPolicy");
 
     // Make Turkish your default language. It shouldn't change according to the server.
@@ -114,9 +92,10 @@ var builder = WebApplication.CreateBuilder(args);
     CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
     CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
-    app.UseAuthentication();
+    app.UseHttpsRedirection();
     app.UseRouting();
-    app.UseAuthorization();
+    app.UseAuthentication(); // this one first
+    app.UseAuthorization(); 
     app.UseEndpoints(endpoints =>
     {
         endpoints.MapControllers();
