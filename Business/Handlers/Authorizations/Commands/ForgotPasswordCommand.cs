@@ -77,7 +77,7 @@ namespace Business.Handlers.Authorizations.Commands
 
                 user.ResetPasswordToken = token.ToLower();
                 user.ResetPasswordExpires = DateTimeOffset.Now.AddMinutes(10);
-                await _userRepository.UpdateAsync(user, u=> u.Email == user.Email && u.Status);
+                await _userRepository.UpdateAsync(user);
 
                 return new SuccessResult(Messages.SendPassword);
             }
