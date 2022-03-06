@@ -1,4 +1,6 @@
-﻿namespace Core.Entities.Dtos
+﻿using Core.Entities;
+
+namespace Entities.Dtos
 {
     /// <summary>
     ///     Simple selectable lists have been created to return with a single schema through the API.

@@ -11,14 +11,16 @@ using Core.Utilities.IoC;
 using Core.Utilities.Security.Jwt;
 using MediatR;
 
-var builder = WebApplication.CreateBuilder(args);
+    var builder = WebApplication.CreateBuilder(args);
     var services = builder.Services;
     var configuration = builder.Configuration;
+    var host = builder.Host;
     
     services.AddSingleton<IConfiguration>(x => configuration);
     services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
     var tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
     services.ConfigureAuthentication(tokenOptions);
 
@@ -31,8 +33,8 @@ var builder = WebApplication.CreateBuilder(args);
         new BusinessModule()
     });
 
-    builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-    builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacBusinessModule()));
+    host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+    host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutofacBusinessModule()));
     
     services.AddControllers().AddJsonOptions(options =>
     {
@@ -44,16 +46,14 @@ var builder = WebApplication.CreateBuilder(args);
     {
         options.AddPolicy("CorsPolicy",
             //builder.WithOrigins(corsPolicies)
-            builder => builder.AllowAnyOrigin()
+            b => b.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 // .AllowCredentials()
                 );
     });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    services.AddEndpointsApiExplorer();
-    services.AddSwaggerGen();
+
     var app = builder.Build();
     ServiceTool.ServiceProvider = ((IApplicationBuilder) app).ApplicationServices;
 
@@ -64,9 +64,8 @@ var builder = WebApplication.CreateBuilder(args);
         app.UseSwaggerUI();
     }
 
-    //güvenlik için gerekli...
     app.UseHsts();
-    //güvenlik için gerekli...
+
     app.UseSecurityHeaders();
 
     app.ConfigureCustomExceptionMiddleware();
@@ -91,9 +90,13 @@ var builder = WebApplication.CreateBuilder(args);
     CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
     app.UseHttpsRedirection();
+    
     app.UseRouting();
-    app.UseAuthentication(); // this one first
+    
+    app.UseAuthentication(); 
+    
     app.UseAuthorization(); 
+    
     app.UseEndpoints(endpoints =>
     {
         endpoints.MapControllers();

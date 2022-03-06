@@ -8,6 +8,7 @@ using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.Dtos;
 using MediatR;
 
 namespace Business.Internals.Handlers.GroupClaims

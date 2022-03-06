@@ -20,6 +20,7 @@ using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.Dtos;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;

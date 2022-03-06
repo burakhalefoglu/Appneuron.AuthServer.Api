@@ -1,4 +1,6 @@
-﻿namespace Core.Entities.Dtos
+﻿using Core.Entities;
+
+namespace Entities.Dtos
 {
     public class ClientDto : IDto
     {
