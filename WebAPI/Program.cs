@@ -64,8 +64,8 @@ var builder = WebApplication.CreateBuilder(args);
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters()
         {
-            // ValidateIssuer = true,
-            // ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateAudience = true,
             ValidAudiences = tokenOptions.Audience,
             ValidIssuer = tokenOptions.Issuer,
             IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
@@ -97,12 +97,6 @@ var builder = WebApplication.CreateBuilder(args);
 
     app.UseCors("CorsPolicy");
 
-    app.UseRouting();
-
-    app.UseAuthentication();
-
-    app.UseAuthorization();
-
     // Make Turkish your default language. It shouldn't change according to the server.
     app.UseRequestLocalization(new RequestLocalizationOptions
     {
@@ -120,8 +114,12 @@ var builder = WebApplication.CreateBuilder(args);
     CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
     CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
-    //app.UseHttpsRedirection();
-
-    app.MapControllers();
+    app.UseAuthentication();
+    app.UseRouting();
+    app.UseAuthorization();
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllers();
+    });
 
     app.Run();
