@@ -31,7 +31,7 @@ namespace Business.Handlers.Authorizations.Commands
             public async Task<IResult> Handle(UserChangePasswordCommand request, CancellationToken cancellationToken)
             {
                 var email = _httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("email"))?.Value;
+                    .FirstOrDefault(x => x.Type.Equals("email"))?.Value;
 
                 var user = await _userRepository.GetAsync(u => u.Email == email && u.Status == true);
                 if (user == null)
