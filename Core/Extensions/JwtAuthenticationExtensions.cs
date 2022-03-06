@@ -10,7 +10,6 @@ public static class JwtAuthenticationExtensions
 {
     public static void ConfigureAuthentication(this IServiceCollection services, TokenOptions tokenOptions)
     {
-        string issuer = tokenOptions.Issuer;
         services.AddAuthentication(opt=>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -23,9 +22,9 @@ public static class JwtAuthenticationExtensions
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = issuer,
+                    ValidIssuer = tokenOptions.Issuer,
                     ValidateAudience = true,
-                    ValidAudience = issuer,
+                    ValidAudiences = tokenOptions.Audience,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ClockSkew = TimeSpan.Zero,

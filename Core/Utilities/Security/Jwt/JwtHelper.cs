@@ -15,13 +15,18 @@ namespace Core.Utilities.Security.Jwt
     {
         private readonly OperationClaimCrypto _operationClaimCrypto;
         private readonly TokenOptions _tokenOptions;
-
+        private readonly string _customerAudience;
+        private readonly string _clientAudience;
+        private readonly string _adminAudience;
         private DateTime _accessTokenExpiration;
 
         public JwtHelper()
         {
             var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-         _tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
+            _tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
+            _customerAudience = configuration.GetSection("CustomerAudience").Get<string>();
+            _clientAudience = configuration.GetSection("ClientAudience").Get<string>();
+            _adminAudience = configuration.GetSection("AdminAudience").Get<string>();
             _operationClaimCrypto = configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
         }
         
@@ -73,7 +78,7 @@ namespace Core.Utilities.Security.Jwt
         {
             var jwt = new JwtSecurityToken(
                 tokenOptions.Issuer,
-                "Appneuron",
+                _customerAudience,
                 expires: _accessTokenExpiration,
                 notBefore: DateTime.Now,
                 claims: SetUserClaims(userClaimModel, projectIdList),
@@ -103,7 +108,7 @@ namespace Core.Utilities.Security.Jwt
         {
             var jwt = new JwtSecurityToken(
                 tokenOptions.Issuer,
-                "Appneuron",
+                _clientAudience,
                 expires: _accessTokenExpiration,
                 notBefore: DateTime.Now,
                 claims: SetClaimsforClient(clientClaimModel),
