@@ -126,14 +126,11 @@ namespace Core.DataAccess.Cassandra
             });
         }
 
-        public async Task UpdateAsync(T record, Expression<Func<T, bool>> predicate)
+        public async Task UpdateAsync(T entity, Expression<Func<T, bool>> predicate = null)
         {
             await Task.Run(() =>
             {
-                _table.Where(predicate)
-                    .Select(u => record)
-                    .Update()
-                    .Execute();
+                _table.Insert(entity).Execute();
             });
         }
     }
