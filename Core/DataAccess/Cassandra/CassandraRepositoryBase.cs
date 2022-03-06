@@ -126,25 +126,6 @@ namespace Core.DataAccess.Cassandra
             });
         }
 
-        public void Update(T record)
-        {
-            _table.Where(u => u.Id == record.Id)
-                .Select(u => record)
-                .Update()
-                .Execute();
-        }
-
-        public async Task UpdateAsync(T record)
-        {
-            await Task.Run(() =>
-            {
-                _table.Where(u => u.Id == record.Id)
-                    .Select(u => record)
-                    .Update()
-                    .Execute();
-            });
-        }
-
         public async Task UpdateAsync(T record, Expression<Func<T, bool>> predicate)
         {
             await Task.Run(() =>
