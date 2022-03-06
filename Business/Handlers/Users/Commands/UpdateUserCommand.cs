@@ -35,10 +35,10 @@ namespace Business.Handlers.Users.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
             {
-                var userId = _httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+                var email = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("email"))?.Value;
 
-                var isUserExits = await _userRepository.GetAsync(u => u.Id == Convert.ToInt64(userId) && u.Status == true);
+                var isUserExits = await _userRepository.GetAsync(u => u.Email == email && u.Status == true);
                 if (isUserExits == null) return new ErrorResult(Messages.UserNotFound);
                 isUserExits.Name = request.FullName;
                 isUserExits.Email = request.Email;

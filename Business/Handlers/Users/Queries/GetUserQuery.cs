@@ -34,10 +34,10 @@ namespace Business.Handlers.Users.Queries
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IDataResult<UserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
             {
-                var userId = _httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+                var email = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("email"))?.Value;
 
-                var user = await _userRepository.GetAsync(p => p.Id == Convert.ToInt64(userId) && p.Status == true);
+                var user = await _userRepository.GetAsync(p => p.Email == email && p.Status == true);
                 var userDto = _mapper.Map<UserDto>(user);
                 return new SuccessDataResult<UserDto>(userDto);
             }

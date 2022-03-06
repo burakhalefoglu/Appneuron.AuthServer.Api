@@ -34,10 +34,10 @@ namespace Business.Handlers.Users.Commands
             [TransactionScopeAspect]
             public async Task<IResult> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
             {
-                var userId = _httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+                var email = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("email"))?.Value;
 
-                var userToDelete = await _userRepository.GetAsync(p => p.Id == Convert.ToInt64(userId) && p.Status == true);
+                var userToDelete = await _userRepository.GetAsync(p => p.Email == email && p.Status == true);
                 if (userToDelete == null) return new ErrorResult(Messages.UserNotFound);
                 userToDelete.Status = false;
 

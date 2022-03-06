@@ -205,7 +205,7 @@ namespace Tests.Business.Handlers
             _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 OperationClaims = null
-            }, new List<long>())).Returns(new AccessToken());
+            }, new List<long>(), "test@email.com")).Returns(new AccessToken());
 
 
             _loginUserQuery = new LoginUserQuery
@@ -301,7 +301,7 @@ namespace Tests.Business.Handlers
             {
                 UserId = 1,
                 OperationClaims = null
-            }, new List<long>())).Returns(new AccessToken());
+            }, new List<long>(), "test@email.com")).Returns(new AccessToken());
 
 
             var result = await _registerUserCommandHandler.Handle(_command, new CancellationToken());

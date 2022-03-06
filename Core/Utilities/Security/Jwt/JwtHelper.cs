@@ -47,13 +47,13 @@ namespace Core.Utilities.Security.Jwt
             };
         }
 
-        public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel, List<long> projectIdList)
+        public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel, List<long> projectIdList, string email)
             where TAccessToken : IAccessToken, new()
         {
             _accessTokenExpiration = DateTime.Now.AddHours(Convert.ToDouble(_tokenOptions.AccessTokenExpiration));
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
-            var jwt = CreateCustomerJwtSecurityToken(_tokenOptions, userClaimModel, signingCredentials, projectIdList);
+            var jwt = CreateCustomerJwtSecurityToken(_tokenOptions, userClaimModel, signingCredentials, projectIdList, email);
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwt);
 
@@ -74,20 +74,24 @@ namespace Core.Utilities.Security.Jwt
 
         private JwtSecurityToken CreateCustomerJwtSecurityToken(TokenOptions tokenOptions,
             UserClaimModel userClaimModel,
-            SigningCredentials signingCredentials, List<long> projectIdList)
+            SigningCredentials signingCredentials,
+            List<long> projectIdList,
+            string email)
         {
             var jwt = new JwtSecurityToken(
                 tokenOptions.Issuer,
                 _customerAudience,
                 expires: _accessTokenExpiration,
                 notBefore: DateTime.Now,
-                claims: SetUserClaims(userClaimModel, projectIdList),
+                claims: SetUserClaims(userClaimModel, projectIdList, email),
                 signingCredentials: signingCredentials
             );
             return jwt;
         }
 
-        private IEnumerable<Claim> SetUserClaims(UserClaimModel userClaimModel, List<long> projectIdList)
+        private IEnumerable<Claim> SetUserClaims(UserClaimModel userClaimModel,
+            List<long> projectIdList,
+            string email)
         {
             for (var i = 0; i < userClaimModel.OperationClaims.Length; i++)
                 userClaimModel.OperationClaims[i] =
@@ -95,6 +99,7 @@ namespace Core.Utilities.Security.Jwt
                         userClaimModel.OperationClaims[i]);
 
             var claims = new List<Claim>();
+            claims.AddEmail(email);
             claims.AddNameIdentifier(userClaimModel.UserId.ToString());
             claims.AddRoles(userClaimModel.OperationClaims);
             if (projectIdList.Count > 0)

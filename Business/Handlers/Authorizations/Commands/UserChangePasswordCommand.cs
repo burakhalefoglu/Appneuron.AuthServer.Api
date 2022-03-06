@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Business.BusinessAspects;
+﻿using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
@@ -11,7 +7,7 @@ using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using MediatR;
 
-namespace Business.Handlers.Users.Commands
+namespace Business.Handlers.Authorizations.Commands
 {
     public class UserChangePasswordCommand : IRequest<IResult>
     {
@@ -34,12 +30,12 @@ namespace Business.Handlers.Users.Commands
             [LogAspect(typeof(ConsoleLogger))]
             public async Task<IResult> Handle(UserChangePasswordCommand request, CancellationToken cancellationToken)
             {
-                var userId = _httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+                var email = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("email"))?.Value;
 
-                var user = await _userRepository.GetAsync(u => u.Id == Convert.ToInt64(userId) && u.Status == true);
+                var user = await _userRepository.GetAsync(u => u.Email == email && u.Status == true);
                 if (user == null)
-                    return new ErrorResult(Messages.UserNotFound);
+                    return new ErrorResult(Messages.DefaultError);
 
                 if (!HashingHelper.VerifyPasswordHash(request.ValidPassword, user.PasswordSalt, user.PasswordHash))
                     return new ErrorResult(Messages.PasswordError);

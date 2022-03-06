@@ -91,7 +91,7 @@ namespace Business.Handlers.Authorizations.Queries
                 {
                     UserId = user.Id,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()
-                }, projectIdList);
+                }, projectIdList, user.Email);
 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }

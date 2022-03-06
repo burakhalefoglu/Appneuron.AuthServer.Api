@@ -43,7 +43,7 @@ namespace Business.MessageBrokers.Manager
             });
 
             var user = await _userRepository.GetAsync(u =>
-                u.Id == context.Message.UserId);
+                u.Email == context.Message.Email && u.Status);
 
             //New Token Creation
             var groupClaims = await _mediator.Send(new GetGroupClaimInternalQuery
@@ -72,7 +72,7 @@ namespace Business.MessageBrokers.Manager
             {
                 UserId = user.Id,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
-            }, projectIdList);
+            }, projectIdList, user.Email);
 
             var kafkaResult = await _messageBroker.SendMessageAsync(new ProjectCreationResult
             {
