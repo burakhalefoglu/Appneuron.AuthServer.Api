@@ -1,16 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Business.Constants;
+﻿using Business.Constants;
 using Business.Internals.Handlers.GroupClaims;
 using Business.Internals.Handlers.UserClaims;
 using Business.Internals.Handlers.UserGroups.Queries;
-using Business.Internals.Handlers.UserProjects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.ClaimModels;
-using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
@@ -30,7 +24,7 @@ namespace Business.Handlers.Authorizations.Queries
             private readonly IMediator _mediator;
             private readonly ITokenHelper _tokenHelper;
             private readonly IUserRepository _userRepository;
-
+            
             public LoginUserQueryHandler(IUserRepository userRepository,
                 ITokenHelper tokenHelper,
                 IMediator mediator)
@@ -79,19 +73,11 @@ namespace Business.Handlers.Authorizations.Queries
                     UserId = user.Id,
                     OperationClaims = operationClaims
                 }, cancellationToken);
-
-                var projectIdResult = await _mediator.Send(new GetUserProjectsInternalQuery
-                {
-                    UserId = user.Id
-                }, cancellationToken);
-                var projectIdList = new List<long>();
-                projectIdResult.Data.ToList().ForEach(x => { projectIdList.Add(x.ProjectId); });
-
                 var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
                 {
                     UserId = user.Id,
                     OperationClaims = operationClaims.Select(x => x.Name).ToArray()
-                }, projectIdList, user.Email);
+                }, user.Email);
 
                 return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
             }

@@ -104,7 +104,7 @@ namespace Business.Handlers.Authorizations.Commands
                 {
                     UserId = user.Id,
                     OperationClaims = oClaims.Select(x => x.Name).ToArray()
-                }, new List<long>(), user.Email);
+                }, user.Email);
                 
                 // create customer with kafka 
                 await _messageBroker.SendMessageAsync(new CreateCustomerMessageCommand

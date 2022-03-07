@@ -9,10 +9,7 @@ using Business.Handlers.Authorizations.Queries;
 using Business.Internals.Handlers.GroupClaims;
 using Business.Internals.Handlers.UserGroups.Commands;
 using Business.Internals.Handlers.UserGroups.Queries;
-using Business.Internals.Handlers.UserProjects;
 using Core.Entities.ClaimModels;
-using Core.Entities.Concrete;
-using Core.Entities.Dtos;
 using Core.Utilities.Mail;
 using Core.Utilities.MessageBrokers;
 using Core.Utilities.Results;
@@ -190,23 +187,10 @@ namespace Tests.Business.Handlers
                         }
                     }));
 
-            _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetUserProjectsInternalQuery>(),
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(
-                    new SuccessDataResult<IEnumerable<UserProject>>(new List<UserProject>
-                    {
-                        new()
-                        {
-                            ProjectId = 1
-                        }
-                    }));
-
-
             _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 OperationClaims = null
-            }, new List<long>(), "test@email.com")).Returns(new AccessToken());
+            }, "test@email.com")).Returns(new AccessToken());
 
 
             _loginUserQuery = new LoginUserQuery
@@ -286,23 +270,11 @@ namespace Tests.Business.Handlers
                         }
                     }));
 
-            _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetUserProjectsInternalQuery>(),
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(
-                    new SuccessDataResult<IEnumerable<UserProject>>(new List<UserProject>
-                    {
-                        new()
-                        {
-                            ProjectId = 1
-                        }
-                    }));
-
             _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 UserId = 1,
                 OperationClaims = null
-            }, new List<long>(), "test@email.com")).Returns(new AccessToken());
+            }, "test@email.com")).Returns(new AccessToken());
 
 
             var result = await _registerUserCommandHandler.Handle(_command, new CancellationToken());

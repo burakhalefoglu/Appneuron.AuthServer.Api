@@ -37,7 +37,7 @@ spec:
       volumes:
         - name: appconfig
           secret:
-            secretName: auth-service-config
+            secretName: auth-service-secret
             items:
             - key: appsettings.json
               path: appsettings.json

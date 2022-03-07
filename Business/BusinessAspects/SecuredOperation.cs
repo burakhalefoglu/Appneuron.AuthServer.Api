@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security;
+﻿using System.Security;
 using Business.Constants;
 using Castle.DynamicProxy;
 using Core.Utilities.Interceptors;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Encyption;
-using Core.Utilities.Security.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,13 +18,13 @@ namespace Business.BusinessAspects
     public class SecuredOperationAttribute : MethodInterceptionAttribute
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly OperationClaimCrypto _operationClaimCrypto;
+        private readonly string _operationClaimCrypto;
 
         public SecuredOperationAttribute()
         {
             Configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
             _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
-            _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
+            _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<string>();
         }
 
         public IConfiguration Configuration { get; }
@@ -45,7 +41,7 @@ namespace Business.BusinessAspects
 
             foreach (var item in oprClaims)
             {
-                var itemDecryptValue = SecurityKeyHelper.DecryptString(_operationClaimCrypto.Key, item.Value);
+                var itemDecryptValue = SecurityKeyHelper.DecryptString(_operationClaimCrypto, item.Value);
                 ocNameList.Add(itemDecryptValue);
             }
 

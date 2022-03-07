@@ -21,6 +21,7 @@ using MediatR;
     services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen();
+    services.AddHttpClient();
     var tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
     services.ConfigureAuthentication(tokenOptions);
 

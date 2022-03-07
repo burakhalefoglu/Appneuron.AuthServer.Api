@@ -1,10 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 using Core.ApiDoc;
 using Core.CrossCuttingConcerns.Caching;
-using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.CrossCuttingConcerns.Caching.Redis;
-using Core.Utilities.ElasticSearch;
 using Core.Utilities.IoC;
 using Core.Utilities.Mail;
 using Core.Utilities.MessageBrokers;
@@ -12,10 +9,8 @@ using Core.Utilities.MessageBrokers.Kafka;
 using Core.Utilities.Messages;
 using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Serilog;
 
 namespace Core.DependencyResolvers
 {
@@ -25,7 +20,7 @@ namespace Core.DependencyResolvers
         {
             services.AddMemoryCache();
             // set redis
-            services.AddSingleton<ICacheManager, MemoryCacheManager>();
+            services.AddSingleton<ICacheManager, RedisCacheManager>();
             services.AddSingleton<IMailService, MailManager>();
             services.AddSingleton<IEmailConfiguration, EmailConfiguration>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

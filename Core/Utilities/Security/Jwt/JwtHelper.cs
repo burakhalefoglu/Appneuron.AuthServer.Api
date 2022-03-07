@@ -4,8 +4,6 @@ using Core.Entities.ClaimModels;
 using Core.Extensions;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Encyption;
-using Core.Utilities.Security.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +12,7 @@ namespace Core.Utilities.Security.Jwt
 {
     public class JwtHelper : ITokenHelper
     {
-        private readonly OperationClaimCrypto _operationClaimCrypto;
+        private readonly string _operationClaimCrypto;
         private readonly TokenOptions _tokenOptions;
         private readonly string _customerAudience;
         private readonly string _clientAudience;
@@ -28,7 +26,7 @@ namespace Core.Utilities.Security.Jwt
             _customerAudience = configuration.GetSection("CustomerAudience").Get<string>();
             _clientAudience = configuration.GetSection("ClientAudience").Get<string>();
             _adminAudience = configuration.GetSection("AdminAudience").Get<string>();
-            _operationClaimCrypto = configuration.GetSection("OperationClaimCrypto").Get<OperationClaimCrypto>();
+            _operationClaimCrypto = configuration.GetSection("OperationClaimCrypto").Get<string>();
         }
         
         public TAccessToken CreateClientToken<TAccessToken>(ClientClaimModel clientClaimModel)
@@ -48,13 +46,13 @@ namespace Core.Utilities.Security.Jwt
             };
         }
 
-        public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel, List<long> projectIdList, string email)
+        public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel, string email)
             where TAccessToken : IAccessToken, new()
         {
             _accessTokenExpiration = DateTime.Now.AddMinutes(Convert.ToDouble(_tokenOptions.AccessTokenExpiration));
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
-            var jwt = CreateCustomerJwtSecurityToken(_tokenOptions, userClaimModel, signingCredentials, projectIdList, email);
+            var jwt = CreateCustomerJwtSecurityToken(_tokenOptions, userClaimModel, signingCredentials, email);
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwt);
 
@@ -76,7 +74,6 @@ namespace Core.Utilities.Security.Jwt
         private JwtSecurityToken CreateCustomerJwtSecurityToken(TokenOptions tokenOptions,
             UserClaimModel userClaimModel,
             SigningCredentials signingCredentials,
-            List<long> projectIdList,
             string email)
         {
             var jwt = new JwtSecurityToken(
@@ -84,27 +81,24 @@ namespace Core.Utilities.Security.Jwt
                 _customerAudience,
                 expires: _accessTokenExpiration,
                 notBefore: DateTime.Now,
-                claims: SetUserClaims(userClaimModel, projectIdList, email),
+                claims: SetUserClaims(userClaimModel, email),
                 signingCredentials: signingCredentials
             );
             return jwt;
         }
 
         private IEnumerable<Claim> SetUserClaims(UserClaimModel userClaimModel,
-            List<long> projectIdList,
             string email)
         {
             for (var i = 0; i < userClaimModel.OperationClaims.Length; i++)
                 userClaimModel.OperationClaims[i] =
-                    SecurityKeyHelper.EncryptString(_operationClaimCrypto.Key,
+                    SecurityKeyHelper.EncryptString(_operationClaimCrypto,
                         userClaimModel.OperationClaims[i]);
 
             var claims = new List<Claim>();
             claims.AddEmail(email);
             claims.AddNameIdentifier(userClaimModel.UserId.ToString());
             claims.AddRoles(userClaimModel.OperationClaims);
-            if (projectIdList.Count > 0)
-                projectIdList.ForEach(x => { claims.AddProjectId(x.ToString()); });
             return claims;
         }
 
@@ -127,7 +121,7 @@ namespace Core.Utilities.Security.Jwt
         {
             for (var i = 0; i < clientClaimModel.OperationClaims.Length; i++)
                 clientClaimModel.OperationClaims[i] =
-                    SecurityKeyHelper.EncryptString(_operationClaimCrypto.Key,
+                    SecurityKeyHelper.EncryptString(_operationClaimCrypto,
                         clientClaimModel.OperationClaims[i]);
 
             var claims = new List<Claim>();

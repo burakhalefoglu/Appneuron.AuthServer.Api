@@ -15,8 +15,6 @@ namespace Business.DependencyResolvers
         {
 
             builder.RegisterType<CassUserRepository>().As<IUserRepository>().SingleInstance();
-            builder.RegisterType<CassClientRepository>().As<IClientRepository>();
-            builder.RegisterType<CassUserProjectRepository>().As<IUserProjectRepository>().SingleInstance();
             builder.RegisterType<CassLogRepository>().As<ILogRepository>().SingleInstance();
             builder.RegisterType<CassTranslateRepository>().As<ITranslateRepository>().SingleInstance();
             builder.RegisterType<CassLanguageRepository>().As<ILanguageRepository>().SingleInstance();

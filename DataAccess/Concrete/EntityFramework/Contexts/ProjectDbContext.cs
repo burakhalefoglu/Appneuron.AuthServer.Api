@@ -47,8 +47,6 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<Log> Logs { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<Translate> Translates { get; set; }
-        public DbSet<UserProject> UserProjects { get; set; }
-        public DbSet<Client> Clients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
