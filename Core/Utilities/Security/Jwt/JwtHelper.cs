@@ -51,7 +51,7 @@ namespace Core.Utilities.Security.Jwt
         public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel, List<long> projectIdList, string email)
             where TAccessToken : IAccessToken, new()
         {
-            _accessTokenExpiration = DateTime.Now.AddHours(Convert.ToDouble(_tokenOptions.AccessTokenExpiration));
+            _accessTokenExpiration = DateTime.Now.AddMinutes(Convert.ToDouble(_tokenOptions.AccessTokenExpiration));
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
             var jwt = CreateCustomerJwtSecurityToken(_tokenOptions, userClaimModel, signingCredentials, projectIdList, email);

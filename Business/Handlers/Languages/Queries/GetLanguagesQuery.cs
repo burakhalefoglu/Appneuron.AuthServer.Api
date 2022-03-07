@@ -34,7 +34,8 @@ namespace Business.Handlers.Languages.Queries
             public async Task<IDataResult<IEnumerable<Language>>> Handle(GetLanguagesQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<Language>>(_languageRepository.GetListAsync().Result.Where(x=> x.Status == true));
+                return new SuccessDataResult<IEnumerable<Language>>(_languageRepository.GetListAsync()
+                    .Result.Where(x=> x.Status == true));
             }
         }
     }
