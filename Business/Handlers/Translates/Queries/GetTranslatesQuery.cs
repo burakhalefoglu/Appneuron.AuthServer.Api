@@ -35,7 +35,8 @@ namespace Business.Handlers.Translates.Queries
             public async Task<IDataResult<IEnumerable<Translate>>> Handle(GetTranslatesQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<Translate>>(await _translateRepository.GetListAsync(x=> x.Status == true));
+                return new SuccessDataResult<IEnumerable<Translate>>(_translateRepository
+                    .GetListAsync().Result.Where(x=> x.Status == true));
             }
         }
     }
