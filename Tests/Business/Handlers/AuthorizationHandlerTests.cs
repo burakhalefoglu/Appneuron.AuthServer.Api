@@ -5,9 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.Authorizations.Commands;
-using Business.Handlers.Authorizations.Queries;
 using Business.Internals.Handlers.GroupClaims;
-using Business.Internals.Handlers.UserGroups.Commands;
 using Business.Internals.Handlers.UserGroups.Queries;
 using Core.Entities.ClaimModels;
 using Core.Utilities.Mail;
@@ -25,9 +23,8 @@ using Moq;
 using NUnit.Framework;
 using Tests.Helpers;
 using static Business.Handlers.Authorizations.Commands.ForgotPasswordCommand;
-using static Business.Handlers.Authorizations.Commands.RegisterUserCommand;
 using static Business.Handlers.Authorizations.Commands.ResetPasswordCommand;
-using static Business.Handlers.Authorizations.Queries.LoginUserQuery;
+using static Business.Handlers.Authorizations.Commands.LoginOrRegisterUserCommand;
 
 namespace Tests.Business.Handlers
 {
@@ -44,13 +41,10 @@ namespace Tests.Business.Handlers
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _messageBroker = new Mock<IMessageBroker>();
             
-            _loginUserQueryHandler = new LoginUserQueryHandler(_userRepository.Object,
+            _loginUserQueryHandler = new LoginOrRegisterUserCommand.LoginOrRegisterUserCommandHandler(_userRepository.Object,
                 _tokenHelper.Object,
                 _mediator.Object);
-
-            _registerUserCommandHandler = new RegisterUserCommandHandler(_userRepository.Object,
-                _mediator.Object, _tokenHelper.Object, _messageBroker.Object);
-
+            
             _forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(_userRepository.Object,
                 _mailService.Object);
 
@@ -64,10 +58,8 @@ namespace Tests.Business.Handlers
         private Mock<IMailService> _mailService;
         private Mock<IMessageBroker> _messageBroker;
         private Mock<IHttpContextAccessor> _httpContextAccessor;
-        private LoginUserQueryHandler _loginUserQueryHandler;
-        private LoginUserQuery _loginUserQuery;
-        private RegisterUserCommandHandler _registerUserCommandHandler;
-        private RegisterUserCommand _command;
+        private LoginOrRegisterUserCommandHandler _loginUserQueryHandler;
+        private LoginOrRegisterUserCommand _loginUserQuery;
         private ForgotPasswordCommandHandler _forgotPasswordCommandHandler;
         private ForgotPasswordCommand _forgotPasswordCommand;
         private ResetPasswordCommandHandler _resetPasswordCommandHandler;
@@ -98,7 +90,7 @@ namespace Tests.Business.Handlers
                             ParentId = "test"
                         }
                     }));
-            _loginUserQuery = new LoginUserQuery
+            _loginUserQuery = new LoginOrRegisterUserCommand
             {
                 Email = user.Email,
                 Password = "123456"
@@ -139,7 +131,7 @@ namespace Tests.Business.Handlers
                         }
                     }));
 
-            _loginUserQuery = new LoginUserQuery
+            _loginUserQuery = new LoginOrRegisterUserCommand
             {
                 Email = user.Email,
                 Password = "1234567"
@@ -193,7 +185,7 @@ namespace Tests.Business.Handlers
             }, "test@email.com")).Returns(new AccessToken());
 
 
-            _loginUserQuery = new LoginUserQuery
+            _loginUserQuery = new LoginOrRegisterUserCommand
             {
                 Email = user.Email,
                 Password = "123456"
@@ -203,85 +195,6 @@ namespace Tests.Business.Handlers
 
             result.Success.Should().BeTrue();
         }
-
-
-        [Test]
-        public async Task Authorization_Register_EmailAlreadyExist()
-        {
-            var registerUser = new User {Email = "test@test.com", Name = "test test"};
-            _command = new RegisterUserCommand
-            {
-                Email = registerUser.Email,
-                Password = "123456"
-            };
-
-            _userRepository.Setup(x =>
-                    x.AnyAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .ReturnsAsync(true);
-
-
-            var result = await _registerUserCommandHandler.Handle(_command, new CancellationToken());
-
-            result.Message.Should().Be(Messages.DefaultError);
-        }
-
-
-        [Test]
-        public async Task Authorization_Register_SuccessfulLogin()
-        {
-            var registerUser = new User {Email = "test@test.com", Name = "test test"};
-            _command = new RegisterUserCommand
-            {
-                Email = registerUser.Email,
-                Password = "123456"
-            };
-
-            _userRepository.Setup(x =>
-                    x.AnyAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .ReturnsAsync(false);
-
-            _userRepository.Setup(x => x.AddAsync(It.IsAny<User>()));
-
-            _userRepository.Setup(x =>
-                    x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(Task.FromResult(new User()
-                {
-                    Id = 1,
-                    Email = registerUser.Email,
-                }));
-
-            _mediator.Setup(m =>
-                    m.Send(It.IsAny<CreateUserGroupInternalCommand>(),
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new SuccessResult());
-            
-            _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(
-                    new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
-                    {
-                        new()
-                        {
-                            Id = 1,
-                            Label = "test",
-                            IsDisabled = false,
-                            ParentId = "test"
-                        }
-                    }));
-
-            _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
-            {
-                UserId = 1,
-                OperationClaims = null
-            }, "test@email.com")).Returns(new AccessToken());
-
-
-            var result = await _registerUserCommandHandler.Handle(_command, new CancellationToken());
-
-            result.Message.Should().Be(Messages.SuccessfulLogin);
-        }
-
 
         [Test]
         public async Task Authorization_ForgotPassword_WrongEmail()

@@ -1,6 +1,4 @@
 ﻿using Business.Handlers.Authorizations.Commands;
-using Business.Handlers.Authorizations.Queries;
-using Business.Handlers.Users.Commands;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authorization;
@@ -19,43 +17,22 @@ namespace WebAPI.Controllers;
         /// <summary>
         ///     Make it User Login operations
         /// </summary>
-        /// <param name="loginModel"></param>
+        /// <param name="loginOrRegisterModel"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [Consumes("application/json")]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginUserQuery loginModel)
+        [HttpPost("loginorregister")]
+        public async Task<IActionResult> LoginOrRegister([FromBody] LoginOrRegisterUserCommand loginOrRegisterModel)
         {
-            var result = await Mediator.Send(loginModel);
+            var result = await Mediator.Send(loginOrRegisterModel);
 
             if (result.Success) return Ok(result);
 
             return BadRequest(result);
         }
-
-        /// <summary>
-        ///     Make it User Register operations
-        /// </summary>
-        /// <param name="registerUserCommand"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [Consumes("application/json")]
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterUserCommand registerUserCommand)
-        {
-            var result = await Mediator.Send(registerUserCommand);
-
-            if (result.Success) return Ok(result);
-            
-            return BadRequest(result);
-        }
-
 
         /// <summary>
         ///     Make it Forgot Password operations
