@@ -2,6 +2,7 @@
 using Business.Helpers;
 using Business.Internals.Handlers.GroupClaims;
 using Business.Internals.Handlers.UserClaims;
+using Business.Internals.Handlers.UserGroups.Commands;
 using Business.Internals.Handlers.UserGroups.Queries;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
@@ -40,8 +41,8 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
         public async Task<IDataResult<AccessToken>> Handle(LoginOrRegisterUserCommand request,
             CancellationToken cancellationToken)
         {
-            var isUserExist = await _userRepository.AnyAsync(u => u.Email == request.Email && u.Status);
-            if (!isUserExist)
+            var user = await _userRepository.GetAsync(u => u.Email == request.Email && u.Status);
+            if (user is null)
             {
                 HashingHelper.CreatePasswordHash(request.Password,
                     out var passwordSalt, out var passwordHash);
@@ -53,12 +54,15 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                     PasswordSalt = passwordSalt,
                     Status = true
                 });
+                user = await _userRepository.GetAsync(x => x.Email == request.Email &&
+                                                               x.Status);
+                await _mediator.Send(new CreateUserGroupInternalCommand()
+                {
+                    GroupId = 1,
+                    UserId = user.Id
+                }, cancellationToken);
             }
 
-            var user = await _userRepository.GetAsync(x => x.Email == request.Email &&
-                                                       x.Status);
-
-            // Please return just default error to not give database information !!!
             if (!HashingHelper.VerifyPasswordHash(request.Password, user.PasswordSalt, user.PasswordHash))
                 return new ErrorDataResult<AccessToken>(Messages.DefaultError);
 
