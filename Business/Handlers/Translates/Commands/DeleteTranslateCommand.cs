@@ -32,8 +32,7 @@ namespace Business.Handlers.Translates.Commands
             public async Task<IResult> Handle(DeleteTranslateCommand request, CancellationToken cancellationToken)
             {
                 var translateToDelete = await _translateRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
-                translateToDelete.Status = false;
-                await _translateRepository.UpdateAsync(translateToDelete);
+                await _translateRepository.DeleteAsync(translateToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

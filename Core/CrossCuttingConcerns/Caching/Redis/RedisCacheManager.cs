@@ -23,7 +23,7 @@ namespace Core.CrossCuttingConcerns.Caching.Redis
         public T Get<T>(string key)
         {
             var result = default(T);
-            RedisInvoker(x => { result = x.Get<T>(key); });
+             RedisInvoker(x => { result = x.Get<T>(key); });
             return result;
         }
 

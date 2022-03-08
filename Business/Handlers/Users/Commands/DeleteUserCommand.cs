@@ -39,9 +39,7 @@ namespace Business.Handlers.Users.Commands
 
                 var userToDelete = await _userRepository.GetAsync(p => p.Email == email && p.Status == true);
                 if (userToDelete == null) return new ErrorResult(Messages.UserNotFound);
-                userToDelete.Status = false;
-
-                await _userRepository.UpdateAsync(userToDelete);
+                await _userRepository.DeleteAsync(userToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

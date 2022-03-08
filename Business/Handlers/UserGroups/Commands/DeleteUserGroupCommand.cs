@@ -32,8 +32,7 @@ namespace Business.Handlers.UserGroups.Commands
                 var entityToDelete = await _userGroupRepository.GetAsync(x => x.UserId == request.Id && x.Status == true);
                 if (entityToDelete is null)
                     return new ErrorResult(Messages.UserGroupNotFound);
-                entityToDelete.Status = false;
-                await _userGroupRepository.UpdateAsync(entityToDelete);
+                await _userGroupRepository.DeleteAsync(entityToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

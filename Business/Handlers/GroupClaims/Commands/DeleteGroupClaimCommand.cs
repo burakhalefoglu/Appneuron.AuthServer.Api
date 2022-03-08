@@ -35,8 +35,7 @@ namespace Business.Handlers.GroupClaims.Commands
                                    x.ClaimId == request.ClaimId &&
                                    x.Status == true);
                 if (groupClaimToDelete == null) return new ErrorResult(Messages.GroupClaimNotFound);
-                groupClaimToDelete.Status = false;
-                await _groupClaimRepository.UpdateAsync(groupClaimToDelete);
+                await _groupClaimRepository.DeleteAsync(groupClaimToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

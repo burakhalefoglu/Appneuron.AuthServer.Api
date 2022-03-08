@@ -33,8 +33,7 @@ namespace Business.Handlers.Groups.Commands
                     .GetAsync(x => x.Id == request.Id && x.Status == true);
 
                 if (groupToDelete == null) return new ErrorResult(Messages.GroupNotFound);
-                groupToDelete.Status = false;
-                await _groupRepository.UpdateAsync(groupToDelete);
+                await _groupRepository.DeleteAsync(groupToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

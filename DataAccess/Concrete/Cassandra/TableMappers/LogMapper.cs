@@ -23,6 +23,8 @@ public class LogMapper: Mappings
             .Column(u => u.Level, cm => cm.WithName("level").WithDbType(typeof(string)))
             .Column(u => u.MessageTemplate, cm => cm.WithName("message_template").WithDbType(typeof(string)))
             .Column(u => u.TimeStamp, cm => cm.WithName("time_stamp").WithDbType(typeof(DateTimeOffset)))
-            .Column(u => u.Exception, cm => cm.WithName("exception").WithDbType(typeof(string)));
+            .Column(u => u.Exception, cm => cm.WithName("exception").WithDbType(typeof(string)))
+            .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
+
     }
 }

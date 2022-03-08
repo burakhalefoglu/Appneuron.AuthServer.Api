@@ -13,25 +13,30 @@ namespace Core.DataAccess.Cassandra
     // https://github.com/datastax/csharp-driver
     public class CassandraRepositoryBase<T>
         : IRepository<T>
-        where T : class, IEntity, new()
+            where T : class, IEntity, new()
     {
+        private readonly MappingConfiguration _mappingConfiguration;
         private readonly Table<T> _table;
-
+        private readonly IMapper _mapper;
+        
         protected CassandraRepositoryBase(MappingConfiguration mappingConfiguration)
         {
+            _mappingConfiguration = mappingConfiguration;
             var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
             var cassandraConnectionSettings = 
                     configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
             var cluster = Cluster.Builder()
                 .AddContactPoints(cassandraConnectionSettings.Host)
                 .WithCredentials(cassandraConnectionSettings.UserName, cassandraConnectionSettings.Password)
-                .WithApplicationName("AuthServer")
+                .WithApplicationName("CustomerProjectServer")
                 .WithCompression(CompressionType.Snappy)
                 .Build();
             var session = cluster.Connect();
             session.CreateKeyspaceIfNotExists(cassandraConnectionSettings.Keyspace);
             _table = new Table<T>(session, mappingConfiguration);
             _table.CreateIfNotExists();
+            _mapper = new Mapper(session, mappingConfiguration);
+
         }
 
         public IQueryable<T> GetList(Expression<Func<T, bool>> predicate = null)
@@ -128,15 +133,26 @@ namespace Core.DataAccess.Cassandra
 
         public async Task UpdateAsync(T entity)
         {
-            await Task.Run(() =>
-            {
-                _table.Insert(entity).Execute();
-            });
+            await _mapper.UpdateAsync(entity);
+        }
+
+        public void Update(T entity)
+        {
+            _mapper.Update(entity);
         }
         
-        public async void Update(T entity)
+        public void Delete(T entity)
         {
-                _table.Insert(entity).Execute();
+            _mapper.Delete(entity);
+            entity.Status = false;
+            _mapper.Insert(entity);
+        }
+        
+        public async Task DeleteAsync(T entity)
+        {
+            await _mapper.DeleteAsync(entity);
+            entity.Status = false;
+            await _mapper.InsertAsync(entity);
         }
     }
 }

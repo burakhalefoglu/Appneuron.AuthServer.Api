@@ -77,6 +77,18 @@ namespace Core.DataAccess.MongoDb
             _collection.FindOneAndReplace(x => x.Id == record.Id, record);
         }
 
+        public async Task DeleteAsync(T record)
+        {
+            record.Status = false;
+            await _collection.FindOneAndReplaceAsync(x => x.Id == record.Id, record);
+        }
+
+        public void Delete(T record)
+        {
+            record.Status = false;
+            _collection.FindOneAndReplace(x => x.Id == record.Id, record);
+        }
+        
         public virtual async Task UpdateAsync(T record)
         {
             await _collection.FindOneAndReplaceAsync(x => x.Id == record.Id, record);
