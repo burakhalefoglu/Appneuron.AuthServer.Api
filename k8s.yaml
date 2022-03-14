@@ -32,8 +32,6 @@ spec:
       labels:
         app: auth-server 
     spec:
-      nodeSelector:
-        dedicated: app
       volumes:
         - name: appconfig
           secret:
