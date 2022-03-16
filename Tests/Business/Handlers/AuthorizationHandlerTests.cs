@@ -182,7 +182,7 @@ namespace Tests.Business.Handlers
             _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 OperationClaims = null
-            }, "test@email.com")).Returns(new AccessToken());
+            })).Returns(new AccessToken());
 
 
             _loginUserQuery = new LoginOrRegisterUserCommand

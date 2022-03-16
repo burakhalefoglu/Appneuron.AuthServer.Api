@@ -46,13 +46,13 @@ namespace Core.Utilities.Security.Jwt
             };
         }
 
-        public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel, string email)
+        public TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel userClaimModel)
             where TAccessToken : IAccessToken, new()
         {
             _accessTokenExpiration = DateTime.Now.AddMinutes(Convert.ToDouble(_tokenOptions.AccessTokenExpiration));
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
-            var jwt = CreateCustomerJwtSecurityToken(_tokenOptions, userClaimModel, signingCredentials, email);
+            var jwt = CreateCustomerJwtSecurityToken(_tokenOptions, userClaimModel, signingCredentials);
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwt);
 
@@ -73,22 +73,20 @@ namespace Core.Utilities.Security.Jwt
 
         private JwtSecurityToken CreateCustomerJwtSecurityToken(TokenOptions tokenOptions,
             UserClaimModel userClaimModel,
-            SigningCredentials signingCredentials,
-            string email)
+            SigningCredentials signingCredentials)
         {
             var jwt = new JwtSecurityToken(
                 tokenOptions.Issuer,
                 _customerAudience,
                 expires: _accessTokenExpiration,
                 notBefore: DateTime.Now,
-                claims: SetUserClaims(userClaimModel, email),
+                claims: SetUserClaims(userClaimModel),
                 signingCredentials: signingCredentials
             );
             return jwt;
         }
 
-        private IEnumerable<Claim> SetUserClaims(UserClaimModel userClaimModel,
-            string email)
+        private IEnumerable<Claim> SetUserClaims(UserClaimModel userClaimModel)
         {
             for (var i = 0; i < userClaimModel.OperationClaims.Length; i++)
                 userClaimModel.OperationClaims[i] =
@@ -96,7 +94,8 @@ namespace Core.Utilities.Security.Jwt
                         userClaimModel.OperationClaims[i]);
 
             var claims = new List<Claim>();
-            claims.AddEmail(email);
+            claims.AddName(userClaimModel.Name);
+            claims.AddEmail(userClaimModel.Email);
             claims.AddNameIdentifier(userClaimModel.UserId.ToString());
             claims.AddRoles(userClaimModel.OperationClaims);
             return claims;

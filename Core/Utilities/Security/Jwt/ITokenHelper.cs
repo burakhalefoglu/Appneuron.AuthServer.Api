@@ -5,7 +5,7 @@ namespace Core.Utilities.Security.Jwt
 {
     public interface ITokenHelper
     {
-        TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel user, string email)
+        TAccessToken CreateCustomerToken<TAccessToken>(UserClaimModel user)
             where TAccessToken : IAccessToken, new();
 
         TAccessToken CreateClientToken<TAccessToken>(ClientClaimModel clientClaimModel)

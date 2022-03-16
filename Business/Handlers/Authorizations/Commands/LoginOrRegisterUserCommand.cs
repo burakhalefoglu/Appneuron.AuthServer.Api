@@ -94,8 +94,10 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
             var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 UserId = user.Id,
+                Email = user.Email,
+                Name = user.Name,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
-            }, user.Email);
+            });
 
             return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
         }
