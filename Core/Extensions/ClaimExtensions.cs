@@ -18,6 +18,11 @@ namespace Core.Extensions
             claims.Add(new Claim(ClaimTypes.Name, name));
         }
 
+        public static void AddIp(this ICollection<Claim> claims, string ip)
+        {
+            claims.Add(new Claim(ClaimTypes.SerialNumber, ip));
+        }
+        
         public static void AddNameIdentifier(this ICollection<Claim> claims, string nameIdentifier)
         {
             claims.Add(new Claim(ClaimTypes.NameIdentifier, nameIdentifier));

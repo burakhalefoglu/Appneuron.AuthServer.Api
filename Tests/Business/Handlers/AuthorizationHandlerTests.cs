@@ -43,7 +43,7 @@ namespace Tests.Business.Handlers
             
             _loginUserQueryHandler = new LoginOrRegisterUserCommand.LoginOrRegisterUserCommandHandler(_userRepository.Object,
                 _tokenHelper.Object,
-                _mediator.Object);
+                _mediator.Object, _httpContextAccessor.Object);
             
             _forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(_userRepository.Object,
                 _mailService.Object);

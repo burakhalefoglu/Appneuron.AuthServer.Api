@@ -54,7 +54,7 @@ namespace Core.Utilities.Security.Encyption
             return Convert.ToBase64String(array);
         }
 
-        public static string DecryptString(string key, string encryptValue)
+        public static string DecryptString(string key, string? encryptValue)
         {
             var iv = new byte[16];
             var buffer = Convert.FromBase64String(encryptValue);

@@ -13,6 +13,7 @@ using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Business.Handlers.Authorizations.Commands;
 
@@ -27,20 +28,26 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
         private readonly IMediator _mediator;
         private readonly ITokenHelper _tokenHelper;
         private readonly IUserRepository _userRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        
 
         public LoginOrRegisterUserCommandHandler(IUserRepository userRepository,
             ITokenHelper tokenHelper,
-            IMediator mediator)
+            IMediator mediator, IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = userRepository;
             _tokenHelper = tokenHelper;
             _mediator = mediator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [LogAspect(typeof(ConsoleLogger))]
         public async Task<IDataResult<AccessToken>> Handle(LoginOrRegisterUserCommand request,
             CancellationToken cancellationToken)
         {
+            var headers = _httpContextAccessor.HttpContext.Request.Headers;
+            var ip = headers.First(x => x.Key == "ip").Value;
+            
             var user = await _userRepository.GetAsync(u => u.Email == request.Email && u.Status);
             if (user is null)
             {
@@ -96,6 +103,7 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                 UserId = user.Id,
                 Email = user.Email,
                 Name = user.Name,
+                IpAddress = ip,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
             });
 

@@ -98,6 +98,8 @@ namespace Core.Utilities.Security.Jwt
             claims.AddEmail(userClaimModel.Email);
             claims.AddNameIdentifier(userClaimModel.UserId.ToString());
             claims.AddRoles(userClaimModel.OperationClaims);
+            claims.AddIp(userClaimModel.IpAddress);
+
             return claims;
         }
 
@@ -127,7 +129,7 @@ namespace Core.Utilities.Security.Jwt
             claims.AddNameIdentifier(clientClaimModel.ClientId.ToString());
             claims.AddRoles(clientClaimModel.OperationClaims);
             claims.AddProjectId(clientClaimModel.ProjectId.ToString());
-
+            return claims;
             return claims;
         }
     }
