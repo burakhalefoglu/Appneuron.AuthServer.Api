@@ -104,10 +104,6 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                 Name = user.Name,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
             });
-            _httpContextAccessor.HttpContext.Response.Cookies.Append("X-Access-Token",
-                accessToken.Token, new CookieOptions() { HttpOnly = true, Secure = true, 
-                    Expires = accessToken.Expiration ,SameSite = SameSiteMode.Strict });
-
             return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
         }
     }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using IResult = Core.Utilities.Results.IResult;
+using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace WebAPI.Controllers;
 
@@ -29,6 +30,9 @@ namespace WebAPI.Controllers;
         public async Task<IActionResult> LoginOrRegister([FromBody] LoginOrRegisterUserCommand loginOrRegisterModel)
         {
             var result = await Mediator.Send(loginOrRegisterModel);
+            Response.Cookies.Append("X-Access-Token",
+                result.Data.Token, new CookieOptions() { HttpOnly = true, Secure = true, 
+                    Expires = result.Data.Expiration ,SameSite = SameSiteMode.Strict });
             if (result.Success) return Ok(result);
 
             return BadRequest(result);
