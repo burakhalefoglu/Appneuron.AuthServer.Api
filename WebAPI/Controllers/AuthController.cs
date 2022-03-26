@@ -31,10 +31,9 @@ namespace WebAPI.Controllers;
         {
             var result = await Mediator.Send(loginOrRegisterModel);
             Response.Cookies.Append("X-Access-Token",
-                result.Data.Token, new CookieOptions{ HttpOnly = true, Secure = true, 
-                    Expires = result.Data.Expiration ,SameSite = SameSiteMode.Strict });
+                result.Data.Token, new CookieOptions{ HttpOnly = true, Secure = false, 
+                    Expires = result.Data.Expiration , SameSite = SameSiteMode.None });
             if (result.Success) return Ok(result);
-
             return BadRequest(result);
         }
 
