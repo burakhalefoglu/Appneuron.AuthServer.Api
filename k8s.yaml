@@ -18,7 +18,7 @@ metadata:
   name: auth-server 
   namespace: service-app
 spec:
-  replicas: 2
+  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
