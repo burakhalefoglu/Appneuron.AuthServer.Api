@@ -45,9 +45,6 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
         public async Task<IDataResult<AccessToken>> Handle(LoginOrRegisterUserCommand request,
             CancellationToken cancellationToken)
         {
-            var headers = _httpContextAccessor.HttpContext.Request.Headers;
-            var ip = headers.First(x => x.Key == "ip").Value;
-            
             var user = await _userRepository.GetAsync(u => u.Email == request.Email && u.Status);
             if (user is null)
             {
