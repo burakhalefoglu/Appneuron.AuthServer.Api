@@ -17,6 +17,15 @@ public static class JwtAuthenticationExtensions
             })
             .AddJwtBearer(options=>
             {
+                options.Events.OnMessageReceived = context => {
+
+                    if (context.Request.Cookies.ContainsKey("X-Access-Token"))
+                    {
+                        context.Token = context.Request.Cookies["X-Access-Token"];
+                    }
+
+                    return Task.CompletedTask;
+                };
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters()

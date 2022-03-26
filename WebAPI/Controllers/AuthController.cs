@@ -30,7 +30,7 @@ namespace WebAPI.Controllers;
         public async Task<IActionResult> LoginOrRegister([FromBody] LoginOrRegisterUserCommand loginOrRegisterModel)
         {
             var result = await Mediator.Send(loginOrRegisterModel);
-            Response.Cookies.Append("Jwt-token",
+            Response.Cookies.Append("X-Access-Token",
                 result.Data.Token, new CookieOptions{ HttpOnly = true, Secure = true, 
                     Expires = result.Data.Expiration ,SameSite = SameSiteMode.Strict });
             if (result.Success) return Ok(result);
