@@ -33,6 +33,9 @@ namespace WebAPI.Controllers;
             Response.Cookies.Append("X-Access-Token",
                 result.Data.Token, new CookieOptions() { HttpOnly = true, Secure = true, 
                     Expires = result.Data.Expiration ,SameSite = SameSiteMode.Strict });
+            Response.Cookies.Append("X-Access-Token",
+                "test", new CookieOptions() { HttpOnly = true, Secure = true, 
+                    Expires = result.Data.Expiration ,SameSite = SameSiteMode.Strict });
             if (result.Success) return Ok(result);
 
             return BadRequest(result);
