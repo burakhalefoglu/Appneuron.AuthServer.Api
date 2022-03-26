@@ -103,7 +103,6 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                 UserId = user.Id,
                 Email = user.Email,
                 Name = user.Name,
-                IpAddress = ip,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
             });
 
