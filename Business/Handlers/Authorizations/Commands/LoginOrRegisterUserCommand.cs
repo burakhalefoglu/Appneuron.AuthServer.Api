@@ -14,6 +14,8 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
+using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace Business.Handlers.Authorizations.Commands;
 
@@ -102,6 +104,9 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                 Name = user.Name,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
             });
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("X-Access-Token",
+                accessToken.Token, new CookieOptions() { HttpOnly = true, Secure = true, 
+                    Expires = accessToken.Expiration ,SameSite = SameSiteMode.Strict });
 
             return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
         }

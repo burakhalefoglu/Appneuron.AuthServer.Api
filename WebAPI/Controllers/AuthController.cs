@@ -3,6 +3,7 @@ using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using IResult = Core.Utilities.Results.IResult;
 
 namespace WebAPI.Controllers;
@@ -28,7 +29,6 @@ namespace WebAPI.Controllers;
         public async Task<IActionResult> LoginOrRegister([FromBody] LoginOrRegisterUserCommand loginOrRegisterModel)
         {
             var result = await Mediator.Send(loginOrRegisterModel);
-
             if (result.Success) return Ok(result);
 
             return BadRequest(result);
