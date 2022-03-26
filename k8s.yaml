@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: auth-server-service
-  namespace: service-app-dev
+  namespace: service-app
 spec:
   type: ClusterIP
   ports:
@@ -16,7 +16,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: auth-server 
-  namespace: service-app-dev
+  namespace: service-app
 spec:
   replicas: 2
   strategy:
