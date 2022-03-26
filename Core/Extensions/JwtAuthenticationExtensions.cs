@@ -17,15 +17,6 @@ public static class JwtAuthenticationExtensions
             })
             .AddJwtBearer(options=>
             {
-                // options.Events.OnMessageReceived = context => {
-                //
-                //     if (context.Request.Cookies.ContainsKey("X-Access-Token"))
-                //     {
-                //         context.Token = context.Request.Cookies["X-Access-Token"];
-                //     }
-                //
-                //     return Task.CompletedTask;
-                // };
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -38,6 +29,17 @@ public static class JwtAuthenticationExtensions
                     ValidateIssuerSigningKey = true,
                     ClockSkew = TimeSpan.Zero,
                     IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (context.Request.Cookies.ContainsKey("X-Access-Token"))
+                        {
+                            context.Token = context.Request.Cookies["X-Access-Token"];
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             });
     }
