@@ -45,7 +45,10 @@ public class GetCustomerTokenQuery: IRequest<IDataResult<AccessToken>>
             var email = _httpContextAccessor.HttpContext?.User.Claims
                 .FirstOrDefault(x => x.Type.EndsWith("emailaddress"))?.Value;
             
-            var tokenFromCassandra = await _mediator.Send(new GetRefreshTokenQuery(), cancellationToken);
+            var tokenFromCassandra = await _mediator.Send(new GetRefreshTokenQuery
+            {
+                UserId = userId
+            }, cancellationToken);
             if (refreshToken != tokenFromCassandra.Data.Value)
                 return new ErrorDataResult<AccessToken>(Messages.AuthorizationsDenied);
             

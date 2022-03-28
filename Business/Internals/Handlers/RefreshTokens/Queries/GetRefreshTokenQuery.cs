@@ -11,25 +11,21 @@ namespace Business.Internals.Handlers.RefreshTokens.Queries;
 
 public class GetRefreshTokenQuery: IRequest<IDataResult<RefreshToken>>
 {
+    public long UserId { get; set; }
     public class GetRefreshTokenQueryHandler : IRequestHandler<GetRefreshTokenQuery, IDataResult<RefreshToken>>
     {
         private readonly IRefreshTokenrepository _refreshTokenRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public GetRefreshTokenQueryHandler(IRefreshTokenrepository refreshTokenRepository, IHttpContextAccessor httpContextAccessor)
+        public GetRefreshTokenQueryHandler(IRefreshTokenrepository refreshTokenRepository)
         {
             _refreshTokenRepository = refreshTokenRepository;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         [LogAspect(typeof(ConsoleLogger))]
         public async Task<IDataResult<RefreshToken>> Handle(GetRefreshTokenQuery request,
             CancellationToken cancellationToken)
         {
-            var userId = _httpContextAccessor.HttpContext?.User.Claims
-                .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
-            Console.WriteLine("userId: " + userId);
             var refreshToken = await _refreshTokenRepository
-                .GetAsync(p => p.UserId == Convert.ToInt64(userId));
+                .GetAsync(p => p.UserId == request.UserId);
             Console.WriteLine("refrestoken: :" + refreshToken);
             return new SuccessDataResult<RefreshToken>(refreshToken);
         }

@@ -74,8 +74,10 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
 
             if (!(user is null))
             {
-               var r =  await _mediator.Send(new GetRefreshTokenQuery(), cancellationToken);
-               // refreshTokenResult = r.Data.Value;
+                refreshTokenResult = _mediator.Send(new GetRefreshTokenQuery
+                {
+                    UserId = user.Id
+                }, cancellationToken).Result.Data.Value;
             }
 
             if (!HashingHelper.VerifyPasswordHash(request.Password, user.PasswordSalt, user.PasswordHash))
