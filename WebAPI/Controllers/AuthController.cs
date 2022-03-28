@@ -44,14 +44,9 @@ public class AuthController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<AccessToken>>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
     [HttpGet("refreshToken")]
-    public async Task<IActionResult> Get(long id, string name, string email)
+    public async Task<IActionResult> Get()
     {
-        var result = await Mediator.Send(new GetCustomerTokenQuery
-        {
-            Id = id,
-            Name = name,
-            Email = email
-        });
+        var result = await Mediator.Send(new GetCustomerTokenQuery());
         if (result.Success) return Ok(result);
         return Unauthorized(result);
     }

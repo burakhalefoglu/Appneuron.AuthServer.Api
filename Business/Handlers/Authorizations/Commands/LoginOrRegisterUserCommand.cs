@@ -2,6 +2,7 @@
 using Business.Helpers;
 using Business.Internals.Handlers.GroupClaims;
 using Business.Internals.Handlers.RefreshTokens.Commands;
+using Business.Internals.Handlers.RefreshTokens.Queries;
 using Business.Internals.Handlers.UserClaims;
 using Business.Internals.Handlers.UserGroups.Commands;
 using Business.Internals.Handlers.UserGroups.Queries;
@@ -72,6 +73,9 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                     UserId = user.Id
                 }, cancellationToken).Result.Data;
             }
+
+            if (!(user is null))
+                refreshTokenResult = _mediator.Send(new GetRefreshTokenQuery(), cancellationToken).Result.Data.Value;
 
             if (!HashingHelper.VerifyPasswordHash(request.Password, user.PasswordSalt, user.PasswordHash))
                 return new ErrorDataResult<AccessToken>(Messages.DefaultError);

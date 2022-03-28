@@ -129,7 +129,6 @@ namespace Core.Utilities.Security.Jwt
             claims.AddRoles(clientClaimModel.OperationClaims);
             claims.AddProjectId(clientClaimModel.ProjectId.ToString());
             return claims;
-            return claims;
         }
     }
 }

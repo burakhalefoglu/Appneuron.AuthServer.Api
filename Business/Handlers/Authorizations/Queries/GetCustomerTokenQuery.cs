@@ -18,11 +18,6 @@ namespace Business.Handlers.Authorizations.Queries;
 
 public class GetCustomerTokenQuery: IRequest<IDataResult<AccessToken>>
 {
-    public long Id { get; set; }
-    public string Name { get; set; }
-    public string Email { get; set; }
-    
-
     public class GetCustomerTokenQueryHandler : IRequestHandler<GetCustomerTokenQuery, IDataResult<AccessToken>>
     {
         private readonly IMediator _mediator;
@@ -43,17 +38,21 @@ public class GetCustomerTokenQuery: IRequest<IDataResult<AccessToken>>
         {
             
             var refreshToken = _httpContextAccessor.HttpContext.Request.Cookies["RefreshToken"];
-            var tokenFromCassandra = await _mediator.Send(new GetRefreshTokenQuery
-            {
-                UserId = request.Id
-            }, cancellationToken);
+            var userId = Convert.ToInt64(_httpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+            var name = _httpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(x => x.Type.EndsWith("name"))?.Value;
+            var email = _httpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(x => x.Type.EndsWith("emailaddress"))?.Value;
+            
+            var tokenFromCassandra = await _mediator.Send(new GetRefreshTokenQuery(), cancellationToken);
             if (refreshToken != tokenFromCassandra.Data.Value)
                 return new ErrorDataResult<AccessToken>(Messages.AuthorizationsDenied + "cookie: " + refreshToken
                 + "result cass: " + tokenFromCassandra.Data.Value);
             
             var usrGroup = await _mediator.Send(new GetUserGroupInternalQuery
             {
-                UserId = request.Id
+                UserId = userId
             }, cancellationToken);
 
             var result = await _mediator.Send(new GetGroupClaimInternalQuery
@@ -73,14 +72,14 @@ public class GetCustomerTokenQuery: IRequest<IDataResult<AccessToken>>
 
             await _mediator.Send(new CreateUserClaimsInternalCommand
             {
-                UserId = request.Id,
+                UserId = userId,
                 OperationClaims = operationClaims
             }, cancellationToken);
             var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
-                UserId = request.Id,
-                Email = request.Email,
-                Name = request.Name,
+                UserId = userId,
+                Email = email,
+                Name = name,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
             });
             return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
