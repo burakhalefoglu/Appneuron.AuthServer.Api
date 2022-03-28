@@ -30,17 +30,6 @@ public static class JwtAuthenticationExtensions
                     ClockSkew = TimeSpan.Zero,
                     IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
                 };
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        if (context.Request.Cookies.ContainsKey("X-Access-Token"))
-                        {
-                            context.Token = context.Request.Cookies["X-Access-Token"];
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
             });
     }
 }

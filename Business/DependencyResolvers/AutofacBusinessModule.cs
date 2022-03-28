@@ -23,6 +23,7 @@ namespace Business.DependencyResolvers
             builder.RegisterType<CassGroupRepository>().As<IGroupRepository>().SingleInstance();
             builder.RegisterType<CassGroupClaimRepository>().As<IGroupClaimRepository>().SingleInstance();
             builder.RegisterType<CassUserGroupRepository>().As<IUserGroupRepository>().SingleInstance();
+            builder.RegisterType<CassRefreshTokenRepository>().As<IRefreshTokenrepository>().SingleInstance();
 
 
             var assembly = Assembly.GetExecutingAssembly();

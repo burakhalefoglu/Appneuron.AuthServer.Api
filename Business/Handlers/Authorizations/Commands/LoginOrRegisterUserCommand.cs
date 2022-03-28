@@ -1,4 +1,5 @@
 ﻿using Business.Constants;
+using Business.Handlers.RefreshTokens.Commands;
 using Business.Helpers;
 using Business.Internals.Handlers.GroupClaims;
 using Business.Internals.Handlers.UserClaims;
@@ -14,8 +15,6 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Net.Http.Headers;
-using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace Business.Handlers.Authorizations.Commands;
 
@@ -31,7 +30,7 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
         private readonly ITokenHelper _tokenHelper;
         private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        
+
 
         public LoginOrRegisterUserCommandHandler(IUserRepository userRepository,
             ITokenHelper tokenHelper,
@@ -61,7 +60,7 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                     Status = true
                 });
                 user = await _userRepository.GetAsync(x => x.Email == request.Email &&
-                                                               x.Status);
+                                                           x.Status);
                 await _mediator.Send(new CreateUserGroupInternalCommand()
                 {
                     GroupId = 1,
@@ -91,12 +90,13 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                 operationClaims.AddRange(selectionItems.Select(item => new OperationClaim
                     {Id = item.Id, Name = item.Label}));
             }
-            
+
             await _mediator.Send(new CreateUserClaimsInternalCommand
             {
                 UserId = user.Id,
                 OperationClaims = operationClaims
             }, cancellationToken);
+            
             var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 UserId = user.Id,
@@ -104,7 +104,16 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                 Name = user.Name,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
             });
-            return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
+            
+            // create refresh token
+           var refreshTokenResult = await  _mediator.Send(new CreateRefreshTokenCommand
+            {
+                UserId = user.Id
+            }, cancellationToken);
+
+           accessToken.Token = refreshTokenResult.Data;
+           
+           return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
         }
     }
 }

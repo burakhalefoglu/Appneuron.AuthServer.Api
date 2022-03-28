@@ -20,7 +20,31 @@ namespace WebAPI.Controllers
         ///     It is for getting the Mediator instance creation process from the base controller.
         /// </summary>
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
+        
+        public void SetCookie(string key,
+            string value,
+            int? expireTime,
+            bool httpOnly,
+            bool secure,
+            SameSiteMode sameSiteMode)  
+        {  
+            CookieOptions option = new CookieOptions();  
 
+            if (expireTime.HasValue)  
+                option.Expires = DateTime.Now.AddMinutes(expireTime.Value);  
+            else  
+                option.Expires = DateTime.Now.AddMilliseconds(10);
+            option.HttpOnly = httpOnly;
+            option.Secure = secure;
+            option.SameSite = sameSiteMode;
+            
+            Response.Cookies.Append(key, value, option);  
+        } 
+        
+        public void Remove(string key)  
+        {  
+            Response.Cookies.Delete(key);  
+        }  
 
         /// <summary>
         /// </summary>

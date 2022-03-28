@@ -1,4 +1,5 @@
 ﻿using Business.Handlers.Authorizations.Commands;
+using Business.Handlers.Authorizations.Queries;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authorization;
@@ -30,11 +31,30 @@ namespace WebAPI.Controllers;
         public async Task<IActionResult> LoginOrRegister([FromBody] LoginOrRegisterUserCommand loginOrRegisterModel)
         {
             var result = await Mediator.Send(loginOrRegisterModel);
-            Response.Cookies.Append("X-Access-Token",
-                result.Data.Token, new CookieOptions{ HttpOnly = true, Secure = false, 
-                    Expires = result.Data.Expiration , SameSite = SameSiteMode.None });
+            SetCookie("RefreshToken", result.Data.RefreshToken, 60, true, false, SameSiteMode.None);
             if (result.Success) return Ok(result);
             return BadRequest(result);
+        }
+        
+        /// <summary>
+        ///   refresh token
+        /// </summary>
+        /// <return>Logs token</return>
+        /// <response code="200"></response>
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<AccessToken>>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
+        [HttpGet("refreshToken")]
+        public async Task<IActionResult> Get(long id, string name, string email)
+        {
+            var result = await Mediator.Send(new GetCustomerTokenQuery
+            {
+                Id = id,
+                Name = name,
+                Email = email
+            });
+            if (result.Success) return Ok(result);
+            return Unauthorized(result);
         }
 
         /// <summary>
