@@ -111,7 +111,7 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                 UserId = user.Id
             }, cancellationToken);
 
-           accessToken.Token = refreshTokenResult.Data;
+           accessToken.RefreshToken = refreshTokenResult.Data;
            
            return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
         }
