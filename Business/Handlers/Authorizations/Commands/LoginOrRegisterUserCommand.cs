@@ -47,6 +47,7 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
             CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetAsync(u => u.Email == request.Email && u.Status);
+            var refreshTokenResult = "";
             if (user is null)
             {
                 HashingHelper.CreatePasswordHash(request.Password,
@@ -66,7 +67,17 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                     GroupId = 1,
                     UserId = user.Id
                 }, cancellationToken);
+                refreshTokenResult = _mediator.Send(new CreateRefreshTokenCommand
+                {
+                    UserId = user.Id
+                }, cancellationToken).Result.Data;
             }
+
+            if (!(user is null))
+                refreshTokenResult = _mediator.Send(new UpdateRefreshTokenCommand
+                {
+                    UserId = user.Id
+                }, cancellationToken).Result.Data;
 
             if (!HashingHelper.VerifyPasswordHash(request.Password, user.PasswordSalt, user.PasswordHash))
                 return new ErrorDataResult<AccessToken>(Messages.DefaultError);
@@ -96,7 +107,7 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                 UserId = user.Id,
                 OperationClaims = operationClaims
             }, cancellationToken);
-            
+
             var accessToken = _tokenHelper.CreateCustomerToken<AccessToken>(new UserClaimModel
             {
                 UserId = user.Id,
@@ -104,16 +115,9 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                 Name = user.Name,
                 OperationClaims = operationClaims.Select(x => x.Name).ToArray()
             });
-            
-            // create refresh token
-           var refreshTokenResult = await  _mediator.Send(new CreateRefreshTokenCommand
-            {
-                UserId = user.Id
-            }, cancellationToken);
+            accessToken.RefreshToken = refreshTokenResult;
 
-           accessToken.RefreshToken = refreshTokenResult.Data;
-           
-           return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
+            return new SuccessDataResult<AccessToken>(accessToken, Messages.SuccessfulLogin);
         }
     }
 }

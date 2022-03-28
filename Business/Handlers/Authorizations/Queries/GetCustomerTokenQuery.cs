@@ -29,7 +29,7 @@ public class GetCustomerTokenQuery: IRequest<IDataResult<AccessToken>>
         private readonly ITokenHelper _tokenHelper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public GetCustomerTokenQueryHandler(IGroupClaimRepository groupClaimRepository, IMediator mediator, ITokenHelper tokenHelper, IHttpContextAccessor httpContextAccessor)
+        public GetCustomerTokenQueryHandler(IMediator mediator, ITokenHelper tokenHelper, IHttpContextAccessor httpContextAccessor)
         {
             _mediator = mediator;
             _tokenHelper = tokenHelper;
