@@ -46,11 +46,10 @@ using MediatR;
     services.AddCors(options =>
     {
         options.AddPolicy("CorsPolicy",
-            //builder.WithOrigins(corsPolicies)
-            b => b.AllowAnyOrigin()
+            b => b.WithOrigins(corsPolicies)
                 .AllowAnyMethod()
+                .AllowCredentials()
                 .AllowAnyHeader()
-                // .AllowCredentials()
                 );
     });
 
