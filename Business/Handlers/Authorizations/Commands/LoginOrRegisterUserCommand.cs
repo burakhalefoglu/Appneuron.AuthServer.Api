@@ -30,17 +30,15 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
         private readonly IMediator _mediator;
         private readonly ITokenHelper _tokenHelper;
         private readonly IUserRepository _userRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public LoginOrRegisterUserCommandHandler(IUserRepository userRepository,
             ITokenHelper tokenHelper,
-            IMediator mediator, IHttpContextAccessor httpContextAccessor)
+            IMediator mediator)
         {
             _userRepository = userRepository;
             _tokenHelper = tokenHelper;
             _mediator = mediator;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         [LogAspect(typeof(ConsoleLogger))]
