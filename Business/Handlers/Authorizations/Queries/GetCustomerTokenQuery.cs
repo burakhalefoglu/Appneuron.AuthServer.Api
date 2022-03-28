@@ -48,8 +48,7 @@ public class GetCustomerTokenQuery: IRequest<IDataResult<AccessToken>>
                 UserId = request.Id
             }, cancellationToken);
             if (refreshToken != tokenFromCassandra.Data.Value)
-                return new ErrorDataResult<AccessToken>(Messages.AuthorizationsDenied + "cookie: " + refreshToken
-                + "result cass: " + tokenFromCassandra.Data.Value);
+                return new ErrorDataResult<AccessToken>(Messages.AuthorizationsDenied);
             
             var usrGroup = await _mediator.Send(new GetUserGroupInternalQuery
             {
