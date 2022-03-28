@@ -6,7 +6,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 
-namespace Business.Handlers.RefreshTokens.Queries;
+namespace Business.Internals.Handlers.RefreshTokens.Queries;
 
 public class GetRefreshTokenQuery: IRequest<IDataResult<RefreshToken>>
 {
@@ -21,7 +21,6 @@ public class GetRefreshTokenQuery: IRequest<IDataResult<RefreshToken>>
             _refreshTokenRepository = refreshTokenRepository;
         }
 
-        [SecuredOperation(Priority = 1)]
         [LogAspect(typeof(ConsoleLogger))]
         public async Task<IDataResult<RefreshToken>> Handle(GetRefreshTokenQuery request,
             CancellationToken cancellationToken)

@@ -1,5 +1,4 @@
-﻿using Business.BusinessAspects;
-using Business.Constants;
+﻿using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
@@ -9,7 +8,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 
-namespace Business.Handlers.RefreshTokens.Commands;
+namespace Business.Internals.Handlers.RefreshTokens.Commands;
 
 public class CreateRefreshTokenCommand: IRequest<IDataResult<string>>
 {
@@ -24,7 +23,6 @@ public class CreateRefreshTokenCommand: IRequest<IDataResult<string>>
             _refreshTokenRepository = refreshTokenRepository;
         }
 
-        [SecuredOperation(Priority = 1)]
         [CacheRemoveAspect("Get")]
         [LogAspect(typeof(ConsoleLogger))]
         public async Task<IDataResult<string>> Handle(CreateRefreshTokenCommand request, CancellationToken cancellationToken)
