@@ -27,9 +27,10 @@ public class GetRefreshTokenQuery: IRequest<IDataResult<RefreshToken>>
         {
             var userId = _httpContextAccessor.HttpContext?.User.Claims
                 .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
-            
+            Console.WriteLine("userId: " + userId);
             var refreshToken = await _refreshTokenRepository
                 .GetAsync(p => p.UserId == Convert.ToInt64(userId));
+            Console.WriteLine("refrestoken: :" + refreshToken);
             return new SuccessDataResult<RefreshToken>(refreshToken);
         }
     }
