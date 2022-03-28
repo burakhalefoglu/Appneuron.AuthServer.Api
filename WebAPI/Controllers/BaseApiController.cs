@@ -25,7 +25,6 @@ namespace WebAPI.Controllers
             string value,
             int? expireTime,
             bool httpOnly,
-            bool secure,
             SameSiteMode sameSiteMode)  
         {  
             CookieOptions option = new CookieOptions();  
@@ -35,9 +34,9 @@ namespace WebAPI.Controllers
             else  
                 option.Expires = DateTime.Now.AddMilliseconds(10);
             option.HttpOnly = httpOnly;
-            option.Secure = secure;
+            option.Secure = true;
             option.SameSite = sameSiteMode;
-            
+
             Response.Cookies.Append(key, value, option);  
         } 
         

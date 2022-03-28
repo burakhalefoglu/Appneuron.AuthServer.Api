@@ -30,7 +30,7 @@ public class AuthController : BaseApiController
     public async Task<IActionResult> LoginOrRegister([FromBody] LoginOrRegisterUserCommand loginOrRegisterModel)
     {
         var result = await Mediator.Send(loginOrRegisterModel);
-        SetCookie("RefreshToken", result.Data.RefreshToken, 60, true, false, SameSiteMode.None);
+        SetCookie("RefreshToken", result.Data.RefreshToken, 60, true, SameSiteMode.None);
         if (result.Success) return Ok(result);
         return BadRequest(result);
     }
