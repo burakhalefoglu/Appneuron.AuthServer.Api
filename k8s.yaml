@@ -45,11 +45,11 @@ spec:
           imagePullPolicy: Always
           resources:
             requests:
-              cpu: "75m"
-              memory: "250Mi"
+              cpu: "125m"
+              memory: "500Mi"
             limits:
-              cpu: "75m"
-              memory: "250Mi"
+              cpu: "125m"
+              memory: "500Mi"
           volumeMounts:
           - name: appconfig
             mountPath: /app/appsettings.json
