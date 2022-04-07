@@ -4,12 +4,11 @@ using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using DataAccess.Concrete.Cassandra.TableMappers;
 
-namespace DataAccess.Concrete.Cassandra
+namespace DataAccess.Concrete.Cassandra;
+
+public class CassLogRepository : CassandraRepositoryBase<Log>, ILogRepository
 {
-    public class CassLogRepository : CassandraRepositoryBase<Log>, ILogRepository
+    public CassLogRepository() : base(MappingConfiguration.Global.Define<LogMapper>())
     {
-        public CassLogRepository() : base(MappingConfiguration.Global.Define<LogMapper>())
-        {
-        }
     }
 }

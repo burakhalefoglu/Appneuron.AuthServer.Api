@@ -3,10 +3,10 @@ using FluentValidation;
 
 namespace Business.Handlers.Authorizations.ValidationRules;
 
-    public class RegisterUserValidator : AbstractValidator<LoginOrRegisterUserCommand>
+public class RegisterUserValidator : AbstractValidator<LoginOrRegisterUserCommand>
+{
+    public RegisterUserValidator()
     {
-        public RegisterUserValidator()
-        {
-            RuleFor(p => p.Password).Password();
-        }
+        RuleFor(p => p.Password).Password();
     }
+}

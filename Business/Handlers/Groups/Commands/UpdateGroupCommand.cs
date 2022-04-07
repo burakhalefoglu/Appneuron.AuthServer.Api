@@ -1,47 +1,44 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Business.BusinessAspects;
+﻿using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 
-namespace Business.Handlers.Groups.Commands
+namespace Business.Handlers.Groups.Commands;
+
+public class UpdateGroupCommand : IRequest<IResult>
 {
-    public class UpdateGroupCommand : IRequest<IResult>
+    public string GroupName { get; set; }
+
+    public class UpdateGroupCommandHandler : IRequestHandler<UpdateGroupCommand, IResult>
     {
-        public string GroupName { get; set; }
+        private readonly IGroupRepository _groupRepository;
 
-        public class UpdateGroupCommandHandler : IRequestHandler<UpdateGroupCommand, IResult>
+        public UpdateGroupCommandHandler(IGroupRepository groupRepository)
         {
-            private readonly IGroupRepository _groupRepository;
+            _groupRepository = groupRepository;
+        }
 
-            public UpdateGroupCommandHandler(IGroupRepository groupRepository)
+        [SecuredOperation(Priority = 1)]
+        [CacheRemoveAspect("Get")]
+        [LogAspect(typeof(ConsoleLogger))]
+        public async Task<IResult> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
+        {
+            var isGroupExist =
+                await _groupRepository.GetAsync(g => g.GroupName == request.GroupName && g.Status == true);
+
+            if (isGroupExist == null) return new ErrorResult(Messages.GroupNotFound);
+
+            var groupToUpdate = new Group
             {
-                _groupRepository = groupRepository;
-            }
-
-            [SecuredOperation(Priority = 1)]
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(ConsoleLogger))]
-            public async Task<IResult> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
-            {
-                var isGroupExist = await _groupRepository.GetAsync(g => g.GroupName == request.GroupName && g.Status == true);
-
-                if (isGroupExist == null) return new ErrorResult(Messages.GroupNotFound);
-
-                var groupToUpdate = new Group
-                {
-                    GroupName = request.GroupName
-                };
-                await _groupRepository.UpdateAsync(groupToUpdate);
-                return new SuccessResult(Messages.Updated);
-            }
+                GroupName = request.GroupName
+            };
+            await _groupRepository.UpdateAsync(groupToUpdate);
+            return new SuccessResult(Messages.Updated);
         }
     }
 }

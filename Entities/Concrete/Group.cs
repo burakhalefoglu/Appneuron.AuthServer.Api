@@ -1,19 +1,17 @@
-﻿using System.Globalization;
-using Core.Entities;
+﻿using Core.Entities;
 
-namespace Entities.Concrete
+namespace Entities.Concrete;
+
+public class Group : IEntity
 {
-    public class Group : IEntity
+    public Group()
     {
-        public Group()
-        {
-            CreatedAt = DateTimeOffset.Now;
-            Status = true;
-        }
-
-        public DateTimeOffset CreatedAt { get; set; }
-        public bool Status { get; set; }
-        public string GroupName { get; set; }
-        public long Id { get; set; }
+        CreatedAt = DateTimeOffset.Now;
+        Status = true;
     }
+
+    public DateTimeOffset CreatedAt { get; set; }
+    public string GroupName { get; set; }
+    public bool Status { get; set; }
+    public long Id { get; set; }
 }

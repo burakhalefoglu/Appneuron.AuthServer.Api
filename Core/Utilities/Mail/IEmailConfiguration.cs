@@ -1,10 +1,9 @@
-﻿namespace Core.Utilities.Mail
+﻿namespace Core.Utilities.Mail;
+
+public interface IEmailConfiguration
 {
-    public interface IEmailConfiguration
-    {
-        string SmtpServer { get; }
-        string SmtpPort { get; }
-        string SmtpUserName { get; }
-        string Password { get; }
-    }
+    string SmtpServer { get; }
+    string SmtpPort { get; }
+    string SmtpUserName { get; }
+    string Password { get; }
 }

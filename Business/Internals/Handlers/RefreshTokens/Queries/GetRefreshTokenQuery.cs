@@ -1,20 +1,20 @@
-﻿using Business.BusinessAspects;
-using Core.Aspects.Autofac.Logging;
+﻿using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace Business.Internals.Handlers.RefreshTokens.Queries;
 
-public class GetRefreshTokenQuery: IRequest<IDataResult<RefreshToken>>
+public class GetRefreshTokenQuery : IRequest<IDataResult<RefreshToken>>
 {
     public long UserId { get; set; }
+
     public class GetRefreshTokenQueryHandler : IRequestHandler<GetRefreshTokenQuery, IDataResult<RefreshToken>>
     {
         private readonly IRefreshTokenrepository _refreshTokenRepository;
+
         public GetRefreshTokenQueryHandler(IRefreshTokenrepository refreshTokenRepository)
         {
             _refreshTokenRepository = refreshTokenRepository;

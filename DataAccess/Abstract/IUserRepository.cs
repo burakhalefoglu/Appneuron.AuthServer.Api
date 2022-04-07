@@ -1,10 +1,8 @@
 using Core.DataAccess;
-using Core.Entities.Concrete;
 using Entities.Concrete;
 
-namespace DataAccess.Abstract
+namespace DataAccess.Abstract;
+
+public interface IUserRepository : IRepository<User>
 {
-    public interface IUserRepository : IRepository<User>
-    {
-    }
 }

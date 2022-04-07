@@ -1,9 +1,8 @@
-﻿namespace Core.Entities.ClaimModels
+﻿namespace Core.Entities.ClaimModels;
+
+public static class JwtCustomClaimNames
 {
-    public static class JwtCustomClaimNames
-    {
-        public const string CustomerId = "CustomerID";
-        public const string ProjectId = "ProjectId";
-        public const string UniqueKey = "UniqueKey";
-    }
+    public const string CustomerId = "CustomerID";
+    public const string ProjectId = "ProjectId";
+    public const string UniqueKey = "UniqueKey";
 }

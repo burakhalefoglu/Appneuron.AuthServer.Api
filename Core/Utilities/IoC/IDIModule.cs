@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Core.Utilities.IoC
+namespace Core.Utilities.IoC;
+
+public interface IDIModule
 {
-    public interface IDIModule
-    {
-        void Load(IServiceCollection services);
-    }
+    void Load(IServiceCollection services);
 }

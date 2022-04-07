@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace Tests.Helpers
+namespace Tests.Helpers;
+
+public static class ClaimsData
 {
-    public static class ClaimsData
+    public static List<Claim> GetClaims()
     {
-        public static List<Claim> GetClaims()
+        return new List<Claim>
         {
-            return new List<Claim>
-            {
-                new("username", "deneme"),
-                new("email", "test@test.com"),
-                new("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "10")
-            };
-        }
+            new("username", "deneme"),
+            new("email", "test@test.com"),
+            new("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "10")
+        };
     }
 }

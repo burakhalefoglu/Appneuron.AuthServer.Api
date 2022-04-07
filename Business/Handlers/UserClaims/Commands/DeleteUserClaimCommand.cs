@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Business.BusinessAspects;
+﻿using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -9,31 +7,30 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 
-namespace Business.Handlers.UserClaims.Commands
+namespace Business.Handlers.UserClaims.Commands;
+
+public class DeleteUserClaimCommand : IRequest<IResult>
 {
-    public class DeleteUserClaimCommand : IRequest<IResult>
+    public long Id { get; set; }
+
+    public class DeleteUserClaimCommandHandler : IRequestHandler<DeleteUserClaimCommand, IResult>
     {
-        public long Id { get; set; }
+        private readonly IUserClaimRepository _userClaimRepository;
 
-        public class DeleteUserClaimCommandHandler : IRequestHandler<DeleteUserClaimCommand, IResult>
+        public DeleteUserClaimCommandHandler(IUserClaimRepository userClaimRepository)
         {
-            private readonly IUserClaimRepository _userClaimRepository;
+            _userClaimRepository = userClaimRepository;
+        }
 
-            public DeleteUserClaimCommandHandler(IUserClaimRepository userClaimRepository)
-            {
-                _userClaimRepository = userClaimRepository;
-            }
-
-            [SecuredOperation(Priority = 1)]
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(ConsoleLogger))]
-            public async Task<IResult> Handle(DeleteUserClaimCommand request, CancellationToken cancellationToken)
-            {
-                var entityToDelete = await _userClaimRepository.GetAsync(x => x.UsersId == request.Id && x.Status == true);
-                if (entityToDelete == null) return new ErrorResult(Messages.UserClaimNotFound);
-                await _userClaimRepository.DeleteAsync(entityToDelete);
-                return new SuccessResult(Messages.Deleted);
-            }
+        [SecuredOperation(Priority = 1)]
+        [CacheRemoveAspect("Get")]
+        [LogAspect(typeof(ConsoleLogger))]
+        public async Task<IResult> Handle(DeleteUserClaimCommand request, CancellationToken cancellationToken)
+        {
+            var entityToDelete = await _userClaimRepository.GetAsync(x => x.UsersId == request.Id && x.Status == true);
+            if (entityToDelete == null) return new ErrorResult(Messages.UserClaimNotFound);
+            await _userClaimRepository.DeleteAsync(entityToDelete);
+            return new SuccessResult(Messages.Deleted);
         }
     }
 }

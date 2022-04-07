@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Business.Internals.Handlers.RefreshTokens.Commands;
 
-public class CreateRefreshTokenCommand: IRequest<IDataResult<string>>
+public class CreateRefreshTokenCommand : IRequest<IDataResult<string>>
 {
     public long UserId { get; set; }
 
@@ -25,7 +25,8 @@ public class CreateRefreshTokenCommand: IRequest<IDataResult<string>>
 
         [CacheRemoveAspect("Get")]
         [LogAspect(typeof(ConsoleLogger))]
-        public async Task<IDataResult<string>> Handle(CreateRefreshTokenCommand request, CancellationToken cancellationToken)
+        public async Task<IDataResult<string>> Handle(CreateRefreshTokenCommand request,
+            CancellationToken cancellationToken)
         {
             var token = RandomHelper.CreateRandomString(32);
             var refreshToken = new RefreshToken
@@ -34,7 +35,7 @@ public class CreateRefreshTokenCommand: IRequest<IDataResult<string>>
                 UserId = request.UserId
             };
             await _refreshTokenRepository.AddAsync(refreshToken);
-            return new SuccessDataResult<string>(token,Messages.Added);
+            return new SuccessDataResult<string>(token, Messages.Added);
         }
     }
 }

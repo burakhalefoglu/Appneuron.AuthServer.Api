@@ -7,12 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Concrete.Cassandra.TableMappers;
 
-public class LogMapper: Mappings
+public class LogMapper : Mappings
 {
     public LogMapper()
     {
         var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-        var cassandraConnectionSettings = 
+        var cassandraConnectionSettings =
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<Log>()
             .TableName("logs")
@@ -25,6 +25,5 @@ public class LogMapper: Mappings
             .Column(u => u.TimeStamp, cm => cm.WithName("time_stamp").WithDbType(typeof(DateTimeOffset)))
             .Column(u => u.Exception, cm => cm.WithName("exception").WithDbType(typeof(string)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
-
     }
 }

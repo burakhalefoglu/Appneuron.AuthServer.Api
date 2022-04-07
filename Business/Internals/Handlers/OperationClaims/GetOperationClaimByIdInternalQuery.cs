@@ -1,33 +1,29 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Core.Entities.Concrete;
-using Core.Utilities.Results;
+﻿using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 
-namespace Business.Internals.Handlers.OperationClaims
+namespace Business.Internals.Handlers.OperationClaims;
+
+public class GetOperationClaimsByIdInternalQuery : IRequest<IDataResult<OperationClaim>>
 {
-    public class GetOperationClaimsByIdInternalQuery : IRequest<IDataResult<OperationClaim>>
+    public long Id { get; set; }
+
+    public class GetOperationClaimsByIdInternalQueryHandler : IRequestHandler<GetOperationClaimsByIdInternalQuery,
+        IDataResult<OperationClaim>>
     {
-        public long Id { get; set; }
+        private readonly IOperationClaimRepository _operationClaimRepository;
 
-        public class GetOperationClaimsByIdInternalQueryHandler : IRequestHandler<GetOperationClaimsByIdInternalQuery,
-            IDataResult<OperationClaim>>
+        public GetOperationClaimsByIdInternalQueryHandler(IOperationClaimRepository operationClaimRepository)
         {
-            private readonly IOperationClaimRepository _operationClaimRepository;
+            _operationClaimRepository = operationClaimRepository;
+        }
 
-            public GetOperationClaimsByIdInternalQueryHandler(IOperationClaimRepository operationClaimRepository)
-            {
-                _operationClaimRepository = operationClaimRepository;
-            }
-
-            public async Task<IDataResult<OperationClaim>> Handle(GetOperationClaimsByIdInternalQuery request,
-                CancellationToken cancellationToken)
-            {
-                return new SuccessDataResult<OperationClaim>(
-                    await _operationClaimRepository.GetAsync(x => x.Id == request.Id && x.Status == true));
-            }
+        public async Task<IDataResult<OperationClaim>> Handle(GetOperationClaimsByIdInternalQuery request,
+            CancellationToken cancellationToken)
+        {
+            return new SuccessDataResult<OperationClaim>(
+                await _operationClaimRepository.GetAsync(x => x.Id == request.Id && x.Status == true));
         }
     }
 }

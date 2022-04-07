@@ -4,25 +4,24 @@ using Core.Utilities.Interceptors;
 using Core.Utilities.IoC;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Core.Aspects.Autofac.Caching
+namespace Core.Aspects.Autofac.Caching;
+
+/// <summary>
+///     CacheRemoveAspect
+/// </summary>
+public class CacheRemoveAspect : MethodInterceptionAttribute
 {
-    /// <summary>
-    ///     CacheRemoveAspect
-    /// </summary>
-    public class CacheRemoveAspect : MethodInterceptionAttribute
+    private readonly ICacheManager _cacheManager;
+    private readonly string _pattern;
+
+    public CacheRemoveAspect(string pattern)
     {
-        private readonly ICacheManager _cacheManager;
-        private readonly string _pattern;
+        _pattern = pattern;
+        _cacheManager = ServiceTool.ServiceProvider.GetService<ICacheManager>();
+    }
 
-        public CacheRemoveAspect(string pattern)
-        {
-            _pattern = pattern;
-            _cacheManager = ServiceTool.ServiceProvider.GetService<ICacheManager>();
-        }
-
-        protected override void OnSuccess(IInvocation invocation)
-        {
-            _cacheManager.RemoveByPattern(_pattern);
-        }
+    protected override void OnSuccess(IInvocation invocation)
+    {
+        _cacheManager.RemoveByPattern(_pattern);
     }
 }

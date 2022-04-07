@@ -5,7 +5,6 @@ using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using IResult = Core.Utilities.Results.IResult;
-using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace WebAPI.Controllers;
 
@@ -36,7 +35,7 @@ public class AuthController : BaseApiController
     }
 
     /// <summary>
-    ///   refresh token
+    ///     refresh token
     /// </summary>
     /// <return>Logs token</return>
     /// <response code="200"></response>

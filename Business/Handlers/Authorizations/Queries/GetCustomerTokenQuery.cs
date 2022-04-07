@@ -9,22 +9,22 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.ClaimModels;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Jwt;
-using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace Business.Handlers.Authorizations.Queries;
 
-public class GetCustomerTokenQuery: IRequest<IDataResult<AccessToken>>
+public class GetCustomerTokenQuery : IRequest<IDataResult<AccessToken>>
 {
     public class GetCustomerTokenQueryHandler : IRequestHandler<GetCustomerTokenQuery, IDataResult<AccessToken>>
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMediator _mediator;
         private readonly ITokenHelper _tokenHelper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public GetCustomerTokenQueryHandler(IMediator mediator, ITokenHelper tokenHelper, IHttpContextAccessor httpContextAccessor)
+        public GetCustomerTokenQueryHandler(IMediator mediator, ITokenHelper tokenHelper,
+            IHttpContextAccessor httpContextAccessor)
         {
             _mediator = mediator;
             _tokenHelper = tokenHelper;
@@ -36,7 +36,6 @@ public class GetCustomerTokenQuery: IRequest<IDataResult<AccessToken>>
         public async Task<IDataResult<AccessToken>> Handle(GetCustomerTokenQuery request,
             CancellationToken cancellationToken)
         {
-            
             var refreshToken = _httpContextAccessor.HttpContext.Request.Cookies["RefreshToken"];
             var userId = Convert.ToInt64(_httpContextAccessor.HttpContext?.User.Claims
                 .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
@@ -44,14 +43,14 @@ public class GetCustomerTokenQuery: IRequest<IDataResult<AccessToken>>
                 .FirstOrDefault(x => x.Type.EndsWith("name"))?.Value;
             var email = _httpContextAccessor.HttpContext?.User.Claims
                 .FirstOrDefault(x => x.Type.EndsWith("emailaddress"))?.Value;
-            
+
             var tokenFromCassandra = await _mediator.Send(new GetRefreshTokenQuery
             {
                 UserId = userId
             }, cancellationToken);
             if (refreshToken != tokenFromCassandra.Data.Value)
                 return new ErrorDataResult<AccessToken>(Messages.AuthorizationsDenied);
-            
+
             var usrGroup = await _mediator.Send(new GetUserGroupInternalQuery
             {
                 UserId = userId

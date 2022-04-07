@@ -1,8 +1,7 @@
-﻿namespace Core.CrossCuttingConcerns.Logging.Serilog.ConfigurationModels
+﻿namespace Core.CrossCuttingConcerns.Logging.Serilog.ConfigurationModels;
+
+public class LogstashConfiguration
 {
-    public class LogstashConfiguration
-    {
-        public string Host { get; set; }
-        public string Port { get; set; }
-    }
+    public string Host { get; set; }
+    public string Port { get; set; }
 }

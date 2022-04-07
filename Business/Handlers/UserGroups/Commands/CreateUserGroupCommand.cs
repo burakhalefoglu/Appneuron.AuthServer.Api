@@ -1,49 +1,46 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Business.BusinessAspects;
+﻿using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 
-namespace Business.Handlers.UserGroups.Commands
+namespace Business.Handlers.UserGroups.Commands;
+
+public class CreateUserGroupCommand : IRequest<IResult>
 {
-    public class CreateUserGroupCommand : IRequest<IResult>
+    public long GroupId { get; set; }
+    public long UserId { get; set; }
+
+    public class CreateUserGroupCommandHandler : IRequestHandler<CreateUserGroupCommand, IResult>
     {
-        public long GroupId { get; set; }
-        public long UserId { get; set; }
+        private readonly IUserGroupRepository _userGroupRepository;
 
-        public class CreateUserGroupCommandHandler : IRequestHandler<CreateUserGroupCommand, IResult>
+        public CreateUserGroupCommandHandler(IUserGroupRepository userGroupRepository)
         {
-            private readonly IUserGroupRepository _userGroupRepository;
+            _userGroupRepository = userGroupRepository;
+        }
 
-            public CreateUserGroupCommandHandler(IUserGroupRepository userGroupRepository)
+        [SecuredOperation(Priority = 1)]
+        [CacheRemoveAspect("Get")]
+        [LogAspect(typeof(ConsoleLogger))]
+        public async Task<IResult> Handle(CreateUserGroupCommand request, CancellationToken cancellationToken)
+        {
+            var userGroupIsExist =
+                await _userGroupRepository.AnyAsync(x => x.UserId == request.UserId && x.Status == true);
+            if (userGroupIsExist)
+                return new ErrorResult(Messages.UserGroupNotFound);
+            var userGroup = new UserGroup
             {
-                _userGroupRepository = userGroupRepository;
-            }
+                GroupId = request.GroupId,
+                UserId = request.UserId
+            };
 
-            [SecuredOperation(Priority = 1)]
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(ConsoleLogger))]
-            public async Task<IResult> Handle(CreateUserGroupCommand request, CancellationToken cancellationToken)
-            {
-                var userGroupIsExist = await _userGroupRepository.AnyAsync(x => x.UserId == request.UserId && x.Status == true);
-                if (userGroupIsExist)
-                    return new ErrorResult(Messages.UserGroupNotFound);
-                var userGroup = new UserGroup
-                {
-                    GroupId = request.GroupId,
-                    UserId = request.UserId
-                };
-
-                await _userGroupRepository.AddAsync(userGroup);
-                return new SuccessResult(Messages.Added);
-            }
+            await _userGroupRepository.AddAsync(userGroup);
+            return new SuccessResult(Messages.Added);
         }
     }
 }

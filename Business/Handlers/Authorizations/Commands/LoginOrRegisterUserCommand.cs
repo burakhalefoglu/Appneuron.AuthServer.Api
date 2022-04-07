@@ -15,7 +15,6 @@ using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace Business.Handlers.Authorizations.Commands;
 
@@ -61,7 +60,7 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
                 });
                 user = await _userRepository.GetAsync(x => x.Email == request.Email &&
                                                            x.Status);
-                await _mediator.Send(new CreateUserGroupInternalCommand()
+                await _mediator.Send(new CreateUserGroupInternalCommand
                 {
                     GroupId = 1,
                     UserId = user.Id
@@ -73,12 +72,10 @@ public class LoginOrRegisterUserCommand : IRequest<IDataResult<AccessToken>>
             }
 
             if (!(user is null))
-            {
                 refreshTokenResult = _mediator.Send(new GetRefreshTokenQuery
                 {
                     UserId = user.Id
                 }, cancellationToken).Result.Data.Value;
-            }
 
             if (!HashingHelper.VerifyPasswordHash(request.Password, user.PasswordSalt, user.PasswordHash))
                 return new ErrorDataResult<AccessToken>(Messages.DefaultError);

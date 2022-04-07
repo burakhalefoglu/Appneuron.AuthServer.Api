@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Business.Constants;
+﻿using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -15,73 +12,72 @@ using MediatR;
 using MimeKit;
 using MimeKit.Text;
 
-namespace Business.Handlers.Authorizations.Commands
+namespace Business.Handlers.Authorizations.Commands;
+
+public class ForgotPasswordCommand : IRequest<IResult>
 {
-    public class ForgotPasswordCommand : IRequest<IResult>
+    public string Email { get; set; }
+
+    public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, IResult>
     {
-        public string Email { get; set; }
+        private readonly IMailService _mailService;
+        private readonly IUserRepository _userRepository;
 
-        public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, IResult>
+        public ForgotPasswordCommandHandler(IUserRepository userRepository,
+            IMailService mailService)
         {
-            private readonly IMailService _mailService;
-            private readonly IUserRepository _userRepository;
+            _userRepository = userRepository;
+            _mailService = mailService;
+        }
 
-            public ForgotPasswordCommandHandler(IUserRepository userRepository,
-                IMailService mailService)
-            {
-                _userRepository = userRepository;
-                _mailService = mailService;
-            }
+        /// <summary>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [PerformanceAspect(5)]
+        [CacheRemoveAspect("Get")]
+        [LogAspect(typeof(ConsoleLogger))]
+        [TransactionScopeAspect]
+        public async Task<IResult> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
+        {
+            var user = await _userRepository.GetAsync(u => u.Email == request.Email && u.Status);
 
-            /// <summary>
-            /// </summary>
-            /// <param name="request"></param>
-            /// <param name="cancellationToken"></param>
-            /// <returns></returns>
-            [PerformanceAspect(5)]
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(ConsoleLogger))]
-            [TransactionScopeAspect]
-            public async Task<IResult> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
-            {
-                var user = await _userRepository.GetAsync(u => u.Email == request.Email && u.Status);
-
-                if (user == null)
-                    // if is not email do noting. But return success result to not give database information !!!
-                    return new SuccessResult(Messages.SendPassword);
-
-                var token = SecurityKeyHelper.GetRandomHexNumber(64);
-                var url = "https://webapi.appneuron.net/auth/api/Auth/resetpassword?email=" +
-                          user.Email + "&token=" + token.ToLower();
-                await _mailService.Send(new EmailMessage
-                {
-                    Content = new TextPart(TextFormat.Html)
-                        {Text = $"<a href = '{url}'>reset your pass...</a>"},
-                    FromAddresses =
-                    {
-                        new EmailAddress
-                        {
-                            Address = "info@appneuron.com",
-                            Name = "Appneuron"
-                        }
-                    },
-                    Subject = "Reset password Mail...",
-                    ToAddresses =
-                    {
-                        new EmailAddress
-                        {
-                            Address = user.Email,
-                            Name = user.Name
-                        }
-                    }
-                });
-
-                user.ResetPasswordToken = token.ToLower();
-                user.ResetPasswordExpires = DateTimeOffset.Now.AddMinutes(10);
-                await _userRepository.UpdateAsync(user);
-
+            if (user == null)
+                // if is not email do noting. But return success result to not give database information !!!
                 return new SuccessResult(Messages.SendPassword);
-            }
+
+            var token = SecurityKeyHelper.GetRandomHexNumber(64);
+            var url = "https://webapi.appneuron.net/auth/api/Auth/resetpassword?email=" +
+                      user.Email + "&token=" + token.ToLower();
+            await _mailService.Send(new EmailMessage
+            {
+                Content = new TextPart(TextFormat.Html)
+                    {Text = $"<a href = '{url}'>reset your pass...</a>"},
+                FromAddresses =
+                {
+                    new EmailAddress
+                    {
+                        Address = "info@appneuron.com",
+                        Name = "Appneuron"
+                    }
+                },
+                Subject = "Reset password Mail...",
+                ToAddresses =
+                {
+                    new EmailAddress
+                    {
+                        Address = user.Email,
+                        Name = user.Name
+                    }
+                }
+            });
+
+            user.ResetPasswordToken = token.ToLower();
+            user.ResetPasswordExpires = DateTimeOffset.Now.AddMinutes(10);
+            await _userRepository.UpdateAsync(user);
+
+            return new SuccessResult(Messages.SendPassword);
         }
     }
 }

@@ -1,13 +1,11 @@
-﻿using System.Linq;
-using Core.Utilities.Results;
+﻿using Core.Utilities.Results;
 
-namespace Core.Utilities.Business
+namespace Core.Utilities.Business;
+
+public static class BusinessRules
 {
-    public static class BusinessRules
+    public static IResult Run(params IResult[] logics)
     {
-        public static IResult Run(params IResult[] logics)
-        {
-            return logics.FirstOrDefault(result => !result.Success);
-        }
+        return logics.FirstOrDefault(result => !result.Success);
     }
 }

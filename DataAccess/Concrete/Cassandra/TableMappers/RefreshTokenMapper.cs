@@ -7,15 +7,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Concrete.Cassandra.TableMappers;
 
-public class RefreshTokenMapper: Mappings
+public class RefreshTokenMapper : Mappings
 {
     public RefreshTokenMapper()
     {
         var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-        var cassandraConnectionSettings = 
+        var cassandraConnectionSettings =
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<RefreshToken>()
-            .TableName("refresh_tokens") 
+            .TableName("refresh_tokens")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
             .PartitionKey("user_id")
             .ClusteringKey(new Tuple<string, SortOrder>("created_at", SortOrder.Ascending))
@@ -24,6 +24,5 @@ public class RefreshTokenMapper: Mappings
             .Column(u => u.Value, cm => cm.WithName("value").WithDbType(typeof(string)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)))
             .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTimeOffset)));
-        
     }
 }

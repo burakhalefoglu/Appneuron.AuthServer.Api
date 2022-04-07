@@ -1,16 +1,14 @@
 using Cassandra.Mapping;
 using Core.DataAccess.Cassandra;
-using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using DataAccess.Concrete.Cassandra.TableMappers;
 using Entities.Concrete;
 
-namespace DataAccess.Concrete.Cassandra
+namespace DataAccess.Concrete.Cassandra;
+
+public class CassUserRepository : CassandraRepositoryBase<User>, IUserRepository
 {
-    public class CassUserRepository : CassandraRepositoryBase<User>, IUserRepository
+    public CassUserRepository() : base(MappingConfiguration.Global.Define<UserMapper>())
     {
-        public CassUserRepository() : base(MappingConfiguration.Global.Define<UserMapper>())
-        {
-        }
     }
 }

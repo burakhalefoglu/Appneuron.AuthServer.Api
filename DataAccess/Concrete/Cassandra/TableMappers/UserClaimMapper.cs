@@ -1,6 +1,5 @@
 ﻿using Cassandra.Mapping;
 using Core.DataAccess.Cassandra.Configurations;
-using Core.Entities.Concrete;
 using Core.Utilities.IoC;
 using Entities.Concrete;
 using Microsoft.Extensions.Configuration;
@@ -8,12 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Concrete.Cassandra.TableMappers;
 
-public class UserClaimMapper: Mappings
+public class UserClaimMapper : Mappings
 {
     public UserClaimMapper()
     {
         var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-        var cassandraConnectionSettings = 
+        var cassandraConnectionSettings =
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<UserClaim>()
             .TableName("user_claims")

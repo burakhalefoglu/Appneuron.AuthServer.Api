@@ -26,287 +26,286 @@ using static Business.Handlers.Authorizations.Commands.ForgotPasswordCommand;
 using static Business.Handlers.Authorizations.Commands.ResetPasswordCommand;
 using static Business.Handlers.Authorizations.Commands.LoginOrRegisterUserCommand;
 
-namespace Tests.Business.Handlers
+namespace Tests.Business.Handlers;
+
+[TestFixture]
+public class AuthorizationHandlerTests
 {
-    [TestFixture]
-    public class AuthorizationHandlerTests
+    [SetUp]
+    public void Setup()
     {
-        [SetUp]
-        public void Setup()
-        {
-            _userRepository = new Mock<IUserRepository>();
-            _tokenHelper = new Mock<ITokenHelper>();
-            _mediator = new Mock<IMediator>();
-            _mailService = new Mock<IMailService>();
-            _httpContextAccessor = new Mock<IHttpContextAccessor>();
-            _messageBroker = new Mock<IMessageBroker>();
-            
-            _loginUserQueryHandler = new LoginOrRegisterUserCommand.LoginOrRegisterUserCommandHandler(_userRepository.Object,
-                _tokenHelper.Object,
-                _mediator.Object);
-            
-            _forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(_userRepository.Object,
-                _mailService.Object);
+        _userRepository = new Mock<IUserRepository>();
+        _tokenHelper = new Mock<ITokenHelper>();
+        _mediator = new Mock<IMediator>();
+        _mailService = new Mock<IMailService>();
+        _httpContextAccessor = new Mock<IHttpContextAccessor>();
+        _messageBroker = new Mock<IMessageBroker>();
 
-            _resetPasswordCommandHandler = new ResetPasswordCommandHandler(_userRepository.Object,
-                _httpContextAccessor.Object);
-        }
+        _loginUserQueryHandler = new LoginOrRegisterUserCommandHandler(_userRepository.Object,
+            _tokenHelper.Object,
+            _mediator.Object);
 
-        private Mock<IUserRepository> _userRepository;
-        private Mock<ITokenHelper> _tokenHelper;
-        private Mock<IMediator> _mediator;
-        private Mock<IMailService> _mailService;
-        private Mock<IMessageBroker> _messageBroker;
-        private Mock<IHttpContextAccessor> _httpContextAccessor;
-        private LoginOrRegisterUserCommandHandler _loginUserQueryHandler;
-        private LoginOrRegisterUserCommand _loginUserQuery;
-        private ForgotPasswordCommandHandler _forgotPasswordCommandHandler;
-        private ForgotPasswordCommand _forgotPasswordCommand;
-        private ResetPasswordCommandHandler _resetPasswordCommandHandler;
-        
-        [Test]
-        public async Task Authorization_Login_UserNotFount()
-        {
-            var user = DataHelper.GetUser("test");
-            HashingHelper.CreatePasswordHash("123456",
-                out var passwordSalt,
-                out var passwordHash);
-            user.PasswordSalt = passwordSalt;
-            user.PasswordHash = passwordHash;
-            _userRepository.Setup(x =>
-                x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(Task.FromResult<User>(null));
+        _forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(_userRepository.Object,
+            _mailService.Object);
 
-            _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(
-                    new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
+        _resetPasswordCommandHandler = new ResetPasswordCommandHandler(_userRepository.Object,
+            _httpContextAccessor.Object);
+    }
+
+    private Mock<IUserRepository> _userRepository;
+    private Mock<ITokenHelper> _tokenHelper;
+    private Mock<IMediator> _mediator;
+    private Mock<IMailService> _mailService;
+    private Mock<IMessageBroker> _messageBroker;
+    private Mock<IHttpContextAccessor> _httpContextAccessor;
+    private LoginOrRegisterUserCommandHandler _loginUserQueryHandler;
+    private LoginOrRegisterUserCommand _loginUserQuery;
+    private ForgotPasswordCommandHandler _forgotPasswordCommandHandler;
+    private ForgotPasswordCommand _forgotPasswordCommand;
+    private ResetPasswordCommandHandler _resetPasswordCommandHandler;
+
+    [Test]
+    public async Task Authorization_Login_UserNotFount()
+    {
+        var user = DataHelper.GetUser("test");
+        HashingHelper.CreatePasswordHash("123456",
+            out var passwordSalt,
+            out var passwordHash);
+        user.PasswordSalt = passwordSalt;
+        user.PasswordHash = passwordHash;
+        _userRepository.Setup(x =>
+            x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(Task.FromResult<User>(null));
+
+        _mediator.Setup(m =>
+                m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
+                new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
+                {
+                    new()
                     {
-                        new()
-                        {
-                            Id = 1,
-                            Label = "test",
-                            IsDisabled = false,
-                            ParentId = "test"
-                        }
-                    }));
-            _loginUserQuery = new LoginOrRegisterUserCommand
-            {
-                Email = user.Email,
-                Password = "123456"
-            };
-
-            var result = await _loginUserQueryHandler.Handle(_loginUserQuery, new CancellationToken());
-
-            result.Success.Should().BeFalse();
-            result.Message.Should().Be(Messages.DefaultError);
-        }
-
-
-        [Test]
-        public async Task Authorization_Login_PasswordError()
+                        Id = 1,
+                        Label = "test",
+                        IsDisabled = false,
+                        ParentId = "test"
+                    }
+                }));
+        _loginUserQuery = new LoginOrRegisterUserCommand
         {
-            var user = DataHelper.GetUser("test");
-            HashingHelper.CreatePasswordHash("123456",
-                out var passwordSalt,
-                out var passwordHash);
-            user.PasswordSalt = passwordSalt;
-            user.PasswordHash = passwordHash;
+            Email = user.Email,
+            Password = "123456"
+        };
 
-            _userRepository.Setup(x =>
-                x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(() => Task.FromResult(user));
+        var result = await _loginUserQueryHandler.Handle(_loginUserQuery, new CancellationToken());
 
-            _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(
-                    new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
+        result.Success.Should().BeFalse();
+        result.Message.Should().Be(Messages.DefaultError);
+    }
+
+
+    [Test]
+    public async Task Authorization_Login_PasswordError()
+    {
+        var user = DataHelper.GetUser("test");
+        HashingHelper.CreatePasswordHash("123456",
+            out var passwordSalt,
+            out var passwordHash);
+        user.PasswordSalt = passwordSalt;
+        user.PasswordHash = passwordHash;
+
+        _userRepository.Setup(x =>
+            x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(() => Task.FromResult(user));
+
+        _mediator.Setup(m =>
+                m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
+                new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
+                {
+                    new()
                     {
-                        new()
-                        {
-                            Id = 1,
-                            Label = "test",
-                            IsDisabled = false,
-                            ParentId = "test"
-                        }
-                    }));
+                        Id = 1,
+                        Label = "test",
+                        IsDisabled = false,
+                        ParentId = "test"
+                    }
+                }));
 
-            _loginUserQuery = new LoginOrRegisterUserCommand
-            {
-                Email = user.Email,
-                Password = "1234567"
-            };
-
-            var result = await _loginUserQueryHandler.Handle(_loginUserQuery, new CancellationToken());
-
-            result.Success.Should().BeFalse();
-            result.Message.Should().Be(Messages.DefaultError);
-        }
-
-
-        [Test]
-        public async Task Authorization_Login_Success()
+        _loginUserQuery = new LoginOrRegisterUserCommand
         {
-            var user = DataHelper.GetUser("test");
-            HashingHelper.CreatePasswordHash("123456",
-                out var passwordSalt,
-                out var passwordHash);
-            user.PasswordSalt = passwordSalt;
-            user.PasswordHash = passwordHash;
+            Email = user.Email,
+            Password = "1234567"
+        };
 
-            _userRepository.Setup(x =>
-                x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(() => Task.FromResult(user));
+        var result = await _loginUserQueryHandler.Handle(_loginUserQuery, new CancellationToken());
 
-            _mediator.Setup(m =>
-                m.Send(It.IsAny<GetUserGroupInternalQuery>(),
-                    It.IsAny<CancellationToken>())).ReturnsAsync( new SuccessDataResult<UserGroup>(new UserGroup
-            {
-                Id = 1
-            }));
+        result.Success.Should().BeFalse();
+        result.Message.Should().Be(Messages.DefaultError);
+    }
 
-            _mediator.Setup(m =>
-                    m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(
-                    new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
+
+    [Test]
+    public async Task Authorization_Login_Success()
+    {
+        var user = DataHelper.GetUser("test");
+        HashingHelper.CreatePasswordHash("123456",
+            out var passwordSalt,
+            out var passwordHash);
+        user.PasswordSalt = passwordSalt;
+        user.PasswordHash = passwordHash;
+
+        _userRepository.Setup(x =>
+            x.GetAsync(It.IsAny<Expression<Func<User, bool>>>())).Returns(() => Task.FromResult(user));
+
+        _mediator.Setup(m =>
+            m.Send(It.IsAny<GetUserGroupInternalQuery>(),
+                It.IsAny<CancellationToken>())).ReturnsAsync(new SuccessDataResult<UserGroup>(new UserGroup
+        {
+            Id = 1
+        }));
+
+        _mediator.Setup(m =>
+                m.Send(It.IsAny<GetGroupClaimInternalQuery>(),
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
+                new SuccessDataResult<IEnumerable<SelectionItem>>(new List<SelectionItem>
+                {
+                    new()
                     {
-                        new()
-                        {
-                            Id = 1,
-                            Label = "test",
-                            IsDisabled = false,
-                            ParentId = "test"
-                        }
-                    }));
+                        Id = 1,
+                        Label = "test",
+                        IsDisabled = false,
+                        ParentId = "test"
+                    }
+                }));
 
-            _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
-            {
-                OperationClaims = null
-            })).Returns(new AccessToken());
-
-
-            _loginUserQuery = new LoginOrRegisterUserCommand
-            {
-                Email = user.Email,
-                Password = "123456"
-            };
-
-            var result = await _loginUserQueryHandler.Handle(_loginUserQuery, new CancellationToken());
-
-            result.Success.Should().BeTrue();
-        }
-
-        [Test]
-        public async Task Authorization_ForgotPassword_WrongEmail()
+        _tokenHelper.Setup(x => x.CreateCustomerToken<AccessToken>(new UserClaimModel
         {
-            var user = DataHelper.GetUser("test");
-            _userRepository.Setup(x =>
-                    x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(() => Task.FromResult<User>(null));
+            OperationClaims = null
+        })).Returns(new AccessToken());
 
-            _forgotPasswordCommand = new ForgotPasswordCommand
-            {
-                Email = user.Email
-            };
-            var result = await _forgotPasswordCommandHandler.Handle(_forgotPasswordCommand, new CancellationToken());
-            result.Success.Should().BeTrue();
-            result.Message.Should().Be(Messages.SendPassword);
-        }
 
-        [Test]
-        public async Task Authorization_ForgotPassword_Success()
+        _loginUserQuery = new LoginOrRegisterUserCommand
         {
-            var user = DataHelper.GetUser("test");
-            _userRepository.Setup(x =>
-                    x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(() => Task.FromResult(user));
+            Email = user.Email,
+            Password = "123456"
+        };
 
-            _forgotPasswordCommand = new ForgotPasswordCommand
-            {
-                Email = user.Email
-            };
+        var result = await _loginUserQueryHandler.Handle(_loginUserQuery, new CancellationToken());
 
-            _mailService.Setup(x => x.Send(It.IsAny<EmailMessage>()));
+        result.Success.Should().BeTrue();
+    }
 
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
+    [Test]
+    public async Task Authorization_ForgotPassword_WrongEmail()
+    {
+        var user = DataHelper.GetUser("test");
+        _userRepository.Setup(x =>
+                x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(() => Task.FromResult<User>(null));
 
-            var result = await _forgotPasswordCommandHandler.Handle(_forgotPasswordCommand, new CancellationToken());
-            result.Success.Should().BeTrue();
-            result.Message.Should().Be(Messages.SendPassword);
-        }
-
-
-        [Test]
-        public async Task Authorization_ResetPassword_InvalidCode()
+        _forgotPasswordCommand = new ForgotPasswordCommand
         {
-            var resetPasswordCommand = new ResetPasswordCommand
-            {
-                Password = "test_pass"
-            };
+            Email = user.Email
+        };
+        var result = await _forgotPasswordCommandHandler.Handle(_forgotPasswordCommand, new CancellationToken());
+        result.Success.Should().BeTrue();
+        result.Message.Should().Be(Messages.SendPassword);
+    }
 
-            _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(() => Task.FromResult<User>(null));
+    [Test]
+    public async Task Authorization_ForgotPassword_Success()
+    {
+        var user = DataHelper.GetUser("test");
+        _userRepository.Setup(x =>
+                x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(() => Task.FromResult(user));
 
-            _httpContextAccessor.Setup(x =>
-                    x.HttpContext.Request.Query)
-                .Returns(() => new QueryCollection());
-
-            var result = await _resetPasswordCommandHandler.Handle(resetPasswordCommand, new CancellationToken());
-            result.Success.Should().BeFalse();
-            result.Message.Should().Be(Messages.InvalidCode);
-        }
-
-        [Test]
-        public async Task Authorization_ResetPassword_InvalidCodeWhenResPasExpiresLowerThanDatetimeNow()
+        _forgotPasswordCommand = new ForgotPasswordCommand
         {
-            var resetPasswordCommand = new ResetPasswordCommand
-            {
-                Password = "test_pass"
-            };
+            Email = user.Email
+        };
 
-            var user = new User
-            {
-                ResetPasswordExpires = new DateTime(2009, 12, 1)
-            };
+        _mailService.Setup(x => x.Send(It.IsAny<EmailMessage>()));
 
-            _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(() => Task.FromResult(user));
+        _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
 
-            _httpContextAccessor.Setup(x =>
-                    x.HttpContext.Request.Query)
-                .Returns(() => new QueryCollection());
-
-            var result = await _resetPasswordCommandHandler.Handle(resetPasswordCommand, new CancellationToken());
-            result.Success.Should().BeFalse();
-            result.Message.Should().Be(Messages.InvalidCode);
-        }
+        var result = await _forgotPasswordCommandHandler.Handle(_forgotPasswordCommand, new CancellationToken());
+        result.Success.Should().BeTrue();
+        result.Message.Should().Be(Messages.SendPassword);
+    }
 
 
-        [Test]
-        public async Task Authorization_ResetPassword_ResetPasswordSuccess()
+    [Test]
+    public async Task Authorization_ResetPassword_InvalidCode()
+    {
+        var resetPasswordCommand = new ResetPasswordCommand
         {
-            var resetPasswordCommand = new ResetPasswordCommand
-            {
-                Password = "test_pass"
-            };
+            Password = "test_pass"
+        };
 
-            var user = new User
-            {
-                ResetPasswordExpires = DateTime.Now.AddDays(1)
-            };
+        _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(() => Task.FromResult<User>(null));
 
-            _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns(() => Task.FromResult(user));
+        _httpContextAccessor.Setup(x =>
+                x.HttpContext.Request.Query)
+            .Returns(() => new QueryCollection());
 
-            _httpContextAccessor.Setup(x =>
-                    x.HttpContext.Request.Query)
-                .Returns(() => new QueryCollection());
+        var result = await _resetPasswordCommandHandler.Handle(resetPasswordCommand, new CancellationToken());
+        result.Success.Should().BeFalse();
+        result.Message.Should().Be(Messages.InvalidCode);
+    }
 
-            _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
+    [Test]
+    public async Task Authorization_ResetPassword_InvalidCodeWhenResPasExpiresLowerThanDatetimeNow()
+    {
+        var resetPasswordCommand = new ResetPasswordCommand
+        {
+            Password = "test_pass"
+        };
 
-            var result = await _resetPasswordCommandHandler.Handle(resetPasswordCommand, new CancellationToken());
-            result.Success.Should().BeTrue();
-            result.Message.Should().Be(Messages.ResetPasswordSuccess);
-        }
+        var user = new User
+        {
+            ResetPasswordExpires = new DateTime(2009, 12, 1)
+        };
+
+        _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(() => Task.FromResult(user));
+
+        _httpContextAccessor.Setup(x =>
+                x.HttpContext.Request.Query)
+            .Returns(() => new QueryCollection());
+
+        var result = await _resetPasswordCommandHandler.Handle(resetPasswordCommand, new CancellationToken());
+        result.Success.Should().BeFalse();
+        result.Message.Should().Be(Messages.InvalidCode);
+    }
+
+
+    [Test]
+    public async Task Authorization_ResetPassword_ResetPasswordSuccess()
+    {
+        var resetPasswordCommand = new ResetPasswordCommand
+        {
+            Password = "test_pass"
+        };
+
+        var user = new User
+        {
+            ResetPasswordExpires = DateTime.Now.AddDays(1)
+        };
+
+        _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(() => Task.FromResult(user));
+
+        _httpContextAccessor.Setup(x =>
+                x.HttpContext.Request.Query)
+            .Returns(() => new QueryCollection());
+
+        _userRepository.Setup(x => x.UpdateAsync(It.IsAny<User>()));
+
+        var result = await _resetPasswordCommandHandler.Handle(resetPasswordCommand, new CancellationToken());
+        result.Success.Should().BeTrue();
+        result.Message.Should().Be(Messages.ResetPasswordSuccess);
     }
 }

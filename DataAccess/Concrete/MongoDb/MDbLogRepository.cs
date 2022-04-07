@@ -2,12 +2,11 @@ using Core.DataAccess.MongoDb;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
 
-namespace DataAccess.Concrete.MongoDb
+namespace DataAccess.Concrete.MongoDb;
+
+public class MDbLogRepository : MongoDbRepositoryBase<Log>, ILogRepository
 {
-    public class MDbLogRepository : MongoDbRepositoryBase<Log>, ILogRepository
+    public MDbLogRepository() : base(Collections.Collections.Log)
     {
-        public MDbLogRepository() : base(Collections.Collections.Log)
-        {
-        }
     }
 }

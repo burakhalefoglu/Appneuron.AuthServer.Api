@@ -8,48 +8,47 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Business.BusinessAspects
+namespace Business.BusinessAspects;
+
+/// <summary>
+///     This Aspect control the user's roles in HttpContext by inject the IHttpContextAccessor.
+///     It is checked by writing as [SecuredOperation] on the handler.
+///     If a valid authorization cannot be found in aspect, it throws an exception.
+/// </summary>
+public class SecuredOperationAttribute : MethodInterceptionAttribute
 {
-    /// <summary>
-    ///     This Aspect control the user's roles in HttpContext by inject the IHttpContextAccessor.
-    ///     It is checked by writing as [SecuredOperation] on the handler.
-    ///     If a valid authorization cannot be found in aspect, it throws an exception.
-    /// </summary>
-    public class SecuredOperationAttribute : MethodInterceptionAttribute
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly string _operationClaimCrypto;
+
+    public SecuredOperationAttribute()
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly string _operationClaimCrypto;
+        Configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
+        _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+        _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<string>();
+    }
 
-        public SecuredOperationAttribute()
+    public IConfiguration Configuration { get; }
+
+    protected override void OnBefore(IInvocation invocation)
+    {
+        var userId = _httpContextAccessor.HttpContext?.User.Claims
+            .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+
+        if (userId == null) throw new UnauthorizedAccessException(Messages.UnauthorizedAccess);
+
+        var oprClaims = _httpContextAccessor.HttpContext?.User.Claims.Where(x => x.Type.EndsWith("role")).ToList();
+        var ocNameList = new List<string>();
+
+        foreach (var item in oprClaims)
         {
-            Configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-            _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
-            _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<string>();
+            var itemDecryptValue = SecurityKeyHelper.DecryptString(_operationClaimCrypto, item.Value);
+            ocNameList.Add(itemDecryptValue);
         }
 
-        public IConfiguration Configuration { get; }
+        var operationName = invocation.TargetType.ReflectedType.Name;
+        if (ocNameList.Contains(operationName))
+            return;
 
-        protected override void OnBefore(IInvocation invocation)
-        {
-            var userId = _httpContextAccessor.HttpContext?.User.Claims
-                .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
-
-            if (userId == null) throw new UnauthorizedAccessException(Messages.UnauthorizedAccess);
-
-            var oprClaims = _httpContextAccessor.HttpContext?.User.Claims.Where(x => x.Type.EndsWith("role")).ToList();
-            var ocNameList = new List<string>();
-
-            foreach (var item in oprClaims)
-            {
-                var itemDecryptValue = SecurityKeyHelper.DecryptString(_operationClaimCrypto, item.Value);
-                ocNameList.Add(itemDecryptValue);
-            }
-
-            var operationName = invocation.TargetType.ReflectedType.Name;
-            if (ocNameList.Contains(operationName))
-                return;
-
-            throw new SecurityException(Messages.AuthorizationsDenied);
-        }
+        throw new SecurityException(Messages.AuthorizationsDenied);
     }
 }

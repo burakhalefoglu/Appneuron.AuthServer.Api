@@ -1,8 +1,7 @@
-﻿namespace Business.MessageBrokers.Models
+﻿namespace Business.MessageBrokers.Models;
+
+public class ProjectCreationResult
 {
-    public class ProjectCreationResult
-    {
-        public string Accesstoken { get; set; }
-        public long UserId { get; set; }
-    }
+    public string Accesstoken { get; set; }
+    public long UserId { get; set; }
 }
